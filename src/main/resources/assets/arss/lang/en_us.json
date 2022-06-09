@@ -1,0 +1,57 @@
+{
+  "itemGroup.tab_arss": "Analog Redstone Suite",
+
+  "display.arss.analog_cell.mode.set": "Set",
+  "display.arss.analog_cell.mode.reset": "Reset",
+
+  "display.arss.better_comparator.mode.compare": "Compare",
+  "display.arss.better_comparator.mode.subtract": "Subtract",
+
+  "display.arss.adder.mode.compare": "Compare",
+  "display.arss.adder.mode.add": "Add",
+
+  "display.arss.checker.mode.equal": "Equal",
+  "display.arss.checker.mode.different": "Different",
+
+  "display.arss.edge_detector.mode.rising": "Rising Edge",
+  "display.arss.edge_detector.mode.lowering": "Lowering Edge",
+
+  "display.arss.demuxer.mode.1": "Bit 1",
+  "display.arss.demuxer.mode.2": "Bit 2",
+  "display.arss.demuxer.mode.4": "Bit 4",
+  "display.arss.demuxer.mode.8": "Bit 8",
+  "display.arss.demuxer.mode.side_control": "Side Controlled",
+
+  "display.arss.delayer.mode.1": "1 Tick",
+  "display.arss.delayer.mode.2": "2 Tick",
+  "display.arss.delayer.mode.4": "4 Tick",
+  "display.arss.delayer.mode.8": "8 Tick",
+  "display.arss.delayer.mode.side_control": "Side Controlled",
+
+  "display.arss.shifter.mode.up": "Shift Up",
+  "display.arss.shifter.mode.down": "Shift Down",
+
+  "item.arss.epurated_redstone_blend__": "Cupro Ferrate Oxide",
+  "item.arss.epurated_redstone_blend": "Oxidized Redstone Compound",
+
+  "block.arss.adder": "Adder",
+  "block.arss.analog_and": "Analog And",
+  "block.arss.analog_button": "Analog Button",
+  "block.arss.analog_cell": "Analog Cell",
+  "block.arss.analog_lever": "Analog Lever",
+  "block.arss.analog_nand": "Analog Nand",
+  "block.arss.analog_nor": "Analog Nor",
+  "block.arss.analog_or": "Analog Or",
+  "block.arss.analog_redstone_block": "Analog Redstone Block",
+  "block.arss.analog_redstone_lamp": "Analog Redstone Lamp",
+  "block.arss.analog_redstone_torch": "Analog Redstone Torch",
+  "block.arss.analog_xnor": "Analog Xnor",
+  "block.arss.analog_xor": "Analog Xor",
+  "block.arss.better_comparator": "Comparator",
+  "block.arss.checker": "Checker",
+  "block.arss.delayer": "Delayer",
+  "block.arss.demuxer": "Demuxer",
+  "block.arss.edge_detector": "Edge Detector",
+  "block.arss.epurated_redstone": "Epurated Redstone",
+  "block.arss.shifter": "Shifter"
+}

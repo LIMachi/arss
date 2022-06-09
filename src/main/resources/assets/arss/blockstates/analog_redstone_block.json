@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "arss:block/analog_redstone_block"
+    }
+  }
+}

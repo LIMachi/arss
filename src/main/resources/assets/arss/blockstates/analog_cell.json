@@ -1,0 +1,11 @@
+{
+  "multipart": [
+    { "when": { "facing": "east"}, "apply": { "model": "arss:block/cell/plate", "y": 270 }},
+    { "when": { "facing": "north"}, "apply": { "model": "arss:block/cell/plate", "y": 180 }},
+    { "when": { "facing": "west"}, "apply": { "model": "arss:block/cell/plate", "y": 90 }},
+    { "when": { "facing": "south"}, "apply": { "model": "arss:block/cell/plate" }},
+    { "when": { "mode": "set"}, "apply": { "model": "arss:block/cell/mode_set" }},
+    { "when": { "mode": "reset"}, "apply": { "model": "arss:block/cell/mode_reset" }},
+    { "apply": { "model": "arss:block/cell/cell" }}
+  ]
+}

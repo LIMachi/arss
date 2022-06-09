@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:blasting",
+  "ingredient": {
+    "item": "arss:epurated_redstone_blend"
+  },
+  "result": "arss:epurated_redstone",
+  "experience": 3.0,
+  "cookingtime": 50
+}

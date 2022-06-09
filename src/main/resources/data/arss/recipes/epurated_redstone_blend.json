@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CRC",
+    "RIR",
+    "CRC"
+  ],
+  "key": {
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "C": {
+      "item": "minecraft:raw_copper"
+    },
+    "I": {
+      "item": "minecraft:raw_iron"
+    }
+  },
+  "result": {
+    "item": "arss:analog_cell",
+    "count": 8
+  }
+}

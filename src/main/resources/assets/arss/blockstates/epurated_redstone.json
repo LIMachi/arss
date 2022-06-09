@@ -1,0 +1,104 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "OR": [
+          {
+            "west": "none",
+            "east": "none",
+            "south": "none",
+            "north": "none"
+          },
+          {
+            "east": "side|up",
+            "north": "side|up"
+          },
+          {
+            "east": "side|up",
+            "south": "side|up"
+          },
+          {
+            "west": "side|up",
+            "south": "side|up"
+          },
+          {
+            "west": "side|up",
+            "north": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "arss:block/depurated_redstone/dot"
+      }
+    },
+    {
+      "when": {
+        "north": "side|up"
+      },
+      "apply": {
+        "model": "arss:block/depurated_redstone/side0"
+      }
+    },
+    {
+      "when": {
+        "south": "side|up"
+      },
+      "apply": {
+        "model": "arss:block/depurated_redstone/side_alt0"
+      }
+    },
+    {
+      "when": {
+        "east": "side|up"
+      },
+      "apply": {
+        "model": "arss:block/depurated_redstone/side_alt1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "west": "side|up"
+      },
+      "apply": {
+        "model": "arss:block/depurated_redstone/side1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "north": "up"
+      },
+      "apply": {
+        "model": "arss:block/depurated_redstone/up"
+      }
+    },
+    {
+      "when": {
+        "east": "up"
+      },
+      "apply": {
+        "model": "arss:block/depurated_redstone/up",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "up"
+      },
+      "apply": {
+        "model": "arss:block/depurated_redstone/up",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "up"
+      },
+      "apply": {
+        "model": "arss:block/depurated_redstone/up",
+        "y": 270
+      }
+    }
+  ]
+}
