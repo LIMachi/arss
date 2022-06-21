@@ -1,9 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "CRC",
-    "RIR",
-    "CRC"
+    "IRI",
+    "RCR",
+    "IRI"
   ],
   "key": {
     "R": {
@@ -13,11 +13,11 @@
       "item": "minecraft:raw_copper"
     },
     "I": {
-      "item": "minecraft:raw_iron"
+      "item": "minecraft:iron_nugget"
     }
   },
   "result": {
-    "item": "arss:analog_cell",
+    "item": "arss:enriched_redstone",
     "count": 8
   }
 }

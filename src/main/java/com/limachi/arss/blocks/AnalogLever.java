@@ -3,13 +3,9 @@ package com.limachi.arss.blocks;
 import com.limachi.arss.Arss;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LeverBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -25,16 +21,15 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.NotNull;
 import org.lwjgl.system.NonnullDefault;
 
 import static com.limachi.arss.Registries.BLOCK_REGISTER;
 import static com.limachi.arss.Registries.ITEM_REGISTER;
 
-@SuppressWarnings({"deprecation", "unused"})
+@SuppressWarnings("unused")
 @Mod.EventBusSubscriber
 @NonnullDefault
-public class AnalogLever extends LeverBlock {
+public class AnalogLever extends LeverBlock implements IScrollBlockPowerOutput {
 
     public static final Properties PROPS = BlockBehaviour.Properties.of(Material.DECORATION).noCollission().strength(0.5F).sound(SoundType.WOOD);
     public static final RegistryObject<Block> R_BLOCK = BLOCK_REGISTER.register("analog_lever", AnalogLever::new);
@@ -61,17 +56,6 @@ public class AnalogLever extends LeverBlock {
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(POWER);
-    }
-
-    @Override
-    public void attack(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player) {
-        if (player.isShiftKeyDown()) {
-            int i = state.getValue(POWER) + 1;
-            if (i == 16) i = 1;
-            player.displayClientMessage(new TextComponent(Integer.toString(i)), true);
-            if (level instanceof ServerLevel)
-                level.setBlock(pos, state.setValue(POWER, i), 3);
-        }
     }
 
     @SubscribeEvent

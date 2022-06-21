@@ -1,6 +1,6 @@
 package com.limachi.arss.blocks.diodes;
 
-import com.limachi.arss.ArssBlockStateProperties;
+import com.limachi.arss.blocks.ArssBlockStateProperties;
 import com.limachi.arss.Static;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ComparatorMode;
 
 import static com.limachi.arss.blocks.diodes.BaseAnalogDiodeBlock.*;
-import static com.limachi.arss.ArssBlockStateProperties.*;
+import static com.limachi.arss.blocks.ArssBlockStateProperties.*;
 
 @Static
 public class AllDiodeBlocks {
@@ -30,6 +30,7 @@ public class AllDiodeBlocks {
         DiodeBlockFactory.create("demuxer", DEMUXER_MODE, AllDiodeBlocks::demuxer);
         DiodeBlockFactory.create("edge_detector", EDGE_MODE, AllDiodeBlocks::edge, true, false, PREVIOUS_READ_POWER);
         DiodeBlockFactory.create("shifter", SHIFTER_MODE, AllDiodeBlocks::shifter);
+        DiodeBlockFactory.create("signal_generator", GENERATOR_MODE, AllDiodeBlocks::generator, SignalGeneratorBlockEntity::new);
     }
 
     static protected BlockState comparator(boolean test, Level level, BlockPos pos, BlockState state) {
@@ -137,5 +138,15 @@ public class AllDiodeBlocks {
         int read = sGetInputSignal(level, pos, state);
         int side = sGetAlternateSignal(level, pos, state);
         return setPower(state, state.getValue(SHIFTER_MODE).up() ? (read << side) & 15 : (read >> side) & 15);
+    }
+
+    static protected BlockState generator(boolean test, Level level, BlockPos pos, BlockState state) {
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof SignalGeneratorBlockEntity) {
+            String mode = state.getValue(GENERATOR_MODE).toString();
+            if (test || sGetInputSignal(level, pos, state) == 0) return setPower(state, ((SignalGeneratorBlockEntity) be).state(mode));
+            return setPower(state, ((SignalGeneratorBlockEntity) be).step(mode));
+        }
+        return state;
     }
 }

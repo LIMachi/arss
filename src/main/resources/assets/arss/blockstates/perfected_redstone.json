@@ -28,7 +28,7 @@
         ]
       },
       "apply": {
-        "model": "arss:block/depurated_redstone/dot"
+        "model": "arss:block/perfected_redstone/dot"
       }
     },
     {
@@ -36,7 +36,7 @@
         "north": "side|up"
       },
       "apply": {
-        "model": "arss:block/depurated_redstone/side0"
+        "model": "arss:block/perfected_redstone/side0"
       }
     },
     {
@@ -44,7 +44,7 @@
         "south": "side|up"
       },
       "apply": {
-        "model": "arss:block/depurated_redstone/side_alt0"
+        "model": "arss:block/perfected_redstone/side_alt0"
       }
     },
     {
@@ -52,7 +52,7 @@
         "east": "side|up"
       },
       "apply": {
-        "model": "arss:block/depurated_redstone/side_alt1",
+        "model": "arss:block/perfected_redstone/side_alt1",
         "y": 270
       }
     },
@@ -61,7 +61,7 @@
         "west": "side|up"
       },
       "apply": {
-        "model": "arss:block/depurated_redstone/side1",
+        "model": "arss:block/perfected_redstone/side1",
         "y": 270
       }
     },
@@ -70,7 +70,7 @@
         "north": "up"
       },
       "apply": {
-        "model": "arss:block/depurated_redstone/up"
+        "model": "arss:block/perfected_redstone/up"
       }
     },
     {
@@ -78,7 +78,7 @@
         "east": "up"
       },
       "apply": {
-        "model": "arss:block/depurated_redstone/up",
+        "model": "arss:block/perfected_redstone/up",
         "y": 90
       }
     },
@@ -87,7 +87,7 @@
         "south": "up"
       },
       "apply": {
-        "model": "arss:block/depurated_redstone/up",
+        "model": "arss:block/perfected_redstone/up",
         "y": 180
       }
     },
@@ -96,7 +96,7 @@
         "west": "up"
       },
       "apply": {
-        "model": "arss:block/depurated_redstone/up",
+        "model": "arss:block/perfected_redstone/up",
         "y": 270
       }
     }

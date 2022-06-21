@@ -31,8 +31,17 @@
   "display.arss.shifter.mode.up": "Shift Up",
   "display.arss.shifter.mode.down": "Shift Down",
 
-  "item.arss.epurated_redstone_blend__": "Cupro Ferrate Oxide",
-  "item.arss.epurated_redstone_blend": "Oxidized Redstone Compound",
+  "display.arss.signal_generator.mode.inverse_saw": "Inverse Saw",
+  "display.arss.signal_generator.mode.random": "Random",
+  "display.arss.signal_generator.mode.saw": "Saw",
+  "display.arss.signal_generator.mode.sine": "Sine",
+  "display.arss.signal_generator.mode.square": "Square",
+  "display.arss.signal_generator.mode.triangle": "Triangle",
+
+  "item.arss.enriched_redstone__": "Cupro Ferrate Oxide",
+  "item.arss.enriched_redstone_": "Oxidized Redstone Compound",
+  "item.arss.enriched_redstone": "Enriched Redstone",
+  "item.arss.perfected_redstone": "Perfected Redstone",
 
   "block.arss.adder": "Adder",
   "block.arss.analog_and": "Analog And",
@@ -40,6 +49,7 @@
   "block.arss.analog_cell": "Analog Cell",
   "block.arss.analog_lever": "Analog Lever",
   "block.arss.analog_nand": "Analog Nand",
+  "block.arss.analog_note_block": "Analog Note Block",
   "block.arss.analog_nor": "Analog Nor",
   "block.arss.analog_or": "Analog Or",
   "block.arss.analog_redstone_block": "Analog Redstone Block",
@@ -52,6 +62,8 @@
   "block.arss.delayer": "Delayer",
   "block.arss.demuxer": "Demuxer",
   "block.arss.edge_detector": "Edge Detector",
-  "block.arss.epurated_redstone": "Epurated Redstone",
-  "block.arss.shifter": "Shifter"
+  "block.arss.enriched_redstone": "Enriched Redstone",
+  "block.arss.perfected_redstone": "Perfected Redstone",
+  "block.arss.shifter": "Shifter",
+  "block.arss.signal_generator": "Signal Generator"
 }

@@ -1,11 +1,16 @@
 analog redstone suite (arss):
 
+************************************************************************************************************************
+bug: enriched/perfected redstone does not work in slopes (going up/down a block)
+missing models and textures
+************************************************************************************************************************
+
 change:
     depurated redstone could work like this:
     every 16 blocks or when changing to redstone wire (direct or indirect) -> loose 1 power, otherwise similar to redstone
 
     CRC C: Raw Copper
-P   RIR R: Redstone -> 8x epurated redstone blend -> Blast -> 8x epurated redstone
+OK  RIR R: Redstone -> 8x epurated redstone blend -> Blast -> 8x epurated redstone
     CRC I: Raw Iron (model: cleaner redstone with different orangish color)
 
 OK  CH HC C: Comparator -> 1x Memory module, 3 modes: set/reset on lateral input or auto (keep last non null signal)
@@ -40,13 +45,13 @@ OK  RRR R: Redstone
 
 OK  demuxer (emit binary signal 0/15 if bit 1/2/4/8 is on)
 
-FIX delayer (slows signal by x ticks, x = side strength + 1, keep original signal strength and order, changing side signal will either compress or expand the signal)
+OK  delayer (slows signal by x ticks, x = side strength + 1, keep original signal strength and order, changing side signal will either compress or expand the signal)
 
-    analog note block (note played is dependent on signal strength)
+OK  analog note block (note played is dependent on signal strength)
 
 OK  analog lamp (light level is dependent on signal strength)
 
-    signal generator (modes: random/triangle/square/saw/sine)
+OK  signal generator (modes: random/triangle/square/saw/sine)
 
     analog jukebox: has an inventory with 15 slots for the 15 disks, when powered, the signal strength is used to select a disk to play
 

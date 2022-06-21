@@ -5,15 +5,10 @@ import com.limachi.arss.Registries;
 import com.limachi.arss.Static;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PoweredBlock;
 import net.minecraft.world.level.block.RedStoneWireBlock;
@@ -25,7 +20,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.system.NonnullDefault;
@@ -33,10 +27,10 @@ import org.lwjgl.system.NonnullDefault;
 import static com.limachi.arss.Registries.BLOCK_REGISTER;
 import static com.limachi.arss.Registries.ITEM_REGISTER;
 
-@SuppressWarnings({"deprecation", "unused"})
+@SuppressWarnings("unused")
 @Static
 @NonnullDefault
-public class AnalogRedstoneBlock extends PoweredBlock {
+public class AnalogRedstoneBlock extends PoweredBlock implements IScrollBlockPowerOutput {
 
     public static final Properties PROPS = BlockBehaviour.Properties.of(Material.METAL, MaterialColor.FIRE).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL).isRedstoneConductor((state, get, pos)->false);
     public static final RegistryObject<Block> R_BLOCK = BLOCK_REGISTER.register("analog_redstone_block", AnalogRedstoneBlock::new);
@@ -52,7 +46,10 @@ public class AnalogRedstoneBlock extends PoweredBlock {
         return RedStoneWireBlock.getColorForPower(state.getValue(POWER));
     }
 
-    public AnalogRedstoneBlock() { super(PROPS); }
+    public AnalogRedstoneBlock() {
+        super(PROPS);
+        registerDefaultState(stateDefinition.any().setValue(POWER, 15));
+    }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
@@ -63,17 +60,5 @@ public class AnalogRedstoneBlock extends PoweredBlock {
     @Override
     public int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction dir) {
         return state.getValue(POWER);
-    }
-
-    @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!player.getAbilities().mayBuild) return InteractionResult.PASS;
-        int p = state.getValue(POWER);
-        p = p + (player.isShiftKeyDown() ? -1 : 1);
-        if (p > 15) p = 0;
-        if (p < 0) p = 15;
-        level.setBlock(pos, state.setValue(POWER, p), 3);
-        player.displayClientMessage(new TextComponent(Integer.toString(p)), true);
-        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 }

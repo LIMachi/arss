@@ -1,7 +1,7 @@
-package com.limachi.arss;
+package com.limachi.arss.blocks;
 
-import com.limachi.arss.blocks.EpuratedRedstone;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.jetbrains.annotations.NotNull;
@@ -100,7 +100,22 @@ public class ArssBlockStateProperties {
         public boolean down() { return this == DOWN; }
     }
 
-    public static final IntegerProperty RANGE = IntegerProperty.create("range", 0, EpuratedRedstone.TOTAL_RANGE);
+    public enum SignalGeneratorMode implements StringRepresentable {
+        INVERSE_SAW("inverse_saw"),
+        RANDOM("random"),
+        SAW("saw"),
+        SINE("sine"),
+        SQUARE("square"),
+        TRIANGLE("triangle");
+
+        private final String name;
+        SignalGeneratorMode(String name) { this.name = name; }
+        public String toString() { return this.getSerializedName(); }
+        public @NotNull String getSerializedName() { return this.name; }
+    }
+
+    public static final IntegerProperty ENRICHED_RS_RANGE = IntegerProperty.create("range", 0, 4);
+    public static final IntegerProperty PERFECTED_RS_RANGE = IntegerProperty.create("range", 0, 32);
     public static final IntegerProperty PREVIOUS_READ_POWER = IntegerProperty.create("previous_read_power", 0, 15);
     public static final EnumProperty<MemoryMode> MEMORY_MODE = EnumProperty.create("mode", MemoryMode.class);
     public static final EnumProperty<AdderMode> ADDER_MODE = EnumProperty.create("mode", AdderMode.class);
@@ -109,4 +124,6 @@ public class ArssBlockStateProperties {
     public static final EnumProperty<DemuxerMode> DEMUXER_MODE = EnumProperty.create("mode", DemuxerMode.class);
     public static final EnumProperty<DelayerMode> DELAYER_MODE = EnumProperty.create("mode", DelayerMode.class);
     public static final EnumProperty<ShifterMode> SHIFTER_MODE = EnumProperty.create("mode", ShifterMode.class);
+    public static final BooleanProperty HIGH = BooleanProperty.create("high");
+    public static final EnumProperty<SignalGeneratorMode> GENERATOR_MODE = EnumProperty.create("mode", SignalGeneratorMode.class);
 }
