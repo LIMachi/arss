@@ -65,5 +65,6 @@
   "block.arss.enriched_redstone": "Enriched Redstone",
   "block.arss.perfected_redstone": "Perfected Redstone",
   "block.arss.shifter": "Shifter",
-  "block.arss.signal_generator": "Signal Generator"
+  "block.arss.signal_generator": "Signal Generator",
+  "block.arss.analog_jukebox": "Analog Jukebox"
 }

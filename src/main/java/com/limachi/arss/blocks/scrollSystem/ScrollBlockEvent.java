@@ -1,4 +1,4 @@
-package com.limachi.arss.blocks;
+package com.limachi.arss.blocks.scrollSystem;
 
 import com.limachi.arss.network.PacketHandler;
 import com.limachi.arss.network.ScrolledBlock;

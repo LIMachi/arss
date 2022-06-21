@@ -1,6 +1,6 @@
 package com.limachi.arss.network;
 
-import com.limachi.arss.blocks.IScrollBlock;
+import com.limachi.arss.blocks.scrollSystem.IScrollBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;

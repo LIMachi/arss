@@ -2,7 +2,8 @@ package com.limachi.arss.blocks;
 
 import com.limachi.arss.Arss;
 import com.limachi.arss.Registries;
-import com.limachi.arss.Static;
+import com.limachi.arss.blocks.scrollSystem.IScrollBlockPowerOutput;
+import com.limachi.arss.utils.StaticInitializer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,7 +28,7 @@ import static com.limachi.arss.Registries.BLOCK_REGISTER;
 import static com.limachi.arss.Registries.ITEM_REGISTER;
 
 @SuppressWarnings("unused")
-@Static
+@StaticInitializer.Static
 @NonnullDefault
 public class AnalogTorch extends RedstoneTorchBlock implements IScrollBlockPowerOutput {
 

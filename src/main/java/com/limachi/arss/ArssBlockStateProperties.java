@@ -1,4 +1,4 @@
-package com.limachi.arss.blocks;
+package com.limachi.arss;
 
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;

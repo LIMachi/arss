@@ -53,7 +53,7 @@ OK  analog lamp (light level is dependent on signal strength)
 
 OK  signal generator (modes: random/triangle/square/saw/sine)
 
-    analog jukebox: has an inventory with 15 slots for the 15 disks, when powered, the signal strength is used to select a disk to play
+OK  analog jukebox: has an inventory with 15 slots for the 15 disks, when powered, the signal strength is used to select a disk to play
 
 OK  analog or -> combines signal as if demuxed -> ored -> remuxed
 

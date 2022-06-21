@@ -1,7 +1,8 @@
 package com.limachi.arss.blocks;
 
 import com.limachi.arss.Arss;
-import com.limachi.arss.Static;
+import com.limachi.arss.ArssBlockStateProperties;
+import com.limachi.arss.utils.StaticInitializer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundSource;
@@ -28,7 +29,7 @@ import static com.limachi.arss.Registries.BLOCK_REGISTER;
 import static com.limachi.arss.Registries.ITEM_REGISTER;
 
 @SuppressWarnings("unused")
-@Static
+@StaticInitializer.Static
 @NonnullDefault
 public class AnalogNoteBlock extends NoteBlock {
 

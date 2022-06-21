@@ -1,6 +1,7 @@
 package com.limachi.arss.blocks;
 
 import com.limachi.arss.Arss;
+import com.limachi.arss.blocks.scrollSystem.IScrollBlockPowerOutput;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.BlockItem;

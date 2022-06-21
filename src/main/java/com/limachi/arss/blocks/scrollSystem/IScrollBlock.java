@@ -1,4 +1,4 @@
-package com.limachi.arss.blocks;
+package com.limachi.arss.blocks.scrollSystem;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;

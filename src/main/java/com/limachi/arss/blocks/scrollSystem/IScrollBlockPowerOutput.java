@@ -1,4 +1,4 @@
-package com.limachi.arss.blocks;
+package com.limachi.arss.blocks.scrollSystem;
 
 import com.limachi.arss.utils.MathUtils;
 import net.minecraft.core.BlockPos;

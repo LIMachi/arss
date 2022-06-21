@@ -1,6 +1,7 @@
-package com.limachi.arss.blocks.diodes;
+package com.limachi.arss.blockEntities;
 
-import com.limachi.arss.Static;
+import com.limachi.arss.blocks.diodes.DiodeBlockFactory;
+import com.limachi.arss.utils.StaticInitializer;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -16,7 +17,7 @@ import java.util.function.BiFunction;
 
 import static com.limachi.arss.Registries.BLOCK_ENTITY_REGISTER;
 
-@Static
+@StaticInitializer.Static
 public class SignalGeneratorBlockEntity extends BlockEntity {
 
     private int step = 0;

@@ -1,7 +1,9 @@
 package com.limachi.arss.blocks.diodes;
 
-import com.limachi.arss.blocks.ArssBlockStateProperties;
-import com.limachi.arss.Static;
+import com.limachi.arss.ArssBlockStateProperties;
+import com.limachi.arss.blockEntities.DelayerBlockEntity;
+import com.limachi.arss.blockEntities.SignalGeneratorBlockEntity;
+import com.limachi.arss.utils.StaticInitializer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -10,9 +12,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ComparatorMode;
 
 import static com.limachi.arss.blocks.diodes.BaseAnalogDiodeBlock.*;
-import static com.limachi.arss.blocks.ArssBlockStateProperties.*;
+import static com.limachi.arss.ArssBlockStateProperties.*;
 
-@Static
+@StaticInitializer.Static
 public class AllDiodeBlocks {
 
     static {

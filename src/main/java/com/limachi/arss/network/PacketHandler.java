@@ -1,7 +1,7 @@
 package com.limachi.arss.network;
 
 import com.limachi.arss.Arss;
-import com.limachi.arss.Static;
+import com.limachi.arss.utils.StaticInitializer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,7 +14,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
-@Static
+@StaticInitializer.Static
 public class PacketHandler {
     public static abstract class Message {
         public Message() {}
