@@ -14,7 +14,7 @@
   "display.arss.checker.mode.different": "Different",
 
   "display.arss.edge_detector.mode.rising": "Rising Edge",
-  "display.arss.edge_detector.mode.lowering": "Lowering Edge",
+  "display.arss.edge_detector.mode.falling": "Falling Edge",
 
   "display.arss.demuxer.mode.1": "Bit 1",
   "display.arss.demuxer.mode.2": "Bit 2",

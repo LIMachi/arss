@@ -1,0 +1,22 @@
+all:
+    missing icons
+    missing models
+
+note block:
+    don't work with direct signal
+    don't work twice with the same signal
+
+diodes: FIXING
+    don't work with item frames on sides
+
+edge detector: OK
+    rename 'lowering edge' to 'falling edge'
+
+signal generator: OK
+    upgrade: change how it works based on side signal
+    saw/inverse_saw/triangle -> signal between sides if at least one side > 0
+    square -> length of the timer between swap
+    sine -> inverse length of timer of a revolution (0 signal 360 steps, 15 signal 22.5 steps)
+
+redstone wires:
+    should not receive signal from vanilla redstone wires

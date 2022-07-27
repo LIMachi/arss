@@ -74,7 +74,7 @@ public class AllDiodeBlocks {
         if (read != prev) {
             EdgeMode mode = state.getValue(EDGE_MODE);
             BlockState newState = state.setValue(PREVIOUS_READ_POWER, read);
-            return setPower(newState, (read > prev && mode.rising()) || (read < prev && mode.lowering()) ? 15 : 0);
+            return setPower(newState, (read > prev && mode.rising()) || (read < prev && mode.falling()) ? 15 : 0);
         }
         return setPower(state, 0);
     }
@@ -146,8 +146,8 @@ public class AllDiodeBlocks {
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof SignalGeneratorBlockEntity) {
             String mode = state.getValue(GENERATOR_MODE).toString();
-            if (test || sGetInputSignal(level, pos, state) == 0) return setPower(state, ((SignalGeneratorBlockEntity) be).state(mode));
-            return setPower(state, ((SignalGeneratorBlockEntity) be).step(mode));
+            if (test || sGetInputSignal(level, pos, state) == 0) return setPower(state, ((SignalGeneratorBlockEntity) be).state(mode, sGetAlternateSignals(level, pos, state)));
+            return setPower(state, ((SignalGeneratorBlockEntity) be).step(mode, sGetAlternateSignals(level, pos, state)));
         }
         return state;
     }

@@ -1,5 +1,6 @@
 package com.limachi.arss.blocks.diodes;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -98,10 +99,18 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
         return 0;
     }
 
-    @Override
-    protected int getInputSignal(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state) {
+    public static Pair<Integer, Integer> sGetAlternateSignals(LevelReader level, BlockPos pos, BlockState state) {
+        if (state.getBlock() instanceof BaseAnalogDiodeBlock instance) {
+            Direction direction = state.getValue(FACING);
+            Direction clock = direction.getClockWise();
+            Direction counter = direction.getCounterClockWise();
+            return Pair.of(instance.getAlternateSignalAt(level, pos.relative(clock), clock), instance.getAlternateSignalAt(level, pos.relative(counter), counter));
+        }
+        return Pair.of(0, 0);
+    }
+
+    protected int commonSignalGetter(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Direction back) {
         int i = super.getInputSignal(level, pos, state);
-        Direction back = state.getValue(FACING);
         BlockPos backPos = pos.relative(back);
         BlockState t_state = level.getBlockState(backPos);
         if (t_state.hasAnalogOutputSignal())
@@ -116,6 +125,11 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
             }
         }
         return i;
+    }
+
+    @Override
+    protected int getInputSignal(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state) {
+        return commonSignalGetter(level, pos, state, state.getValue(FACING));
     }
 
     @Nullable
@@ -192,6 +206,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
 
     @Override
     protected int getAlternateSignalAt(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull Direction dir) {
+//        if (ALL_POWERS_ON_SIDES) return commonSignalGetter((Level) level, pos, level.getBlockState(pos), dir);
         if (ALL_POWERS_ON_SIDES) return ((Level)level).getSignal(pos, dir);
         return super.getAlternateSignalAt(level, pos, dir);
     }

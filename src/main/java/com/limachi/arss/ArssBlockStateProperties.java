@@ -50,7 +50,7 @@ public class ArssBlockStateProperties {
 
     public enum EdgeMode implements StringRepresentable {
         RISING("rising"),
-        LOWERING("lowering");
+        FALLING("falling");
 
         private final String name;
         EdgeMode(String name) { this.name = name; }
@@ -58,7 +58,7 @@ public class ArssBlockStateProperties {
         public @NotNull String getSerializedName() { return this.name; }
 
         public boolean rising() { return this == RISING; }
-        public boolean lowering() { return this == LOWERING; }
+        public boolean falling() { return this == FALLING; }
     }
 
     public enum DemuxerMode implements StringRepresentable {
