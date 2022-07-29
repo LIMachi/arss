@@ -18,4 +18,9 @@ public interface IScrollBlock {
      * called client side only, for visual/audio feedback, might be called a lot, delta should not be integrated
      */
     void scrollFeedBack(Level level, BlockPos pos, int delta, Player player);
+
+    /**
+     * called on both side to test if the scroll is locked on this block
+     */
+    boolean canScroll(Level level, BlockPos pos);
 }

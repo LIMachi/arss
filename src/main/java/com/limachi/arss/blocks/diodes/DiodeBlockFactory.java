@@ -3,6 +3,7 @@ package com.limachi.arss.blocks.diodes;
 import com.limachi.arss.Arss;
 import com.limachi.arss.Registries;
 import com.limachi.arss.blocks.AnalogRedstoneBlock;
+import com.limachi.arss.blocks.redstone_wires.RedstoneWireFactory;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.function.Supplier;
 
 import static com.limachi.arss.Registries.BLOCK_REGISTER;
 import static com.limachi.arss.Registries.ITEM_REGISTER;
@@ -44,15 +46,15 @@ public class DiodeBlockFactory {
     public static final BlockBehaviour.Properties PROPS = BlockBehaviour.Properties.of(Material.DECORATION).instabreak().sound(SoundType.STONE);
     public static final Item.Properties I_PROPS = new Item.Properties().tab(Arss.ITEM_GROUP);
 
-    private static final HashMap<String, Pair<RegistryObject<Block>, RegistryObject<Item>>> DIODE_BLOCKS = new HashMap<>();
+    private static final HashMap<String, Pair<RegistryObject<Item>, RegistryObject<Block>>> DIODE_BLOCKS = new HashMap<>();
 
-    public static Block getBlock(String name) { return DIODE_BLOCKS.get(name).getFirst().get(); }
+    public static Block getBlock(String name) { return DIODE_BLOCKS.get(name).getSecond().get(); }
 
-    public static RegistryObject<Block> getBlockRegister(String name) { return DIODE_BLOCKS.get(name).getFirst(); }
+    public static RegistryObject<Block> getBlockRegister(String name) { return DIODE_BLOCKS.get(name).getSecond(); }
 
-    public static Item getItem(String name) { return DIODE_BLOCKS.get(name).getSecond().get(); }
+    public static Item getItem(String name) { return DIODE_BLOCKS.get(name).getFirst().get(); }
 
-    public static RegistryObject<Item> getItemRegister(String name) { return DIODE_BLOCKS.get(name).getSecond(); }
+    public static RegistryObject<Item> getItemRegister(String name) { return DIODE_BLOCKS.get(name).getFirst(); }
 
     public static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, boolean fTickOnceAfterUpdate, boolean fIsTicking, Property<?>... extraProps) { create(fName, fMode, fGen, PROPS, I_PROPS, 1, fTickOnceAfterUpdate, fIsTicking, false, null, extraProps); }
 
@@ -65,7 +67,7 @@ public class DiodeBlockFactory {
     public static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, boolean hasPowerTint, Property<?> ... extraProps) { create(fName, fMode, fGen, PROPS, I_PROPS, 1, false, false, hasPowerTint, null, extraProps); }
 
     public static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, BlockBehaviour.Properties props, Item.Properties iProps, int fDelay, boolean fTickOnceAfterUpdate, boolean fIsTicking, boolean hasPowerTint, BlockEntityBuilder beb, Property<?> ... extraProps) {
-        RegistryObject<Block> gBlock;
+        Supplier<Block> gBlock;
         if (beb == null) {
             class Product extends BaseAnalogDiodeBlock {
 
@@ -97,7 +99,7 @@ public class DiodeBlockFactory {
                 }
             }
 
-            gBlock = BLOCK_REGISTER.register(fName, Product::new);
+            gBlock = Product::new;
         }
         else {
             class Product extends BaseAnalogDiodeBlock implements EntityBlock {
@@ -111,7 +113,6 @@ public class DiodeBlockFactory {
                     isTicking = fIsTicking;
                     BlockState builder = stateDefinition.any();
                     builder = builder.setValue(FACING, Direction.NORTH).setValue(POWERED, false).setValue(POWER, 0);
-                    //for now let the mode default to a random value, hopefully the first element of the enum
                     registerDefaultState(builder);
                 }
 
@@ -142,12 +143,12 @@ public class DiodeBlockFactory {
                 }
             }
 
-            gBlock = BLOCK_REGISTER.register(fName, Product::new);
+            gBlock = Product::new;
         }
-        final RegistryObject<Block> rBlock = gBlock;
-        Registries.setRenderLayer(rBlock, RenderType.cutout());
+        Pair<RegistryObject<Item>, RegistryObject<Block>> p = Registries.registerBlockAndItem(fName, gBlock);
         if (hasPowerTint)
-            Registries.setColor(rBlock, AnalogRedstoneBlock::getColor);
-        DIODE_BLOCKS.put(fName, new Pair<>(rBlock, ITEM_REGISTER.register(fName, ()->new BlockItem(rBlock.get(), iProps))));
+            Registries.setColor(p.getSecond(), RedstoneWireFactory::getColor);
+        Registries.setRenderLayer(p.getSecond(), RenderType.cutout());
+        DIODE_BLOCKS.put(fName, p);
     }
 }

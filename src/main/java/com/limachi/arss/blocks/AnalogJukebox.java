@@ -1,14 +1,13 @@
 package com.limachi.arss.blocks;
 
-import com.limachi.arss.Arss;
+import com.limachi.arss.Registries;
 import com.limachi.arss.blockEntities.AnalogJukeboxBlockEntity;
 import com.limachi.arss.utils.StaticInitializer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.level.Level;
@@ -23,17 +22,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.registries.RegistryObject;
 import org.lwjgl.system.NonnullDefault;
 
-import static com.limachi.arss.Registries.BLOCK_REGISTER;
-import static com.limachi.arss.Registries.ITEM_REGISTER;
-
 @SuppressWarnings({"unused", "deprecation"})
 @StaticInitializer.Static
 @NonnullDefault
 public class AnalogJukebox extends BaseEntityBlock {
 
     public static final Properties PROPS = Properties.of(Material.WOOD, MaterialColor.DIRT).strength(2.0F, 6.0F);
-    public static final RegistryObject<Block> R_BLOCK = BLOCK_REGISTER.register("analog_jukebox", AnalogJukebox::new);
-    public static final RegistryObject<Item> R_ITEM = ITEM_REGISTER.register("analog_jukebox", ()->new BlockItem(R_BLOCK.get(), new Item.Properties().tab(Arss.ITEM_GROUP)));
+    public static final RegistryObject<Block> R_BLOCK = Registries.registerBlockAndItem("analog_jukebox",AnalogJukebox::new).getSecond();
+    static {
+        Registries.setRenderLayer(R_BLOCK, RenderType.translucent());
+    }
 
     public AnalogJukebox() {
         super(PROPS);

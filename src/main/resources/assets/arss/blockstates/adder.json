@@ -2,63 +2,63 @@
   "variants": {
     "facing=east,mode=compare,powered=false": {
       "y": 270,
-      "model": "minecraft:block/comparator"
+      "model": "arss:block/diodes/adder/off0"
     },
     "facing=east,mode=compare,powered=true": {
       "y": 270,
-      "model": "minecraft:block/comparator_on"
+      "model": "arss:block/diodes/adder/on0"
     },
-    "facing=east,mode=subtract,powered=false": {
+    "facing=east,mode=add,powered=false": {
       "y": 270,
-      "model": "minecraft:block/comparator_subtract"
+      "model": "arss:block/diodes/adder/off1"
     },
-    "facing=east,mode=subtract,powered=true": {
+    "facing=east,mode=add,powered=true": {
       "y": 270,
-      "model": "minecraft:block/comparator_on_subtract"
+      "model": "arss:block/diodes/adder/on1"
     },
     "facing=north,mode=compare,powered=false": {
       "y": 180,
-      "model": "minecraft:block/comparator"
+      "model": "arss:block/diodes/adder/off0"
     },
     "facing=north,mode=compare,powered=true": {
       "y": 180,
-      "model": "minecraft:block/comparator_on"
+      "model": "arss:block/diodes/adder/on0"
     },
-    "facing=north,mode=subtract,powered=false": {
+    "facing=north,mode=add,powered=false": {
       "y": 180,
-      "model": "minecraft:block/comparator_subtract"
+      "model": "arss:block/diodes/adder/off1"
     },
-    "facing=north,mode=subtract,powered=true": {
+    "facing=north,mode=add,powered=true": {
       "y": 180,
-      "model": "minecraft:block/comparator_on_subtract"
+      "model": "arss:block/diodes/adder/on1"
     },
     "facing=south,mode=compare,powered=false": {
-      "model": "minecraft:block/comparator"
+      "model": "arss:block/diodes/adder/off0"
     },
     "facing=south,mode=compare,powered=true": {
-      "model": "minecraft:block/comparator_on"
+      "model": "arss:block/diodes/adder/on0"
     },
-    "facing=south,mode=subtract,powered=false": {
-      "model": "minecraft:block/comparator_subtract"
+    "facing=south,mode=add,powered=false": {
+      "model": "arss:block/diodes/adder/off1"
     },
-    "facing=south,mode=subtract,powered=true": {
-      "model": "minecraft:block/comparator_on_subtract"
+    "facing=south,mode=add,powered=true": {
+      "model": "arss:block/diodes/adder/on1"
     },
     "facing=west,mode=compare,powered=false": {
       "y": 90,
-      "model": "minecraft:block/comparator"
+      "model": "arss:block/diodes/adder/off0"
     },
     "facing=west,mode=compare,powered=true": {
       "y": 90,
-      "model": "minecraft:block/comparator_on"
+      "model": "arss:block/diodes/adder/on0"
     },
-    "facing=west,mode=subtract,powered=false": {
+    "facing=west,mode=add,powered=false": {
       "y": 90,
-      "model": "minecraft:block/comparator_subtract"
+      "model": "arss:block/diodes/adder/off1"
     },
-    "facing=west,mode=subtract,powered=true": {
+    "facing=west,mode=add,powered=true": {
       "y": 90,
-      "model": "minecraft:block/comparator_on_subtract"
+      "model": "arss:block/diodes/adder/on1"
     }
   }
 }

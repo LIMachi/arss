@@ -1,9 +1,9 @@
 {
     "ambientocclusion": false,
     "textures": {
-        "particle": "block/redstone_dust_dot",
-        "line": "block/redstone_dust_line0",
-        "overlay": "block/redstone_dust_overlay"
+        "particle": "arss:block/perfected_redstone/dot",
+        "line": "arss:block/perfected_redstone/line0",
+        "overlay": "arss:block/perfected_redstone/overlay"
     },
     "elements": [
         {   "from": [ 0, 0, 0.25 ],

@@ -1,6 +1,7 @@
 {
     "parent": "block/redstone_dust_side_alt",
     "textures": {
-        "line": "block/redstone_dust_line0"
+        "line": "arss:block/perfected_redstone/line0",
+        "overlay": "arss:block/perfected_redstone/overlay_line"
     }
 }

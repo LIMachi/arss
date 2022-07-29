@@ -1,10 +1,10 @@
 {
   "variants": {
     "lit=false": {
-      "model": "minecraft:block/redstone_torch_off"
+      "model": "arss:block/analog_redstone_torch/off"
     },
     "lit=true": {
-      "model": "minecraft:block/redstone_torch"
+      "model": "arss:block/analog_redstone_torch/on"
     }
   }
 }

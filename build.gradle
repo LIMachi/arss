@@ -17,7 +17,7 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 
 
-version = '1.0'
+version = 'A1.0'
 group = 'com.limachi.arss'
 archivesBaseName = 'arss'
 

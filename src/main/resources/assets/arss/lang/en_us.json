@@ -43,6 +43,12 @@
   "item.arss.enriched_redstone": "Enriched Redstone",
   "item.arss.perfected_redstone": "Perfected Redstone",
 
+  "display.arss.analog_note_block.high_pitch.true": "Pitch: High",
+  "display.arss.analog_note_block.high_pitch.false": "Pitch: Low",
+
+  "display.arss.scrollable_block.can_scroll.true": "Unlocked",
+  "display.arss.scrollable_block.can_scroll.false": "Locked",
+
   "block.arss.adder": "Adder",
   "block.arss.analog_and": "Analog And",
   "block.arss.analog_button": "Analog Button",
@@ -66,5 +72,34 @@
   "block.arss.perfected_redstone": "Perfected Redstone",
   "block.arss.shifter": "Shifter",
   "block.arss.signal_generator": "Signal Generator",
-  "block.arss.analog_jukebox": "Analog Jukebox"
+  "block.arss.analog_jukebox": "Analog Jukebox",
+
+  "key.hold_to_scroll": "Hold to scroll",
+  "key.categories.arss": "Analog Redstone Suite",
+
+  "tooltip.help.press_shift_for_help": "[Shift]: Help",
+  "tooltip.help.analog_redstone_torch": "Scroll to select the output strength (while holding the scroll key if bound), can be locked by using a (analog) redstone torch on it.",
+  "tooltip.help.analog_lever": "Scroll to select the output strength (while holding the scroll key if bound), can be locked by using a (analog) redstone torch on it.",
+  "tooltip.help.analog_button": "Scroll to select the output strength (while holding the scroll key if bound), can be locked by using a (analog) redstone torch on it.",
+  "tooltip.help.analog_redstone_block": "Scroll to select the output strength (while holding the scroll key if bound), can be locked by using a (analog) redstone torch on it.",
+  "tooltip.help.analog_jukebox": "This jukebox has an inventory of 15 disks and while it receive a redstone signal, it will play the disk corresponding to the signal strength.",
+  "tooltip.help.analog_note_block": "This note block will use the strength of the incoming signal to pitch the note, interact with it to switch between low and high pitch range.",
+  "tooltip.help.analog_redstone_lamp": "This lamp will have a light value depending on the strength of the signal received.",
+  "tooltip.help.adder": "Opposite of the comparator: In 'Compare' mode it will test if the back signal is stronger or equal to the side signals, in 'Add' mode it will add the back signal and the side signals.",
+  "tooltip.help.analog_and": "Analog gate (will see the signal as 4 bits): will do the And operation on each bit of the back and sides signals.",
+  "tooltip.help.analog_nand": "Analog gate (will see the signal as 4 bits): will do the Nand operation on each bit of the back and sides signals.",
+  "tooltip.help.analog_or": "Analog gate (will see the signal as 4 bits): will do the Or operation on each bit of the back and sides signals.",
+  "tooltip.help.analog_nor": "Analog gate (will see the signal as 4 bits): will do the Nor operation on each bit of the back and sides signals.",
+  "tooltip.help.analog_xor": "Analog gate (will see the signal as 4 bits): will do the Xor operation on each bit of the back and sides signals.",
+  "tooltip.help.analog_xnor": "Analog gate (will see the signal as 4 bits): will do the Xnor operation on each bit of the back and sides signals.",
+  "tooltip.help.analog_cell": "Will store the signal strength from the back and emit on the front, 2 modes: 'Set' will require a side signal to update the cell, 'Reset' will update whenever the back signal is not 0 and will reset (set the output to 0) when receiving a side signal.",
+  "tooltip.help.better_comparator": "Same as a standard comparator, but will work with 1 tick pulse and can read inventories/item frames from the sides.",
+  "tooltip.help.checker": "Test if two signals are exactly the same (in 'Equal' mode) or different (in 'Different' mode).",
+  "tooltip.help.delayer": "Will delay the incoming signal without changing it's length. Can delay using 4 presets (modes 1,2,3,4 tick delay) or using the 5th mode where the delay will be equivalent to the strength of the side signal + 1.",
+  "tooltip.help.demuxer": "Test bits of the signal (will emit a signal of 15 if the selected bit is on), use the 5th mode and the bit to test will be the one corresponding to the signal strength of the sides (0 strength -> none, 1 -> 1, 2 -> 2, 3 -> 4, 4 -> 8).",
+  "tooltip.help.edge_detector": "Emit a 1 tick pulse when the signal strength change. Mode 'Rising' will only react when the signal is stronger than before, and 'Falling' when the signal weakens.",
+  "tooltip.help.shifter": "Shifts the bits of the incoming signal 'Up' or 'Down' (effectively multiplying or dividing the strength). How much is shifted is based on the sides signal strength.",
+  "tooltip.help.signal_generator": "Generate redstone signals every tick it is powered using five modes/generators, the range of the signal for 'Saw', 'Inverse Saw', 'Triangle' and 'Random' is determined by the sides if there is power, or will be between 0 and 15 if no side is powered. In 'square' the interval between swaps is 1 + side strength ticks.",
+  "tooltip.help.enriched_redstone": "This redstone was mixed with other conducting metals and is now able to be more efficient, only loosing signal strength every 4 blocks instead of every block.",
+  "tooltip.help.perfected_redstone": "By increasing the bonding of the redstone and metals (through sheer heat), you managed to remove the signal decay completely (well almost, for some reason you can't go more than 32 blocks without loosing the signal entirely)."
 }

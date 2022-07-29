@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+@SuppressWarnings("unused")
 public class ScrolledBlock extends PacketHandler.Message {
     BlockPos pos;
     int delta;

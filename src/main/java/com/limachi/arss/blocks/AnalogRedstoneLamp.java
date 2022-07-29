@@ -1,11 +1,10 @@
 package com.limachi.arss.blocks;
 
-import com.limachi.arss.Arss;
+import com.limachi.arss.Registries;
 import com.limachi.arss.utils.StaticInitializer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -15,14 +14,10 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.Material;
-import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.system.NonnullDefault;
 
 import java.util.Random;
-
-import static com.limachi.arss.Registries.BLOCK_REGISTER;
-import static com.limachi.arss.Registries.ITEM_REGISTER;
 
 @SuppressWarnings("unused")
 @StaticInitializer.Static
@@ -30,9 +25,9 @@ import static com.limachi.arss.Registries.ITEM_REGISTER;
 public class AnalogRedstoneLamp extends RedstoneLampBlock {
 
     public static final Properties PROPS = BlockBehaviour.Properties.of(Material.BUILDABLE_GLASS).lightLevel(AnalogRedstoneLamp::litBlockEmission).strength(0.3F).sound(SoundType.GLASS);
-    public static final RegistryObject<Block> R_BLOCK = BLOCK_REGISTER.register("analog_redstone_lamp", AnalogRedstoneLamp::new);
-    public static final RegistryObject<Item> R_ITEM = ITEM_REGISTER.register("analog_redstone_lamp", ()->new BlockItem(R_BLOCK.get(), new Item.Properties().tab(Arss.ITEM_GROUP)));
-
+    static {
+        Registries.setRenderLayer(Registries.registerBlockAndItem("analog_redstone_lamp", AnalogRedstoneLamp::new).getSecond(), RenderType.translucent());
+    }
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
 
     static int litBlockEmission(BlockState state) {

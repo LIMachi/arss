@@ -1,5 +1,6 @@
 package com.limachi.arss.blocks.scrollSystem;
 
+import com.limachi.arss.ArssBlockStateProperties;
 import com.limachi.arss.utils.MathUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
@@ -20,5 +21,10 @@ public interface IScrollBlockPowerOutput extends IScrollBlock {
 
     default void scrollFeedBack(Level level, BlockPos pos, int delta, Player player) {
         player.displayClientMessage(new TextComponent(Integer.toString(MathUtils.clampModulus(level.getBlockState(pos).getValue(BlockStateProperties.POWER) + delta, 1, 15))), true);
+    }
+
+    @Override
+    default boolean canScroll(Level level, BlockPos pos) {
+        return level.getBlockState(pos).getValue(ArssBlockStateProperties.CAN_SCROLL);
     }
 }

@@ -1,17 +1,17 @@
 package com.limachi.arss.blocks;
 
-import com.limachi.arss.Arss;
 import com.limachi.arss.ArssBlockStateProperties;
+import com.limachi.arss.Registries;
 import com.limachi.arss.utils.StaticInitializer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.NoteBlock;
@@ -22,11 +22,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.registries.RegistryObject;
 import org.lwjgl.system.NonnullDefault;
-
-import static com.limachi.arss.Registries.BLOCK_REGISTER;
-import static com.limachi.arss.Registries.ITEM_REGISTER;
 
 @SuppressWarnings("unused")
 @StaticInitializer.Static
@@ -34,9 +30,9 @@ import static com.limachi.arss.Registries.ITEM_REGISTER;
 public class AnalogNoteBlock extends NoteBlock {
 
     public static final Properties PROPS = Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(0.8F);
-    public static final RegistryObject<Block> R_BLOCK = BLOCK_REGISTER.register("analog_note_block", AnalogNoteBlock::new);
-    public static final RegistryObject<Item> R_ITEM = ITEM_REGISTER.register("analog_note_block", ()->new BlockItem(R_BLOCK.get(), new Item.Properties().tab(Arss.ITEM_GROUP)));
-
+    static {
+        Registries.setRenderLayer(Registries.registerBlockAndItem("analog_note_block", AnalogNoteBlock::new).getSecond(), RenderType.translucent());
+    }
     public static final BooleanProperty HIGH = ArssBlockStateProperties.HIGH;
 
     public AnalogNoteBlock() {
@@ -57,11 +53,10 @@ public class AnalogNoteBlock extends NoteBlock {
             _new = net.minecraftforge.common.ForgeHooks.onNoteChange(level, pos, state, state.getValue(NOTE), _new);
             if (_new == -1) return;
         }
-        if (_new != state.getValue(NOTE)) {
+        if (_new != state.getValue(NOTE))
             level.setBlock(pos, state.setValue(NOTE, _new != -1 ? _new : state.getValue(NOTE)).setValue(POWERED, power > 0), 3);
-            if (power > 0)
-                playNote(level, pos);
-        }
+        if (power > 0)
+            playNote(level, pos);
     }
 
     private void playNote(Level level, BlockPos pos) {
@@ -81,6 +76,7 @@ public class AnalogNoteBlock extends NoteBlock {
                 if (_new == -1) return InteractionResult.FAIL;
             }
             level.setBlock(pos, state.setValue(NOTE, _new != -1 ? _new : state.getValue(NOTE)).setValue(HIGH, !state.getValue(HIGH)), 3);
+            player.displayClientMessage(new TranslatableComponent("display.arss.analog_note_block.high_pitch." + level.getBlockState(pos).getValue(HIGH)), true);
             playNote(level, pos);
             player.awardStat(Stats.TUNE_NOTEBLOCK);
             return InteractionResult.CONSUME;

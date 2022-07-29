@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "H",
+    "N",
+    "C"
+  ],
+  "key": {
+    "H": {
+      "item": "minecraft:hopper"
+    },
+    "J": {
+      "item": "minecraft:jukebox"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    }
+  },
+  "result": {
+    "item": "arss:analog_jukebox",
+    "count": 1
+  }
+}

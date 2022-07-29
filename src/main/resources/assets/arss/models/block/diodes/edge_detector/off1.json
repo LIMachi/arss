@@ -1,0 +1,6 @@
+{
+  "parent": "arss:block/diode_base/2_modes/off1",
+  "textures": {
+    "top": "arss:block/diodes/edge_detector"
+  }
+}

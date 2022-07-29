@@ -2,6 +2,7 @@ package com.limachi.arss.blocks.scrollSystem;
 
 import com.limachi.arss.network.PacketHandler;
 import com.limachi.arss.network.ScrolledBlock;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
@@ -11,6 +12,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -26,23 +28,28 @@ public class ScrollBlockEvent {
     private static int COUNTDOWN = -1;
     private static BlockPos POS = null;
 
+    public static final KeyMapping keyScroll = new KeyMapping("key.hold_to_scroll", 340, "key.categories.arss");
+    static {
+        ClientRegistry.registerKeyBinding(keyScroll);
+    }
+
     @SubscribeEvent
     public static void scrollBlockEvent(InputEvent.MouseScrollEvent event) {
         Player player = Minecraft.getInstance().player;
-        if (player != null && player.isShiftKeyDown()) {
+        if (player != null && (keyScroll.isDown() || keyScroll.isUnbound())) {
             HitResult target = Minecraft.getInstance().hitResult;
             if (target != null && target.getType() == HitResult.Type.BLOCK) {
                 BlockPos pos = ((BlockHitResult) target).getBlockPos();
                 BlockEntity be = player.level.getBlockEntity(pos);
                 Block block = player.level.getBlockState(pos).getBlock();
-                if (block instanceof IScrollBlock || be instanceof IScrollBlock) {
+                if ((block instanceof IScrollBlock sb && sb.canScroll(player.level, pos)) || (be instanceof IScrollBlock sbe && sbe.canScroll(player.level, pos))) {
                     POS = pos;
                     DELTA += event.getScrollDelta();
                     COUNTDOWN = COUNTDOWN_LENGTH;
-                    if (be instanceof IScrollBlock)
-                        ((IScrollBlock)be).scrollFeedBack(player.level, pos, DELTA, player);
-                    if (block instanceof IScrollBlock)
-                        ((IScrollBlock)block).scrollFeedBack(player.level, pos, DELTA, player);
+                    if (block instanceof IScrollBlock sb)
+                        sb.scrollFeedBack(player.level, pos, DELTA, player);
+                    if (be instanceof IScrollBlock sbe)
+                        sbe.scrollFeedBack(player.level, pos, DELTA, player);
                     event.setCanceled(true);
                 }
             }

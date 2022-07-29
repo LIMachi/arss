@@ -14,6 +14,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
+@SuppressWarnings("unused")
 @StaticInitializer.Static
 public class PacketHandler {
     public static abstract class Message {
@@ -50,7 +51,7 @@ public class PacketHandler {
                         if (t == PacketHandler.Target.CLIENT)
                             ctx.enqueueWork(((Message)msg)::clientWork);
                         if (t == PacketHandler.Target.SERVER)
-                            ctx.enqueueWork(()->((Message)msg).serverWork(ctx.getSender()));
+                            ctx.enqueueWork(()->(msg).serverWork(ctx.getSender()));
                         ctx.setPacketHandled(true);
                     });
         } catch (Exception e) {

@@ -31,5 +31,6 @@ public class Arss
         bus.addListener(Registries::clientSetup);
         MinecraftForge.EVENT_BUS.register(this);
         Registries.registerAll(bus);
+        Configs.register(MOD_ID, "Analog_Redstone_Suite");
     }
 }

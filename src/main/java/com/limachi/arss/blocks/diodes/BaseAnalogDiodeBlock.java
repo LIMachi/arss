@@ -1,5 +1,7 @@
 package com.limachi.arss.blocks.diodes;
 
+import com.limachi.arss.Configs;
+import com.limachi.arss.utils.StaticInitializer;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -48,11 +50,12 @@ import java.util.Random;
  *   analog gates (or, nor, and, nand, xor, xnor)
  */
 
+@StaticInitializer.Static
 @SuppressWarnings({"deprecation", "unused"})
 public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
 
-    public static final boolean ONE_TICK_FEATURE = true;
-    public static final boolean ALL_POWERS_ON_SIDES = true;
+    @Configs.Config(reload = true, cmt="Read sides like the back (ex: will use the content of a chest on the side as a valid redstone signal)")
+    static public boolean ALL_POWERS_ON_SIDES = true;
 
     protected BaseAnalogDiodeBlock(Properties props) { super(props); }
 
@@ -109,8 +112,19 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
         return Pair.of(0, 0);
     }
 
+    protected int getDirectionalSignal(Level level, BlockPos pos, BlockState state, Direction dir) {
+        BlockPos blockpos = pos.relative(dir);
+        int i = level.getSignal(blockpos, dir);
+        if (i >= 15) {
+            return i;
+        } else {
+            BlockState blockstate = level.getBlockState(blockpos);
+            return Math.max(i, blockstate.is(Blocks.REDSTONE_WIRE) ? blockstate.getValue(RedStoneWireBlock.POWER) : 0);
+        }
+    }
+
     protected int commonSignalGetter(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Direction back) {
-        int i = super.getInputSignal(level, pos, state);
+        int i = getDirectionalSignal(level, pos, state, back);
         BlockPos backPos = pos.relative(back);
         BlockState t_state = level.getBlockState(backPos);
         if (t_state.hasAnalogOutputSignal())
@@ -176,26 +190,14 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
         if (!level.getBlockTicks().willTickThisTick(pos, this)) {
             BlockState newState = calculateOutputSignal(true, level, pos, state);
             if (newState != state) {
-
-                if (ONE_TICK_FEATURE) {
-
-                    /*
-                     * alternate priority order trying to fix comparator not working with one tick pulses
-                     * use default behavior if ONE_TICK_FEATURE is false
-                     */
-
                     boolean turn_on = shouldTurnOn(level, pos, state);
-
                     TickPriority tickpriority = TickPriority.HIGH;
                     if (shouldPrioritize(level, pos, state))
                         tickpriority = TickPriority.VERY_HIGH;
                     else if (turn_on)
                         tickpriority = TickPriority.EXTREMELY_HIGH;
                     level.scheduleTick(pos, this, getDelay(state), tickpriority);
-                } else {
-                    TickPriority tickpriority = shouldPrioritize(level, pos, state) ? TickPriority.EXTREMELY_HIGH : TickPriority.VERY_HIGH;
-                    level.scheduleTick(pos, this, 2, tickpriority);
-                }
+
             }
         }
     }
@@ -206,8 +208,10 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
 
     @Override
     protected int getAlternateSignalAt(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull Direction dir) {
-//        if (ALL_POWERS_ON_SIDES) return commonSignalGetter((Level) level, pos, level.getBlockState(pos), dir);
-        if (ALL_POWERS_ON_SIDES) return ((Level)level).getSignal(pos, dir);
+        if (ALL_POWERS_ON_SIDES) {
+            BlockPos start = pos.relative(dir.getOpposite());
+            return commonSignalGetter((Level) level, start, level.getBlockState(start), dir);
+        }
         return super.getAlternateSignalAt(level, pos, dir);
     }
 

@@ -6,7 +6,6 @@ import net.minecraft.Util;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
@@ -25,12 +24,12 @@ import java.util.HashMap;
 @ParametersAreNonnullByDefault
 public abstract class RedstoneWireFactory {
 
-    private static final HashMap<String, Pair<RegistryObject<Block>, RegistryObject<Item>>> REDSTONE_WIRES = new HashMap<>();
+    private static final HashMap<String, Pair<RegistryObject<Item>, RegistryObject<Block>>> REDSTONE_WIRES = new HashMap<>();
 
-    public static Block getBlock(String name) { return REDSTONE_WIRES.get(name).getFirst().get(); }
-    public static RegistryObject<Block> getBlockRegister(String name) { return REDSTONE_WIRES.get(name).getFirst(); }
-    public static Item getItem(String name) { return REDSTONE_WIRES.get(name).getSecond().get(); }
-    public static RegistryObject<Item> getItemRegister(String name) { return REDSTONE_WIRES.get(name).getSecond(); }
+    public static Block getBlock(String name) { return REDSTONE_WIRES.get(name).getSecond().get(); }
+    public static RegistryObject<Block> getBlockRegister(String name) { return REDSTONE_WIRES.get(name).getSecond(); }
+    public static Item getItem(String name) { return REDSTONE_WIRES.get(name).getFirst().get(); }
+    public static RegistryObject<Item> getItemRegister(String name) { return REDSTONE_WIRES.get(name).getFirst(); }
 
     private static final Vec3[] COLORS = Util.make(new Vec3[16], vec -> {
         for(int i = 0; i <= 15; ++i) {
@@ -80,9 +79,9 @@ public abstract class RedstoneWireFactory {
                 builder.add(fRange);
             }
         }
-        RegistryObject<Block> rBlock = Registries.BLOCK_REGISTER.register(fName, Product::new);
-        Registries.setColor(rBlock, RedstoneWireFactory::getColor);
-        Registries.setRenderLayer(rBlock, RenderType.cutout());
-        REDSTONE_WIRES.put(fName, new Pair<>(rBlock, Registries.ITEM_REGISTER.register(fName, ()->new BlockItem(rBlock.get(), iProps))));
+        Pair<RegistryObject<Item>, RegistryObject<Block>> p = Registries.registerBlockAndItem(fName, Product::new);
+        Registries.setColor(p.getSecond(), RedstoneWireFactory::getColor);
+        Registries.setRenderLayer(p.getSecond(), RenderType.cutout());
+        REDSTONE_WIRES.put(fName, p);
     }
 }

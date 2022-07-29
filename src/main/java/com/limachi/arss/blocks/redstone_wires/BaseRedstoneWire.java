@@ -12,7 +12,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.RedstoneSide;
 import net.minecraft.world.phys.BlockHitResult;
@@ -151,8 +150,6 @@ public abstract class BaseRedstoneWire extends RedStoneWireBlock {
         if (!(state.getValue(range).equals(i.range) && state.getValue(POWER).equals(i.power))) {
             if (level.getBlockState(pos) == state)
                 level.setBlock(pos, state.setValue(range, i.range).setValue(POWER, i.power), 2);
-
-            //vanilla redstone update propagation
             level.updateNeighborsAt(pos, this);
             for(Direction direction : Direction.values())
                 level.updateNeighborsAt(pos.relative(direction), this);
@@ -179,13 +176,7 @@ public abstract class BaseRedstoneWire extends RedStoneWireBlock {
     }
 
     private RedstoneWireFactory.PR getWireSignal(BlockState state) {
-        if (!state.is(this)) {
-            if (state.is(Blocks.REDSTONE_WIRE)) {
-                int p = state.getValue(BlockStateProperties.POWER) - rangeFalloff;
-                return new RedstoneWireFactory.PR(Math.max(p, 0), p > 0 ? maxRange : 0);
-            }
-            return new RedstoneWireFactory.PR();
-        }
+        if (!state.is(this)) { return new RedstoneWireFactory.PR(); }
         int p = state.getValue(POWER);
         int r = state.getValue(range) - 1;
         if (r <= 0) {

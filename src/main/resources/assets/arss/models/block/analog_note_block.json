@@ -1,0 +1,31 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "sides": "minecraft:block/note_block",
+    "decal": "arss:item/arss_decal"
+  },
+  "elements": [
+    { "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "down": { "texture": "#sides", "cullface": "down" },
+        "up": { "texture": "#sides", "cullface": "up" },
+        "north": { "texture": "#sides", "cullface": "north" },
+        "south": { "texture": "#sides", "cullface": "south" },
+        "west": { "texture": "#sides", "cullface": "west" },
+        "east": { "texture": "#sides", "cullface": "east" }
+      }
+    },
+    { "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "down": { "texture": "#decal", "cullface": "down" },
+        "up": { "texture": "#decal", "cullface": "up" },
+        "north": { "texture": "#decal", "cullface": "north" },
+        "south": { "texture": "#decal", "cullface": "south" },
+        "west": { "texture": "#decal", "cullface": "west" },
+        "east": { "texture": "#decal", "cullface": "east" }
+      }
+    }
+  ]
+}

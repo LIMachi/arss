@@ -126,4 +126,5 @@ public class ArssBlockStateProperties {
     public static final EnumProperty<ShifterMode> SHIFTER_MODE = EnumProperty.create("mode", ShifterMode.class);
     public static final BooleanProperty HIGH = BooleanProperty.create("high");
     public static final EnumProperty<SignalGeneratorMode> GENERATOR_MODE = EnumProperty.create("mode", SignalGeneratorMode.class);
+    public static final BooleanProperty CAN_SCROLL = BooleanProperty.create("can_scroll");
 }

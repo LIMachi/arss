@@ -1,64 +1,154 @@
 {
   "variants": {
-    "facing=east,mode=compare,powered=false": {
+    "facing=east,mode=1,powered=false": {
       "y": 270,
-      "model": "minecraft:block/comparator"
+      "model": "arss:block/diodes/demuxer/bit1_off"
     },
-    "facing=east,mode=compare,powered=true": {
+    "facing=east,mode=1,powered=true": {
       "y": 270,
-      "model": "minecraft:block/comparator_on"
+      "model": "arss:block/diodes/demuxer/bit1_on"
     },
-    "facing=east,mode=subtract,powered=false": {
+    "facing=north,mode=1,powered=false": {
+      "y": 180,
+      "model": "arss:block/diodes/demuxer/bit1_off"
+    },
+    "facing=north,mode=1,powered=true": {
+      "y": 180,
+      "model": "arss:block/diodes/demuxer/bit1_on"
+    },
+    "facing=south,mode=1,powered=false": {
+      "model": "arss:block/diodes/demuxer/bit1_off"
+    },
+    "facing=south,mode=1,powered=true": {
+      "model": "arss:block/diodes/demuxer/bit1_on"
+    },
+    "facing=west,mode=1,powered=false": {
+      "y": 90,
+      "model": "arss:block/diodes/demuxer/bit1_off"
+    },
+    "facing=west,mode=1,powered=true": {
+      "y": 90,
+      "model": "arss:block/diodes/demuxer/bit1_on"
+    },
+    "facing=east,mode=2,powered=false": {
       "y": 270,
-      "model": "minecraft:block/comparator_subtract"
+      "model": "arss:block/diodes/demuxer/bit2_off"
     },
-    "facing=east,mode=subtract,powered=true": {
+    "facing=east,mode=2,powered=true": {
       "y": 270,
-      "model": "minecraft:block/comparator_on_subtract"
+      "model": "arss:block/diodes/demuxer/bit2_on"
     },
-    "facing=north,mode=compare,powered=false": {
+    "facing=north,mode=2,powered=false": {
       "y": 180,
-      "model": "minecraft:block/comparator"
+      "model": "arss:block/diodes/demuxer/bit2_off"
     },
-    "facing=north,mode=compare,powered=true": {
+    "facing=north,mode=2,powered=true": {
       "y": 180,
-      "model": "minecraft:block/comparator_on"
+      "model": "arss:block/diodes/demuxer/bit2_on"
     },
-    "facing=north,mode=subtract,powered=false": {
+    "facing=south,mode=2,powered=false": {
+      "model": "arss:block/diodes/demuxer/bit2_off"
+    },
+    "facing=south,mode=2,powered=true": {
+      "model": "arss:block/diodes/demuxer/bit2_on"
+    },
+    "facing=west,mode=2,powered=false": {
+      "y": 90,
+      "model": "arss:block/diodes/demuxer/bit2_off"
+    },
+    "facing=west,mode=2,powered=true": {
+      "y": 90,
+      "model": "arss:block/diodes/demuxer/bit2_on"
+    },
+    "facing=east,mode=4,powered=false": {
+      "y": 270,
+      "model": "arss:block/diodes/demuxer/bit3_off"
+    },
+    "facing=east,mode=4,powered=true": {
+      "y": 270,
+      "model": "arss:block/diodes/demuxer/bit3_on"
+    },
+    "facing=north,mode=4,powered=false": {
       "y": 180,
-      "model": "minecraft:block/comparator_subtract"
+      "model": "arss:block/diodes/demuxer/bit3_off"
     },
-    "facing=north,mode=subtract,powered=true": {
+    "facing=north,mode=4,powered=true": {
       "y": 180,
-      "model": "minecraft:block/comparator_on_subtract"
+      "model": "arss:block/diodes/demuxer/bit3_on"
     },
-    "facing=south,mode=compare,powered=false": {
-      "model": "minecraft:block/comparator"
+    "facing=south,mode=4,powered=false": {
+      "model": "arss:block/diodes/demuxer/bit3_off"
     },
-    "facing=south,mode=compare,powered=true": {
-      "model": "minecraft:block/comparator_on"
+    "facing=south,mode=4,powered=true": {
+      "model": "arss:block/diodes/demuxer/bit3_on"
     },
-    "facing=south,mode=subtract,powered=false": {
-      "model": "minecraft:block/comparator_subtract"
-    },
-    "facing=south,mode=subtract,powered=true": {
-      "model": "minecraft:block/comparator_on_subtract"
-    },
-    "facing=west,mode=compare,powered=false": {
+    "facing=west,mode=4,powered=false": {
       "y": 90,
-      "model": "minecraft:block/comparator"
+      "model": "arss:block/diodes/demuxer/bit3_off"
     },
-    "facing=west,mode=compare,powered=true": {
+    "facing=west,mode=4,powered=true": {
       "y": 90,
-      "model": "minecraft:block/comparator_on"
+      "model": "arss:block/diodes/demuxer/bit3_on"
     },
-    "facing=west,mode=subtract,powered=false": {
-      "y": 90,
-      "model": "minecraft:block/comparator_subtract"
+    "facing=east,mode=8,powered=false": {
+      "y": 270,
+      "model": "arss:block/diodes/demuxer/bit4_off"
     },
-    "facing=west,mode=subtract,powered=true": {
+    "facing=east,mode=8,powered=true": {
+      "y": 270,
+      "model": "arss:block/diodes/demuxer/bit4_on"
+    },
+    "facing=north,mode=8,powered=false": {
+      "y": 180,
+      "model": "arss:block/diodes/demuxer/bit4_off"
+    },
+    "facing=north,mode=8,powered=true": {
+      "y": 180,
+      "model": "arss:block/diodes/demuxer/bit4_on"
+    },
+    "facing=south,mode=8,powered=false": {
+      "model": "arss:block/diodes/demuxer/bit4_off"
+    },
+    "facing=south,mode=8,powered=true": {
+      "model": "arss:block/diodes/demuxer/bit4_on"
+    },
+    "facing=west,mode=8,powered=false": {
       "y": 90,
-      "model": "minecraft:block/comparator_on_subtract"
+      "model": "arss:block/diodes/demuxer/bit4_off"
+    },
+    "facing=west,mode=8,powered=true": {
+      "y": 90,
+      "model": "arss:block/diodes/demuxer/bit4_on"
+    },
+    "facing=east,mode=side_control,powered=false": {
+      "y": 270,
+      "model": "arss:block/diodes/demuxer/auto_off"
+    },
+    "facing=east,mode=side_control,powered=true": {
+      "y": 270,
+      "model": "arss:block/diodes/demuxer/auto_on"
+    },
+    "facing=north,mode=side_control,powered=false": {
+      "y": 180,
+      "model": "arss:block/diodes/demuxer/auto_off"
+    },
+    "facing=north,mode=side_control,powered=true": {
+      "y": 180,
+      "model": "arss:block/diodes/demuxer/auto_on"
+    },
+    "facing=south,mode=side_control,powered=false": {
+      "model": "arss:block/diodes/demuxer/auto_off"
+    },
+    "facing=south,mode=side_control,powered=true": {
+      "model": "arss:block/diodes/demuxer/auto_on"
+    },
+    "facing=west,mode=side_control,powered=false": {
+      "y": 90,
+      "model": "arss:block/diodes/demuxer/auto_off"
+    },
+    "facing=west,mode=side_control,powered=true": {
+      "y": 90,
+      "model": "arss:block/diodes/demuxer/auto_on"
     }
   }
 }
