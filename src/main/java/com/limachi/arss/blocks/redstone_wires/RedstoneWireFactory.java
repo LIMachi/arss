@@ -80,8 +80,8 @@ public abstract class RedstoneWireFactory {
             }
         }
         Pair<RegistryObject<Item>, RegistryObject<Block>> p = Registries.registerBlockAndItem(fName, Product::new);
-        Registries.setColor(p.getSecond(), RedstoneWireFactory::getColor);
-        Registries.setRenderLayer(p.getSecond(), RenderType.cutout());
+        Registries.hasRedstoneTint(p.getSecond());
+        Registries.isCutout(p.getSecond());
         REDSTONE_WIRES.put(fName, p);
     }
 }

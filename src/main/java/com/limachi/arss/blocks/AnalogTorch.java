@@ -6,7 +6,6 @@ import com.limachi.arss.Registries;
 import com.limachi.arss.blocks.scrollSystem.IScrollBlockPowerOutput;
 import com.limachi.arss.utils.StaticInitializer;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -56,15 +55,15 @@ public class AnalogTorch extends RedstoneTorchBlock implements IScrollBlockPower
     });
 
     static {
-        Registries.setRenderLayer(R_BLOCK, RenderType.translucent());
-        Registries.setColor(R_BLOCK, AnalogRedstoneBlock::getColor);
-        Registries.setRenderLayer(R_WALL_VARIANT, RenderType.translucent());
-        Registries.setColor(R_WALL_VARIANT, AnalogRedstoneBlock::getColor);
+        Registries.isTranslucent(R_BLOCK);
+        Registries.hasRedstoneTint(R_BLOCK);
+        Registries.isTranslucent(R_WALL_VARIANT);
+        Registries.hasRedstoneTint(R_WALL_VARIANT);
     }
 
     static {
-        Registries.setRenderLayer(R_BLOCK, RenderType.cutout());
-        Registries.setRenderLayer(R_WALL_VARIANT, RenderType.cutout());
+        Registries.isCutout(R_BLOCK);
+        Registries.isCutout(R_WALL_VARIANT);
     }
 
     public static final IntegerProperty POWER = BlockStateProperties.POWER;

@@ -4,7 +4,6 @@ import com.limachi.arss.ArssBlockStateProperties;
 import com.limachi.arss.Registries;
 import com.limachi.arss.blocks.scrollSystem.IScrollBlockPowerOutput;
 import com.limachi.arss.utils.StaticInitializer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -37,8 +36,8 @@ public class AnalogLever extends LeverBlock implements IScrollBlockPowerOutput {
     public static final Properties PROPS = BlockBehaviour.Properties.of(Material.DECORATION).noCollission().strength(0.5F).sound(SoundType.WOOD);
     static {
         RegistryObject<Block> rb = Registries.registerBlockAndItem("analog_lever", AnalogLever::new).getSecond();
-        Registries.setRenderLayer(rb, RenderType.translucent());
-        Registries.setColor(rb, AnalogRedstoneBlock::getColor);
+        Registries.isTranslucent(rb);
+        Registries.hasRedstoneTint(rb);
     }
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
 

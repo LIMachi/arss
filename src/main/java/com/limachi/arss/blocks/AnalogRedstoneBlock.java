@@ -4,7 +4,6 @@ import com.limachi.arss.ArssBlockStateProperties;
 import com.limachi.arss.Registries;
 import com.limachi.arss.blocks.scrollSystem.IScrollBlockPowerOutput;
 import com.limachi.arss.utils.StaticInitializer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -28,6 +27,8 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.system.NonnullDefault;
@@ -40,11 +41,12 @@ public class AnalogRedstoneBlock extends PoweredBlock implements IScrollBlockPow
     public static final Properties PROPS = BlockBehaviour.Properties.of(Material.METAL, MaterialColor.FIRE).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL).isRedstoneConductor((state, get, pos)->false);
     static {
         RegistryObject<Block> rb = Registries.registerBlockAndItem("analog_redstone_block", AnalogRedstoneBlock::new).getSecond();
-        Registries.setRenderLayer(rb, RenderType.translucent());
-        Registries.setColor(rb, AnalogRedstoneBlock::getColor);
+        Registries.isTranslucent(rb);
+        Registries.hasRedstoneTint(rb);
     }
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
 
+    @OnlyIn(Dist.CLIENT)
     public static int getColor(BlockState state, BlockAndTintGetter getter, BlockPos pos, int index) {
         return RedStoneWireBlock.getColorForPower(state.getValue(POWER));
     }

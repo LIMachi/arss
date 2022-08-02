@@ -3,7 +3,6 @@ package com.limachi.arss.blocks;
 import com.limachi.arss.ArssBlockStateProperties;
 import com.limachi.arss.Registries;
 import com.limachi.arss.utils.StaticInitializer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -31,7 +30,7 @@ public class AnalogNoteBlock extends NoteBlock {
 
     public static final Properties PROPS = Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(0.8F);
     static {
-        Registries.setRenderLayer(Registries.registerBlockAndItem("analog_note_block", AnalogNoteBlock::new).getSecond(), RenderType.translucent());
+        Registries.isTranslucent(Registries.registerBlockAndItem("analog_note_block", AnalogNoteBlock::new).getSecond());
     }
     public static final BooleanProperty HIGH = ArssBlockStateProperties.HIGH;
 

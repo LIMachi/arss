@@ -2,7 +2,6 @@ package com.limachi.arss.blocks;
 
 import com.limachi.arss.Registries;
 import com.limachi.arss.utils.StaticInitializer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -26,7 +25,7 @@ public class AnalogRedstoneLamp extends RedstoneLampBlock {
 
     public static final Properties PROPS = BlockBehaviour.Properties.of(Material.BUILDABLE_GLASS).lightLevel(AnalogRedstoneLamp::litBlockEmission).strength(0.3F).sound(SoundType.GLASS);
     static {
-        Registries.setRenderLayer(Registries.registerBlockAndItem("analog_redstone_lamp", AnalogRedstoneLamp::new).getSecond(), RenderType.translucent());
+        Registries.isTranslucent(Registries.registerBlockAndItem("analog_redstone_lamp", AnalogRedstoneLamp::new).getSecond());
     }
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
 

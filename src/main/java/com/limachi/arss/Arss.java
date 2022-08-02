@@ -7,6 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,7 @@ public class Arss
     {
         StaticInitializer.initialize();
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        bus.addListener(Registries::clientSetup);
+        DistExecutor.unsafeRunForDist(()->()->{bus.addListener(ClientRegistries::clientSetup); return 0;}, ()->()->0);
         MinecraftForge.EVENT_BUS.register(this);
         Registries.registerAll(bus);
         Configs.register(MOD_ID, "Analog_Redstone_Suite");

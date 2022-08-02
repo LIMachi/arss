@@ -30,7 +30,7 @@ public class AnalogJukebox extends BaseEntityBlock {
     public static final Properties PROPS = Properties.of(Material.WOOD, MaterialColor.DIRT).strength(2.0F, 6.0F);
     public static final RegistryObject<Block> R_BLOCK = Registries.registerBlockAndItem("analog_jukebox",AnalogJukebox::new).getSecond();
     static {
-        Registries.setRenderLayer(R_BLOCK, RenderType.translucent());
+        Registries.isTranslucent(R_BLOCK);
     }
 
     public AnalogJukebox() {

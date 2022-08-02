@@ -147,8 +147,8 @@ public class DiodeBlockFactory {
         }
         Pair<RegistryObject<Item>, RegistryObject<Block>> p = Registries.registerBlockAndItem(fName, gBlock);
         if (hasPowerTint)
-            Registries.setColor(p.getSecond(), RedstoneWireFactory::getColor);
-        Registries.setRenderLayer(p.getSecond(), RenderType.cutout());
+            Registries.hasRedstoneTint(p.getSecond());
+        Registries.isCutout(p.getSecond());
         DIODE_BLOCKS.put(fName, p);
     }
 }

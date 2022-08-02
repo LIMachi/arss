@@ -1,30 +1,5 @@
-all: OK
-    missing icons
-    missing models
-    upgrade: add help in tooltip for all items
-
-note block: OK
-    don't work with direct signal
-    don't work twice with the same signal (if signal switches between 0 and a non 0 signal)
-    upgrade: add message when toggling high/low notes
-
-diodes: OK
-    don't work with item frames on sides
-
-edge detector: OK
-    rename 'lowering edge' to 'falling edge'
-
-signal generator: OK
-    upgrade: change how it works based on side signal
-    saw/inverse_saw/triangle -> signal between sides if at least one side > 0
-    square -> length of the timer between swap
-    sine -> inverse length of timer of a revolution (0 signal 360 steps, 15 signal 22.5 steps)
-
-redstone wires: OK
-    should not receive signal from vanilla redstone wires
-
-scrollable blocks: OK
-    upgrade: right click with a (analog) redstone torch to lock the power state and prevent scroll
+Caused by java.lang.NoClassDefFoundError: net/minecraft/client/color/block/BlockColor
+[30.07 14:51:58] [Server] 		at com.limachi.arss.blocks.redstone_wires.RedstoneWireFactory.create(RedstoneWireFactory.java:83) ~[arss-B1.0.jar%2347!/{re:classloading}
 
 jukebox:
     upgrade: add an inventory screen
