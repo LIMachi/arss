@@ -1,5 +1,0 @@
-Caused by java.lang.NoClassDefFoundError: net/minecraft/client/color/block/BlockColor
-[30.07 14:51:58] [Server] 		at com.limachi.arss.blocks.redstone_wires.RedstoneWireFactory.create(RedstoneWireFactory.java:83) ~[arss-B1.0.jar%2347!/{re:classloading}
-
-jukebox:
-    upgrade: add an inventory screen

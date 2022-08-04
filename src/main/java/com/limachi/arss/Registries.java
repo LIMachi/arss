@@ -5,6 +5,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -29,6 +30,12 @@ public class Registries {
     public static final DeferredRegister<Block> BLOCK_REGISTER = DeferredRegister.create(ForgeRegistries.BLOCKS, Arss.MOD_ID);
     public static final DeferredRegister<Item> ITEM_REGISTER = DeferredRegister.create(ForgeRegistries.ITEMS, Arss.MOD_ID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_REGISTER = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, Arss.MOD_ID);
+    public static final DeferredRegister<MenuType<?>> MENU_REGISTER = DeferredRegister.create(ForgeRegistries.CONTAINERS, Arss.MOD_ID);
+
+    public static RegistryObject<Block> block(String regKey, Supplier<Block> blockNew) { return BLOCK_REGISTER.register(regKey, blockNew); }
+    public static RegistryObject<Item> item(String regKey, Supplier<Item> itemNew) { return ITEM_REGISTER.register(regKey, itemNew); }
+    public static RegistryObject<BlockEntityType<?>> blockEntity(String regKey, BlockEntityType.BlockEntitySupplier<?> beNew, RegistryObject<Block> block) { return blockEntity(regKey, beNew, block, null); }
+    public static RegistryObject<BlockEntityType<?>> blockEntity(String regKey, BlockEntityType.BlockEntitySupplier<?> beNew, RegistryObject<Block> block, com.mojang.datafixers.types.Type<?> fixer) { return BLOCK_ENTITY_REGISTER.register(regKey, ()->BlockEntityType.Builder.of(beNew, block.get()).build(fixer)); }
 
     public static Supplier<BlockItem> blockItem(RegistryObject<Block> blockReg) { return blockItem(blockReg, new Item.Properties().tab(Arss.ITEM_GROUP), ""); }
     public static Supplier<BlockItem> blockItem(RegistryObject<Block> blockReg, Item.Properties props) { return blockItem(blockReg, props, ""); }
@@ -69,5 +76,6 @@ public class Registries {
         BLOCK_REGISTER.register(bus);
         ITEM_REGISTER.register(bus);
         BLOCK_ENTITY_REGISTER.register(bus);
+        MENU_REGISTER.register(bus);
     }
 }

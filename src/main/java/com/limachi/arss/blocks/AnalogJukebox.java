@@ -2,8 +2,8 @@ package com.limachi.arss.blocks;
 
 import com.limachi.arss.Registries;
 import com.limachi.arss.blockEntities.AnalogJukeboxBlockEntity;
+import com.limachi.arss.menu.AnalogJukeboxMenu;
 import com.limachi.arss.utils.StaticInitializer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -53,7 +53,7 @@ public class AnalogJukebox extends BaseEntityBlock {
                     return InteractionResult.sidedSuccess(level.isClientSide);
                 }
             } else {
-                ((AnalogJukeboxBlockEntity)be).dropRecord();
+                AnalogJukeboxMenu.open(player, (AnalogJukeboxBlockEntity)be);
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
         }

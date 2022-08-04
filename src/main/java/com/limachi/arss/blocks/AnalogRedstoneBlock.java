@@ -39,10 +39,10 @@ import org.lwjgl.system.NonnullDefault;
 public class AnalogRedstoneBlock extends PoweredBlock implements IScrollBlockPowerOutput {
 
     public static final Properties PROPS = BlockBehaviour.Properties.of(Material.METAL, MaterialColor.FIRE).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL).isRedstoneConductor((state, get, pos)->false);
+    public static final RegistryObject<Block> R_BLOCK = Registries.registerBlockAndItem("analog_redstone_block", AnalogRedstoneBlock::new).getSecond();
     static {
-        RegistryObject<Block> rb = Registries.registerBlockAndItem("analog_redstone_block", AnalogRedstoneBlock::new).getSecond();
-        Registries.isTranslucent(rb);
-        Registries.hasRedstoneTint(rb);
+        Registries.isTranslucent(R_BLOCK);
+        Registries.hasRedstoneTint(R_BLOCK);
     }
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
 

@@ -101,5 +101,7 @@
   "tooltip.help.shifter": "Shifts the bits of the incoming signal 'Up' or 'Down' (effectively multiplying or dividing the strength). How much is shifted is based on the sides signal strength.",
   "tooltip.help.signal_generator": "Generate redstone signals every tick it is powered using five modes/generators, the range of the signal for 'Saw', 'Inverse Saw', 'Triangle' and 'Random' is determined by the sides if there is power, or will be between 0 and 15 if no side is powered. In 'square' the interval between swaps is 1 + side strength ticks.",
   "tooltip.help.enriched_redstone": "This redstone was mixed with other conducting metals and is now able to be more efficient, only loosing signal strength every 4 blocks instead of every block.",
-  "tooltip.help.perfected_redstone": "By increasing the bonding of the redstone and metals (through sheer heat), you managed to remove the signal decay completely (well almost, for some reason you can't go more than 32 blocks without loosing the signal entirely)."
+  "tooltip.help.perfected_redstone": "By increasing the bonding of the redstone and metals (through sheer heat), you managed to remove the signal decay completely (well almost, for some reason you can't go more than 32 blocks without loosing the signal entirely).",
+
+  "screen.title.analog_jukebox": "Analog Jukebox"
 }
