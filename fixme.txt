@@ -1,0 +1,3 @@
+missing loot tables for:
+    analog note block
+    better comparator
