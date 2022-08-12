@@ -2,7 +2,8 @@
   "parent": "block/block",
   "textures": {
     "sides": "minecraft:block/note_block",
-    "decal": "arss:item/arss_decal"
+    "decal": "arss:item/arss_decal",
+    "particle": "minecraft:block/note_block"
   },
   "elements": [
     { "from": [ 0, 0, 0 ],

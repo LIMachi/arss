@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "arss:analog_redstone_block",
+    "arss:analog_redstone_lamp"
+  ]
+}

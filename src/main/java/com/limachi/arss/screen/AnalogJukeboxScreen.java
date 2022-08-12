@@ -11,10 +11,13 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.system.NonnullDefault;
 
-@StaticInitializer.Static
+@StaticInitializer.StaticClient
 @NonnullDefault
+@OnlyIn(Dist.CLIENT)
 public class AnalogJukeboxScreen extends AbstractContainerScreen<AnalogJukeboxMenu> {
 
     public static final ResourceLocation BACKGROUND = new ResourceLocation(Arss.MOD_ID, "textures/screen/analog_jukebox.png");

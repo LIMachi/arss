@@ -2,7 +2,8 @@
   "parent": "block/block",
   "textures": {
     "sides": "minecraft:block/redstone_lamp_on",
-    "decal": "arss:item/arss_decal"
+    "decal": "arss:item/arss_decal",
+    "particle": "minecraft:block/redstone_lamp_on"
   },
   "elements": [
     { "from": [ 0, 0, 0 ],

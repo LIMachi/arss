@@ -29,7 +29,10 @@ public class Arss
     {
         StaticInitializer.initialize();
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        DistExecutor.unsafeRunForDist(()->()->{bus.addListener(ClientRegistries::clientSetup); return 0;}, ()->()->0);
+        DistExecutor.unsafeRunForDist(()->()->{
+            StaticInitializer.initializeClient();
+            bus.addListener(ClientRegistries::clientSetup);
+            return 0;}, ()->()->0);
         MinecraftForge.EVENT_BUS.register(this);
         Registries.registerAll(bus);
         Configs.register(MOD_ID, "Analog_Redstone_Suite");

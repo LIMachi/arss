@@ -2,7 +2,8 @@
   "parent": "block/block",
   "textures": {
     "all": "arss:block/analog_redstone_block",
-    "decal": "arss:item/arss_decal"
+    "decal": "arss:item/arss_decal",
+    "particle": "minecraft:redstone_block"
   },
   "elements": [
     { "from": [ 0, 0, 0 ],

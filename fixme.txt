@@ -1,3 +1,4 @@
-missing loot tables for:
-    analog note block
-    better comparator
+OK invalid client call server side
+OK analog redstone block takes too long to break
+OK wrong break particles
+missing break progression animation -> don't know how to fix, but might be an issue with multi layered blocks / tinted blocks

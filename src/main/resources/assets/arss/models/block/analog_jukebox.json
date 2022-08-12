@@ -3,7 +3,8 @@
   "textures": {
     "top": "minecraft:block/jukebox_top",
     "sides": "minecraft:block/jukebox_side",
-    "decal": "arss:item/arss_decal"
+    "decal": "arss:item/arss_decal",
+    "particle": "minecraft:block/jukebox_side"
   },
   "elements": [
     { "from": [ 0, 0, 0 ],
