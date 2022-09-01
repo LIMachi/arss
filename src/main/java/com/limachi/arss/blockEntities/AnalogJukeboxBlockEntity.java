@@ -120,4 +120,18 @@ public class AnalogJukeboxBlockEntity extends BaseOpaqueContainerBlockEntity {
             return ((RecordItem)record).getAnalogOutput();
         return 0;
     }
+
+    @Override
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        return stack.getItem() instanceof RecordItem && super.canPlaceItem(slot, stack);
+    }
+
+    @Override
+    public void setChanged() {
+        if (playing != 0 && getItem(playing - 1).isEmpty()) {
+            playing = 0;
+            level.levelEvent(1010, worldPosition, 0);
+        }
+        super.setChanged();
+    }
 }

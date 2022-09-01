@@ -1,3 +1,5 @@
+import java.nio.file.Files
+
 buildscript {
     repositories {
         // These repositories are only for Gradle plugins, put any other repositories in the repository block further below
@@ -17,12 +19,17 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 
 
-version = 'B1.4'
+version = 'B1.5'
 group = 'com.limachi.arss'
 archivesBaseName = 'arss'
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+configurations.all {
+    // Check for updates every build, usefull because i don't always bump the version of my lib while testing
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
@@ -146,6 +153,14 @@ repositories {
     // flatDir {
     //     dir 'libs'
     // }
+    maven {
+        name "bytesafe"
+        url "https://limachi.bytesafe.dev/maven/limlib/"
+        credentials {
+            username "bytesafe"
+            password = Files.readAllLines(file("../bytesafe").toPath())[0]
+        }
+    }
 }
 
 dependencies {
@@ -165,6 +180,11 @@ dependencies {
     // For more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+
+    dependencies {
+        runtimeOnly fg.deobf("com.limachi.lim_lib:lim_lib:A1.0.1") { changing = true }
+        compileOnly fg.deobf("com.limachi.lim_lib:lim_lib:A1.0.1") { changing = true }
+    }
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
