@@ -1,11 +1,9 @@
 package com.limachi.arss.blocks.diodes;
 
 import com.limachi.arss.Arss;
-import com.limachi.arss.Registries;
-import com.limachi.arss.blocks.AnalogRedstoneBlock;
-import com.limachi.arss.blocks.redstone_wires.RedstoneWireFactory;
+import com.limachi.arss.blocks.AnalogRedstoneBlockBlock;
+import com.limachi.lim_lib.registries.Registries;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.BlockItem;
@@ -28,9 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
-import static com.limachi.arss.Registries.BLOCK_REGISTER;
-import static com.limachi.arss.Registries.ITEM_REGISTER;
-
 @SuppressWarnings({"deprecation", "unused"})
 public class DiodeBlockFactory {
     @FunctionalInterface
@@ -44,7 +39,7 @@ public class DiodeBlockFactory {
     }
 
     public static final BlockBehaviour.Properties PROPS = BlockBehaviour.Properties.of(Material.DECORATION).instabreak().sound(SoundType.STONE);
-    public static final Item.Properties I_PROPS = new Item.Properties().tab(Arss.ITEM_GROUP);
+    public static final Item.Properties I_PROPS = new Item.Properties().tab(Arss.getInstance().tab());
 
     private static final HashMap<String, Pair<RegistryObject<Item>, RegistryObject<Block>>> DIODE_BLOCKS = new HashMap<>();
 
@@ -145,10 +140,10 @@ public class DiodeBlockFactory {
 
             gBlock = Product::new;
         }
-        Pair<RegistryObject<Item>, RegistryObject<Block>> p = Registries.registerBlockAndItem(fName, gBlock);
+        RegistryObject<Block> R_BLOCK = Registries.block(Arss.MOD_ID, fName + "_block", gBlock);
         if (hasPowerTint)
-            Registries.hasRedstoneTint(p.getSecond());
-        Registries.isCutout(p.getSecond());
-        DIODE_BLOCKS.put(fName, p);
+            AnalogRedstoneBlockBlock.hasRedstoneTint(R_BLOCK);
+        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName + "_item", ()->new BlockItem(R_BLOCK.get(), Arss.getInstance().defaultProps()), "jei.info." + fName);
+        DIODE_BLOCKS.put(fName, new Pair<>(R_ITEM, R_BLOCK));
     }
 }

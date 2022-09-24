@@ -2,14 +2,14 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "arss:demuxer"
+      "item": "arss:demuxer_item"
     },
     {
-      "item": "arss:demuxer"
+      "item": "arss:demuxer_item"
     }
   ],
   "result": {
-    "item": "arss:analog_or",
+    "item": "arss:analog_or_item",
     "count": 2
   }
 }

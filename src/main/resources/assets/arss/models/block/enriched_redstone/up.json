@@ -1,5 +1,6 @@
 {
     "ambientocclusion": false,
+    "render_type": "minecraft:cutout",
     "textures": {
         "particle": "arss:block/enriched_redstone/dot",
         "line": "arss:block/enriched_redstone/line0",

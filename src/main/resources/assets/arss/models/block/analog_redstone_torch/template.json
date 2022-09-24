@@ -1,5 +1,6 @@
 {
     "ambientocclusion": false,
+    "render_type": "minecraft:cutout",
     "textures": {
         "particle": "#torch",
         "overlay": "arss:block/analog_redstone_block"

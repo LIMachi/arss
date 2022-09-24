@@ -2,13 +2,13 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "arss:analog_xor"
+      "item": "arss:analog_xor_item"
     },
     {
-      "item": "arss:analog_redstone_torch"
+      "item": "arss:analog_redstone_torch_item"
     }
   ],
   "result": {
-    "item": "arss:analog_xnor"
+    "item": "arss:analog_xnor_item"
   }
 }

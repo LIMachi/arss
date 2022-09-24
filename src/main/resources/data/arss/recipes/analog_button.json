@@ -14,7 +14,7 @@
     }
   },
   "result": {
-    "item": "arss:analog_button",
+    "item": "arss:analog_button_item",
     "count": 8
   }
 }

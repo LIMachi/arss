@@ -1,7 +1,10 @@
 package com.limachi.arss.blockEntities;
 
+import com.limachi.arss.Arss;
 import com.limachi.arss.blocks.diodes.DiodeBlockFactory;
-import com.limachi.arss.utils.StaticInitializer;
+import com.limachi.lim_lib.registries.Registries;
+import com.limachi.lim_lib.registries.Stage;
+import com.limachi.lim_lib.registries.StaticInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -10,15 +13,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
-import static com.limachi.arss.Registries.BLOCK_ENTITY_REGISTER;
-
-@StaticInitializer.Static
+@StaticInit(Stage.BLOCK_ENTITY)
 public class DelayerBlockEntity extends BlockEntity {
 
     private final int[] memory = new int[16];
     private int head = 0;
 
-    public static final RegistryObject<BlockEntityType<?>> TYPE = BLOCK_ENTITY_REGISTER.register("delayer", ()->BlockEntityType.Builder.of(DelayerBlockEntity::new, DiodeBlockFactory.getBlock("delayer")).build(null));
+    public static final RegistryObject<BlockEntityType<DelayerBlockEntity>> TYPE = Registries.blockEntity(Arss.MOD_ID, "delayer_block_entity", DelayerBlockEntity::new, DiodeBlockFactory.getBlockRegister("delayer"));
 
     public DelayerBlockEntity(BlockPos pos, BlockState state) { super(TYPE.get(), pos, state); }
 

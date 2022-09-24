@@ -1,0 +1,118 @@
+{
+  "itemGroup.tab_arss": "Analog Redstone Suite",
+
+  "display.arss.analog_cell.mode.set": "Enregistrer",
+  "display.arss.analog_cell.mode.reset": "Réinitialiser",
+
+  "display.arss.better_comparator.mode.compare": "Comparer",
+  "display.arss.better_comparator.mode.subtract": "Soustraire",
+
+  "display.arss.adder.mode.compare": "Comparer",
+  "display.arss.adder.mode.add": "Additionner",
+
+  "display.arss.checker.mode.equal": "Égal",
+  "display.arss.checker.mode.different": "Différent",
+
+  "display.arss.edge_detector.mode.rising": "Montant",
+  "display.arss.edge_detector.mode.falling": "Descendant",
+
+  "display.arss.demuxer.mode.1": "Bit 1",
+  "display.arss.demuxer.mode.2": "Bit 2",
+  "display.arss.demuxer.mode.4": "Bit 4",
+  "display.arss.demuxer.mode.8": "Bit 8",
+  "display.arss.demuxer.mode.side_control": "Contrôlé par le côté",
+
+  "display.arss.delayer.mode.1": "1 Tick",
+  "display.arss.delayer.mode.2": "2 Tick",
+  "display.arss.delayer.mode.4": "4 Tick",
+  "display.arss.delayer.mode.8": "8 Tick",
+  "display.arss.delayer.mode.side_control": "Contrôlé par le côté",
+
+  "display.arss.shifter.mode.up": "Haut",
+  "display.arss.shifter.mode.down": "Bas",
+
+  "display.arss.signal_generator.mode.inverse_saw": "Scie inversée",
+  "display.arss.signal_generator.mode.random": "Aléatoire",
+  "display.arss.signal_generator.mode.saw": "Scie",
+  "display.arss.signal_generator.mode.sine": "Sinus",
+  "display.arss.signal_generator.mode.square": "Carré",
+  "display.arss.signal_generator.mode.triangle": "Triangle",
+
+  "item.arss.enriched_redstone__": "Cupro Ferrate Oxide",
+  "item.arss.enriched_redstone_": "Oxidized Redstone Compound",
+  "item.arss.enriched_redstone": "Redstone Enrichie",
+  "item.arss.perfected_redstone": "Redstone Parfaite",
+
+  "display.arss.analog_note_block.high_pitch.true": "Ton: Aigu",
+  "display.arss.analog_note_block.high_pitch.false": "Ton: Grave",
+
+  "display.arss.scrollable_block.can_scroll.true": "Déverrouillé",
+  "display.arss.scrollable_block.can_scroll.false": "Verrouillé",
+
+  "block.arss.adder_block": "Additionneur",
+  "block.arss.analog_and_block": "Et Analogue",
+  "block.arss.analog_button_block": "Bouton Analogue",
+  "block.arss.analog_cell_block": "Cellule Analogue",
+  "block.arss.analog_lever_block": "Levier Analogue",
+  "block.arss.analog_nand_block": "Non-Et Analogue",
+  "block.arss.analog_note_block_block": "Bloc Musical Analogue",
+  "block.arss.analog_nor_block": "Non-Ou Analogue",
+  "block.arss.analog_or_block": "Ou Analogue",
+  "block.arss.analog_redstone_block_block": "Bloc de Redstone Analogue",
+  "block.arss.analog_redstone_lamp_block": "Lampe de Redstone Analogue",
+  "block.arss.analog_redstone_torch_block": "Torche de Redstone Analogue",
+  "block.arss.analog_xnor_block": "Ni Exclusif Analogue",
+  "block.arss.analog_xor_block": "Ou Exclusif Analogue",
+  "block.arss.better_comparator_block": "Comparateur",
+  "block.arss.checker_block": "Vérificateur",
+  "block.arss.delayer_block": "Retardateur",
+  "block.arss.demuxer_block": "Démultiplexeur",
+  "block.arss.edge_detector_block": "Détecteur de Fronts",
+  "block.arss.enriched_redstone_block": "Redstone Enrichie",
+  "block.arss.perfected_redstone_block": "Redstone Parfaite",
+  "block.arss.shifter_block": "Décaleur",
+  "block.arss.signal_generator_block": "Générateur de Signaux",
+  "block.arss.analog_jukebox_block": "Jukebox Analogue",
+
+  "key.hold_to_scroll": "Enfoncer pour Défiler",
+  "key.categories.arss": "Analog Redstone Suite",
+
+  "jei.info.analog_redstone_torch": "Pour sélectionner la puissance, faite défiler (molette + touche de défilement si assignée).\n\nPeut être verrouillé en utilisant une torche de redstone (analogue ou vanilla).",
+  "jei.info.analog_lever": "Pour sélectionner la puissance, faite défiler (molette + touche de défilement si assignée).\n\nPeut être verrouillé en utilisant une torche de redstone (analogue ou vanilla).",
+  "jei.info.analog_button": "Pour sélectionner la puissance, faite défiler (molette + touche de défilement si assignée).\n\nPeut être verrouillé en utilisant une torche de redstone (analogue ou vanilla).",
+  "jei.info.analog_redstone_block": "Pour sélectionner la puissance, faite défiler (molette + touche de défilement si assignée).\n\nPeut être verrouillé en utilisant une torche de redstone (analogue ou vanilla).",
+  "jei.info.analog_jukebox": "Ce Jukebox a un inventaire de 15 disc et jouera le disc dans le slot correspondant quand il reçoit un signal de redstone.",
+  "jei.info.analog_note_block": "Ce Bloc Musical jouera une note avec un ton dépendant de la puissance du signal.\n\nVous pouvez changer le ton de base (bas ou haut) en cliquant dessus.",
+  "jei.info.analog_redstone_lamp": "Cette lampe aura une portée d'éclairage en fonction de la puissance du signal reçu.",
+  "jei.info.adder": "Exact inverse du Comparateur: En mode 'Comparaison' il teste si le signal entrant est plus fort que les signaux sur les côtés et en mode 'Addition' il addition le signal entrant et le plus fort signal reçu sur les côtés.",
+  "jei.info.analog_and": "Effectue l'opération binaire Et (&) sur chacun des 4 bits du signal entrant et du plus fort signal sur les côtés.",
+  "jei.info.analog_nand": "Effectue l'opération binaire Non-Et (~&) sur chacun des 4 bits du signal entrant et du plus fort signal sur les côtés.",
+  "jei.info.analog_or": "Effectue l'opération binaire Ou (|) sur chacun des 4 bits du signal entrant et du plus fort signal sur les côtés.",
+  "jei.info.analog_nor": "Effectue l'opération binaire Non-Ou (~|) sur chacun des 4 bits du signal entrant et du plus fort signal sur les côtés.",
+  "jei.info.analog_xor": "Effectue l'opération binaire Ou Exclusif (^) sur chacun des 4 bits du signal entrant et du plus fort signal sur les côtés.",
+  "jei.info.analog_xnor": "Effectue l'opération binaire Ni Exclusif (~^) sur chacun des 4 bits du signal entrant et du plus fort signal sur les côtés.",
+  "jei.info.analog_cell": "Cellule mémoire servant à stocker un signal analogique\n\nDeux modes:\n'Enregistrer': Quand la cellule reçoit un signal sur un côté, elle stocke le signal entrant (derrière).\n\n'Réinitialiser': Quand la cellule reçoit un signal sur un côté, elle met a zero son signal stocké, sinon elle stocke le signal entrant a chaque fois qu'il change et qu'il n'est pas a zero.",
+  "jei.info.better_comparator": "Comme le Comparateur vanilla, mais fonctionne avec les pulsations de redstone de 1 tick et est compatible avec plus de signaux sur les côtés.",
+  "jei.info.checker": "Teste si le signal entrant est égal (en mode 'Égal') ou différent (en mode 'Différent').",
+  "jei.info.delayer": "Va retarder le signal entrant de 1,2,3 ou 4 ticks, sans changer la puissance ou la durée des pulsations.\n\nA aussi un mode où le délai est en fonction de la puissance sur les côtés (+1).",
+  "jei.info.demuxer": "Teste si le bit 1,2,4,8 du signal entrant est actif.\n\nA aussi un mode où le bit testé est en fonction de la puissance sur les côtés (puissance de 1->bit 1, 2->bit 2, 3->bit 4, 4->bit 8)",
+  "jei.info.edge_detector": "Émet une pulsation de 1 tick quand le signal entrant augmente (en mode 'Montant') ou diminue (en mode 'Descendant').",
+  "jei.info.shifter": "Décale les bits du signal entrant vers le haut (mode 'Haut') ou vers le bas (mode 'Bas') en fonction du plus fort signal sur les côtés.\nPar exemple en mode haut et avec un signal sur le coté de 1, le signal entrant 6 deviendra 12.",
+  "jei.info.signal_generator": "Génère de signaux séquentiellement.\n\nTant qu'il y a un signal entrant (derrière), la séquence avancera.\n\n\n\nEn mode 'Scie', 'Scie Inversée', 'triangle' et 'aléatoire', le signal en sortie seras entre 0 et 15 (pas de signal sur les côtés) où alors entre le signal le plus faible et le plus fort des côtés.\n\n\nEn mode 'Carré', le temps entre les oscillation est égale a 1 tick + la puissance la plus élevée sur les côtés.\n\nEn mode 'Sinus', les cotés contrôlent a quelle vitesse le signal avance (1 degré + côté le plus fort).",
+  "jei.info.enriched_redstone": "Cette Redstone a été mélangée avec des métaux conducteurs et est maintenant plus efficace pour transporter un signal, ne perdant en puissance que tous les 4 blocs au lieu de chaque bloc.",
+  "jei.info.perfected_redstone": "Grace à l'augmentation des liaison entre la Redstone et les métaux (à force de chaleur), vous avez réussi a vous débarrasser complètement de la perte de signal\n\n\n\n(enfin presque, pour une raison étrange vous n'arrivez pas a dépasser les 32 blocs de distance sans perde le signal d'un coup).",
+
+  "top.info.locked": "§8Verrouillé§r",
+  "top.info.unlocked": "§eDéverrouillé§r",
+  "top.info.stored_power": "§ePuissance stockée: §c%s§r",
+
+  "top.info.mode": "§eMode: §r",
+
+  "top.info.pitch": "§7Ton: §r",
+  "top.info.pitch.high": "§eAigu§r",
+  "top.info.pitch.low": "§eGrave§r",
+
+  "top.info.power": "§7Puissance: §r%s",
+
+  "screen.title.analog_jukebox": "Jukebox Analogue"
+}

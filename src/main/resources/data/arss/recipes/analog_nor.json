@@ -2,13 +2,13 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "arss:analog_or"
+      "item": "arss:analog_or_item"
     },
     {
-      "item": "arss:analog_redstone_torch"
+      "item": "arss:analog_redstone_torch_item"
     }
   ],
   "result": {
-    "item": "arss:analog_nor"
+    "item": "arss:analog_nor_item"
   }
 }

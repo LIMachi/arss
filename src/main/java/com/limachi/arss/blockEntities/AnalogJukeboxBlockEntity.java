@@ -1,7 +1,6 @@
 package com.limachi.arss.blockEntities;
 
-import com.limachi.arss.blocks.AnalogJukebox;
-import com.limachi.arss.utils.StaticInitializer;
+import com.limachi.lim_lib.registries.annotations.RegisterBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -11,22 +10,19 @@ import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.RegistryObject;
-import org.lwjgl.system.NonnullDefault;
+import org.jetbrains.annotations.NotNull;
 
-import static com.limachi.arss.Registries.BLOCK_ENTITY_REGISTER;
-
-@StaticInitializer.Static
-@NonnullDefault
 public class AnalogJukeboxBlockEntity extends BaseOpaqueContainerBlockEntity {
 
-    public static final RegistryObject<BlockEntityType<?>> TYPE = BLOCK_ENTITY_REGISTER.register("analog_jukebox", ()->BlockEntityType.Builder.of(AnalogJukeboxBlockEntity::new, AnalogJukebox.R_BLOCK.get()).build(null));
+    @RegisterBlockEntity
+    public static RegistryObject<BlockEntityType<?>> TYPE;
 
     protected int playing = 0;
 
     public AnalogJukeboxBlockEntity(BlockPos pos, BlockState state) { super(TYPE.get(), pos, state, 15); }
 
     @Override
-    public void load(CompoundTag tag) {
+    public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         playing = tag.getInt("Playing");
         if (playing > 0)
@@ -34,7 +30,7 @@ public class AnalogJukeboxBlockEntity extends BaseOpaqueContainerBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putInt("Playing", playing);
     }

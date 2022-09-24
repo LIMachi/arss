@@ -1,0 +1,21 @@
+{
+  "homepage": "https://www.curseforge.com/minecraft/mc-mods/analog-redstone-suite",
+  "1.19.2": {
+    "1.19.2-B1.0": "Ported to 1.19.2, now requires my library: LimLib. Moved help from tooltips to JEI info tab. Fixed most bugs and oversights. Added compatibility with The One Probe. Added french translation."
+  },
+  "1.18.2": {
+    "B1.5": "Bug fixes (Analog Jukebox): Non disc item can no longer be inserted. Disc stop playing when removed via hopper/pipe.",
+    "B1.4": "Bug fixes: Removed invalid client calls server side. Fixed missing particles. Fixed missing tool type for breaking some blocks.",
+    "B1.3": "Bug fixe: added missing loot tables to comparator and note block.",
+    "B1.2": "Fixed the jukebox not having a craft. Added a screen to manipulate the discs inside a jukebox.",
+    "B1.1": "Bug fixe: Removed invalid client call server side.",
+    "B1.0": "Added crafts, icons, models. Fixed Analog Note Block missing some updates. Added new mode to signal generator. Scrollable block can be locked. Added help/documentation on all items via tooltip. Key (while hold) to scroll blocks is now assignable in the keybind menu.",
+    "A1.0": "Here be dragons"
+  },
+  "promos": {
+    "1.19.2-latest": "1.19.2-B1.0",
+    "1.19.2-recommended": "1.19.2-B1.0",
+    "1.18.2-latest": "B1.5",
+    "1.18.2-recommended": "B1.5"
+  }
+}

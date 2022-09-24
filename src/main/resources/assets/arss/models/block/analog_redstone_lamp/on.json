@@ -1,5 +1,6 @@
 {
   "parent": "block/block",
+  "render_type": "minecraft:translucent",
   "textures": {
     "sides": "minecraft:block/redstone_lamp_on",
     "decal": "arss:item/arss_decal",

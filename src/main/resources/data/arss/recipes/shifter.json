@@ -5,10 +5,10 @@
       "item": "minecraft:repeater"
     },
     {
-      "item": "arss:delayer"
+      "item": "arss:delayer_item"
     }
   ],
   "result": {
-    "item": "arss:shifter"
+    "item": "arss:shifter_item"
   }
 }

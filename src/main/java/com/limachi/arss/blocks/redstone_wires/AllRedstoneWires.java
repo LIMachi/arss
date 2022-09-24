@@ -2,15 +2,15 @@ package com.limachi.arss.blocks.redstone_wires;
 
 import com.limachi.arss.Arss;
 import com.limachi.arss.ArssBlockStateProperties;
-import com.limachi.arss.utils.StaticInitializer;
+import com.limachi.lim_lib.registries.StaticInit;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 
-@StaticInitializer.Static
+@StaticInit
 public class AllRedstoneWires {
     public static final BlockBehaviour.Properties B_PROPS = BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak();
-    public static final Item.Properties I_PROPS = new Item.Properties().tab(Arss.ITEM_GROUP);
+    public static final Item.Properties I_PROPS = new Item.Properties().tab(Arss.getInstance().tab());
 
     static  {
         RedstoneWireFactory.create("enriched_redstone", B_PROPS, I_PROPS, ArssBlockStateProperties.ENRICHED_RS_RANGE, 4, 1);

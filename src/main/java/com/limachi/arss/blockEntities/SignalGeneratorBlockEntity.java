@@ -1,7 +1,10 @@
 package com.limachi.arss.blockEntities;
 
+import com.limachi.arss.Arss;
 import com.limachi.arss.blocks.diodes.DiodeBlockFactory;
-import com.limachi.arss.utils.StaticInitializer;
+import com.limachi.lim_lib.registries.Registries;
+import com.limachi.lim_lib.registries.Stage;
+import com.limachi.lim_lib.registries.StaticInit;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -16,9 +19,7 @@ import java.util.Random;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-import static com.limachi.arss.Registries.BLOCK_ENTITY_REGISTER;
-
-@StaticInitializer.Static
+@StaticInit(Stage.BLOCK_ENTITY)
 public class SignalGeneratorBlockEntity extends BlockEntity {
 
     private int step = 0;
@@ -29,7 +30,7 @@ public class SignalGeneratorBlockEntity extends BlockEntity {
         for (int i = 0; i < 360; ++i) sineGraph[i] = (int)Math.round((Math.sin(((double)i / 180. * Math.PI)) + 1.) / 2. * 15.);
     }
 
-    public static final RegistryObject<BlockEntityType<?>> TYPE = BLOCK_ENTITY_REGISTER.register("signal_generator", ()->BlockEntityType.Builder.of(SignalGeneratorBlockEntity::new, DiodeBlockFactory.getBlock("signal_generator")).build(null));
+    public static final RegistryObject<BlockEntityType<SignalGeneratorBlockEntity>> TYPE = Registries.blockEntity(Arss.MOD_ID, "signal_generator_block_entity", SignalGeneratorBlockEntity::new, DiodeBlockFactory.getBlockRegister("signal_generator"));
 
     public SignalGeneratorBlockEntity(BlockPos pos, BlockState state) { super(TYPE.get(), pos, state); }
 

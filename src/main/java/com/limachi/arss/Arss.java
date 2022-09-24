@@ -1,40 +1,21 @@
 package com.limachi.arss;
 
-import com.limachi.arss.utils.StaticInitializer;
-import com.mojang.logging.LogUtils;
+import com.limachi.lim_lib.KeyMapController;
+import com.limachi.lim_lib.ModBase;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
-@SuppressWarnings("unused")
 @Mod(Arss.MOD_ID)
-public class Arss
+public class Arss extends ModBase
 {
+    public static final KeyMapController.GlobalKeyBinding SCROLL_KEY = KeyMapController.registerKeyBind("key.hold_to_scroll", 340, "key.categories.arss");
+
     public static final String MOD_ID = "arss";
-    public static final Logger LOGGER = LogUtils.getLogger();
 
-    public static final CreativeModeTab ITEM_GROUP = new CreativeModeTab("tab_" + MOD_ID) {
-        @Override
-        public @NotNull ItemStack makeIcon() { return new ItemStack(Items.COMPARATOR); }
-    };
+    public static final CreativeModeTab TAB = createTab(MOD_ID, ()->()->Items.COMPARATOR);
 
-    public Arss()
-    {
-        StaticInitializer.initialize();
-        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        DistExecutor.unsafeRunForDist(()->()->{
-            StaticInitializer.initializeClient();
-            bus.addListener(ClientRegistries::clientSetup);
-            return 0;}, ()->()->0);
-        MinecraftForge.EVENT_BUS.register(this);
-        Registries.registerAll(bus);
-        Configs.register(MOD_ID, "Analog_Redstone_Suite");
-    }
+    public Arss() { super(MOD_ID, "Analog_Redstone_Suite", TAB); }
+
+    public static Arss getInstance() { return (Arss)INSTANCES.get(MOD_ID); }
 }

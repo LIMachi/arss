@@ -1,0 +1,4 @@
+translate back the JEI info from French to English
+finish a version of LimLib that can be uploaded to curse forge
+backport all change from 1.19.2 to 1.18.2 (will probably be the last update for 1.18.2, unless we finally have models/textures)
+will probably move some code from this version of the mod to my lib (in prevision of adding more redstone interactions with Dimensional Bags)

@@ -5,10 +5,10 @@
       "item": "minecraft:repeater"
     },
     {
-      "item": "arss:analog_cell"
+      "item": "arss:analog_cell_item"
     }
   ],
   "result": {
-    "item": "arss:delayer"
+    "item": "arss:delayer_item"
   }
 }

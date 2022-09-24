@@ -1,12 +1,11 @@
 package com.limachi.arss.menu;
 
-import com.limachi.arss.Registries;
 import com.limachi.arss.blockEntities.AnalogJukeboxBlockEntity;
-import com.limachi.arss.blocks.AnalogJukebox;
-import com.limachi.arss.utils.StaticInitializer;
+import com.limachi.arss.blocks.AnalogJukeboxBlock;
+import com.limachi.lim_lib.registries.annotations.RegisterMenu;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
@@ -19,13 +18,16 @@ import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.RegistryObject;
-import org.lwjgl.system.NonnullDefault;
 
-@StaticInitializer.Static
-@NonnullDefault
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@SuppressWarnings("unused")
+@ParametersAreNonnullByDefault
 public class AnalogJukeboxMenu extends AbstractContainerMenu {
 
-    public static final RegistryObject<MenuType<AnalogJukeboxMenu>> MENU = Registries.MENU_REGISTER.register("analog_jukebox", ()->new MenuType<>(AnalogJukeboxMenu::new));
+    @RegisterMenu
+    public static RegistryObject<MenuType<AnalogJukeboxMenu>> MENU;
 
     private final ContainerLevelAccess accessor;
 
@@ -51,25 +53,25 @@ public class AnalogJukeboxMenu extends AbstractContainerMenu {
     }
 
     //Client only
-    public AnalogJukeboxMenu(int id, Inventory playerInv) {
+    public AnalogJukeboxMenu(int id, Inventory playerInv, FriendlyByteBuf buff) {
         this(id, playerInv, new SimpleContainer(15), BlockPos.ZERO);
     }
 
     //disable shift-click
     @Override
-    public ItemStack quickMoveStack(Player p_38941_, int p_38942_) {
+    public @Nonnull ItemStack quickMoveStack(Player p_38941_, int p_38942_) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public boolean stillValid(Player player) { return stillValid(accessor, player, AnalogJukebox.R_BLOCK.get()); }
+    public boolean stillValid(Player player) { return stillValid(accessor, player, AnalogJukeboxBlock.R_BLOCK.get()); }
 
     public static void open(Player player, AnalogJukeboxBlockEntity be) {
         Level level = be.getLevel();
         if (level != null && !level.isClientSide())
-            NetworkHooks.openGui((ServerPlayer) player, new MenuProvider() {
+            NetworkHooks.openScreen((ServerPlayer) player, new MenuProvider() {
                 @Override
-                public Component getDisplayName() { return new TranslatableComponent("screen.title.analog_jukebox"); }
+                public @Nonnull Component getDisplayName() { return Component.translatable("screen.title.analog_jukebox"); }
 
                 @Override
                 public AbstractContainerMenu createMenu(int id, Inventory inventory, Player p_39956_) { return new AnalogJukeboxMenu(id, inventory, be, be.getBlockPos()); }

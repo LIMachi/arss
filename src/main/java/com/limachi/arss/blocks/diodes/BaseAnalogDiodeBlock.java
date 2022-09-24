@@ -1,20 +1,28 @@
 package com.limachi.arss.blocks.diodes;
 
-import com.limachi.arss.Configs;
-import com.limachi.arss.utils.StaticInitializer;
+import com.limachi.lim_lib.Configs;
+import com.limachi.lim_lib.integration.theOneProbePlugin.IProbeInfoGiver;
+import com.limachi.lim_lib.registries.StaticInit;
 import com.mojang.datafixers.util.Pair;
+import mcjty.theoneprobe.api.ElementAlignment;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
+import mcjty.theoneprobe.apiimpl.styles.ItemStyle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -34,7 +42,6 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 /**
  * common class for comparator like blocks (get power at the back by getting analog signal/item frame) and expect potential power on the sides (the highest value)
@@ -50,9 +57,9 @@ import java.util.Random;
  *   analog gates (or, nor, and, nand, xor, xnor)
  */
 
-@StaticInitializer.Static
+@StaticInit
 @SuppressWarnings({"deprecation", "unused"})
-public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
+public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeInfoGiver {
 
     @Configs.Config(reload = true, cmt="Read sides like the back (ex: will use the content of a chest on the side as a valid redstone signal)")
     static public boolean ALL_POWERS_ON_SIDES = true;
@@ -177,7 +184,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
             Enum<?> s = state.getValue(modeProp);
             float f = s.ordinal() * 0.05F + 0.5F;
             level.playSound(player, pos, SoundEvents.COMPARATOR_CLICK, SoundSource.BLOCKS, 0.3F, f);
-            player.displayClientMessage(new TranslatableComponent("display.arss." + name + ".mode." + s), true);
+            player.displayClientMessage(Component.translatable("display.arss." + name + ".mode." + s), true);
             level.setBlock(pos, state, 2);
             refreshOutputState(level, pos, state);
             return InteractionResult.sidedSuccess(level.isClientSide);
@@ -237,7 +244,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
     }
 
     @Override
-    public void tick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull Random rng) {
+    public void tick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource rng) {
         refreshOutputState(level, pos, state);
         if (isTicking) {
             int delay = getDelay(state);
@@ -270,5 +277,14 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
             return strength;
         BlockState state = level.getBlockState(target);
         return Math.max(strength, state.is(Blocks.REDSTONE_WIRE) ? state.getValue(RedStoneWireBlock.POWER) : 0);
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, Player player, Level level, BlockState blockState, IProbeHitData iProbeHitData) {
+        IProbeInfo v = iProbeInfo.vertical(iProbeInfo.defaultLayoutStyle().spacing(2));
+        IProbeInfo h = v.horizontal(iProbeInfo.defaultLayoutStyle().spacing(2).alignment(ElementAlignment.ALIGN_TOPLEFT));
+        h.item(new ItemStack(Items.REDSTONE), new ItemStyle().height(14).width(14)).text(Component.translatable("top.info.power", blockState.getValue(POWER).toString()));
+        if (modeProp != null)
+            v.text(Component.translatable("top.info.mode").append(Component.translatable("display.arss." + name + ".mode." + blockState.getValue(modeProp))));
     }
 }
