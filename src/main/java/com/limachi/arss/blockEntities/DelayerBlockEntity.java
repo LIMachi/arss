@@ -19,7 +19,7 @@ public class DelayerBlockEntity extends BlockEntity {
     private final int[] memory = new int[16];
     private int head = 0;
 
-    public static final RegistryObject<BlockEntityType<DelayerBlockEntity>> TYPE = Registries.blockEntity(Arss.MOD_ID, "delayer_block_entity", DelayerBlockEntity::new, DiodeBlockFactory.getBlockRegister("delayer"));
+    public static final RegistryObject<BlockEntityType<DelayerBlockEntity>> TYPE = Registries.blockEntity(Arss.MOD_ID, "delayer", DelayerBlockEntity::new, DiodeBlockFactory.getBlockRegister("delayer"));
 
     public DelayerBlockEntity(BlockPos pos, BlockState state) { super(TYPE.get(), pos, state); }
 

@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "arss:analog_xnor_item"
+          "name": "arss:better_comparator"
         }
       ],
       "conditions": [

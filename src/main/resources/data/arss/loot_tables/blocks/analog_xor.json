@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "arss:adder_item"
+          "name": "arss:analog_xor"
         }
       ],
       "conditions": [

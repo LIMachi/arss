@@ -36,15 +36,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class AnalogLeverBlock extends LeverBlock implements IScrollBlockPowerOutput {
 
     public static final Properties PROPS = BlockBehaviour.Properties.of(Material.DECORATION).noCollission().strength(0.5F).sound(SoundType.WOOD);
-    @RegisterBlock
+
+    @RegisterBlock(name = "analog_lever")
     public static RegistryObject<Block> R_BLOCK;
 
     @StaticInit(Stage.BLOCK)
-    public static void setTint() {
-        AnalogRedstoneBlockBlock.hasRedstoneTint(R_BLOCK);
-    }
+    public static void setTint() { AnalogRedstoneBlock.hasRedstoneTint(R_BLOCK); }
 
-    @RegisterBlockItem(jeiInfoKey = "jei.info.analog_lever")
+    @RegisterBlockItem(name = "analog_lever", block = "analog_lever", jeiInfoKey = "jei.info.analog_lever")
     public static RegistryObject<Item> R_ITEM;
 
     public static final IntegerProperty POWER = BlockStateProperties.POWER;

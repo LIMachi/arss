@@ -27,9 +27,10 @@ public class AnalogRedstoneLampBlock extends RedstoneLampBlock {
 
     public static final Properties PROPS = BlockBehaviour.Properties.of(Material.BUILDABLE_GLASS).lightLevel(AnalogRedstoneLampBlock::litBlockEmission).strength(0.3F).sound(SoundType.GLASS);
 
-    @RegisterBlock
+    @RegisterBlock(name = "analog_redstone_lamp")
     public static RegistryObject<Block> R_BLOCK;
-    @RegisterBlockItem(jeiInfoKey = "jei.info.analog_redstone_lamp")
+
+    @RegisterBlockItem(name = "analog_redstone_lamp", block = "analog_redstone_lamp", jeiInfoKey = "jei.info.analog_redstone_lamp")
     public static RegistryObject<Item> R_ITEM;
 
     public static final IntegerProperty POWER = BlockStateProperties.POWER;

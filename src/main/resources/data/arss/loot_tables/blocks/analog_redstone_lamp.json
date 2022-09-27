@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "arss:analog_jukebox_item"
+          "name": "arss:analog_redstone_lamp"
         }
       ],
       "conditions": [

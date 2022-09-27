@@ -26,7 +26,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class AnalogJukeboxMenu extends AbstractContainerMenu {
 
-    @RegisterMenu
+    @RegisterMenu(name = "analog_jukebox")
     public static RegistryObject<MenuType<AnalogJukeboxMenu>> MENU;
 
     private final ContainerLevelAccess accessor;

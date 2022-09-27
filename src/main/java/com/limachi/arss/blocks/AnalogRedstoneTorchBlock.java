@@ -37,21 +37,21 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
 
     public static final BlockBehaviour.Properties PROPS = BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak().lightLevel((state) -> state.getValue(BlockStateProperties.LIT) ? 7 : 0).sound(SoundType.WOOD);
 
-    @RegisterBlock
+    @RegisterBlock(name = "analog_redstone_torch")
     public static RegistryObject<Block> R_BLOCK;
 
     public static RegistryObject<Item> R_ITEM;
 
     @StaticInit(Stage.BLOCK)
     public static void generateWallVariantAndSetTint() {
-        AnalogRedstoneWallTorchBlock.R_BLOCK = Registries.block(Arss.MOD_ID, "analog_redstone_wall_torch_block", AnalogRedstoneWallTorchBlock::new);
-        AnalogRedstoneBlockBlock.hasRedstoneTint(R_BLOCK);
-        AnalogRedstoneBlockBlock.hasRedstoneTint(AnalogRedstoneWallTorchBlock.R_BLOCK);
+        AnalogRedstoneWallTorchBlock.R_BLOCK = Registries.block(Arss.MOD_ID, "analog_redstone_wall_torch", AnalogRedstoneWallTorchBlock::new);
+        AnalogRedstoneBlock.hasRedstoneTint(R_BLOCK);
+        AnalogRedstoneBlock.hasRedstoneTint(AnalogRedstoneWallTorchBlock.R_BLOCK);
     }
 
     @StaticInit(Stage.ITEM)
     public static void generateItem() {
-        R_ITEM = Registries.item(Arss.MOD_ID, "analog_redstone_torch_item", ()->new StandingAndWallBlockItem(R_BLOCK.get(), AnalogRedstoneWallTorchBlock.R_BLOCK.get(), new Item.Properties().tab(Arss.getInstance().tab())), "jei.info.analog_redstone_torch");
+        R_ITEM = Registries.item(Arss.MOD_ID, "analog_redstone_torch", ()->new StandingAndWallBlockItem(R_BLOCK.get(), AnalogRedstoneWallTorchBlock.R_BLOCK.get(), new Item.Properties().tab(Arss.getInstance().tab())), "jei.info.analog_redstone_torch");
     }
 
 

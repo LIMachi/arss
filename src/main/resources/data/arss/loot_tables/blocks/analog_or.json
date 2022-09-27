@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "arss:signal_generator_item"
+          "name": "arss:analog_or"
         }
       ],
       "conditions": [

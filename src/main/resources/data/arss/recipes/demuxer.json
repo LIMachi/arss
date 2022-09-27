@@ -14,7 +14,7 @@
     }
   },
   "result": {
-    "item": "arss:demuxer_item",
+    "item": "arss:demuxer",
     "count": 2
   }
 }

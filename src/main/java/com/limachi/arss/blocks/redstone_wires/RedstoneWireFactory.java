@@ -1,7 +1,7 @@
 package com.limachi.arss.blocks.redstone_wires;
 
 import com.limachi.arss.Arss;
-import com.limachi.arss.blocks.AnalogRedstoneBlockBlock;
+import com.limachi.arss.blocks.AnalogRedstoneBlock;
 import com.limachi.lim_lib.registries.Registries;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.Util;
@@ -81,9 +81,9 @@ public abstract class RedstoneWireFactory {
                 builder.add(fRange);
             }
         }
-        RegistryObject<Block> R_BLOCK = Registries.block(Arss.MOD_ID, fName + "_block", Product::new);
-        AnalogRedstoneBlockBlock.hasRedstoneTint(R_BLOCK);
-        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName + "_item", ()->new BlockItem(R_BLOCK.get(), Arss.getInstance().defaultProps()), "jei.info." + fName);
+        RegistryObject<Block> R_BLOCK = Registries.block(Arss.MOD_ID, fName, Product::new);
+        AnalogRedstoneBlock.hasRedstoneTint(R_BLOCK);
+        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName, ()->new BlockItem(R_BLOCK.get(), Arss.getInstance().defaultProps()), "jei.info." + fName);
         REDSTONE_WIRES.put(fName, new Pair<>(R_ITEM, R_BLOCK));
     }
 }

@@ -40,23 +40,21 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @SuppressWarnings({"unused", "deprecation"})
 @ParametersAreNonnullByDefault
-public class AnalogRedstoneBlockBlock extends PoweredBlock implements IScrollBlockPowerOutput {
+public class AnalogRedstoneBlock extends PoweredBlock implements IScrollBlockPowerOutput {
 
     public static void hasRedstoneTint(RegistryObject<Block> block) {
-        DistExecutor.unsafeCallWhenOn(Dist.CLIENT, ()->()->{ ClientRegistries.setColor(block, AnalogRedstoneBlockBlock::getColor); return null; });
+        DistExecutor.unsafeCallWhenOn(Dist.CLIENT, ()->()->{ ClientRegistries.setColor(block, AnalogRedstoneBlock::getColor); return null; });
     }
 
     public static final Properties PROPS = BlockBehaviour.Properties.of(Material.METAL, MaterialColor.FIRE).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL).isRedstoneConductor((state, get, pos)->false);
 
-    @RegisterBlock
+    @RegisterBlock(name = "analog_redstone_block")
     public static RegistryObject<Block> R_BLOCK;
 
     @StaticInit(Stage.BLOCK)
-    public static void setTint() {
-        AnalogRedstoneBlockBlock.hasRedstoneTint(R_BLOCK);
-    }
+    public static void setTint() { AnalogRedstoneBlock.hasRedstoneTint(R_BLOCK); }
 
-    @RegisterBlockItem(jeiInfoKey = "jei.info.analog_redstone_block")
+    @RegisterBlockItem(name = "analog_redstone_block", block = "analog_redstone_block", jeiInfoKey = "jei.info.analog_redstone_block")
     public static RegistryObject<Item> R_ITEM;
 
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
@@ -66,7 +64,7 @@ public class AnalogRedstoneBlockBlock extends PoweredBlock implements IScrollBlo
         return RedStoneWireBlock.getColorForPower(state.getValue(POWER));
     }
 
-    public AnalogRedstoneBlockBlock() {
+    public AnalogRedstoneBlock() {
         super(PROPS);
         registerDefaultState(stateDefinition.any().setValue(POWER, 15).setValue(ArssBlockStateProperties.CAN_SCROLL, true));
     }

@@ -2,14 +2,14 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "arss:analog_nor_item"
+      "item": "arss:analog_nor"
     },
     {
-      "item": "arss:analog_and_item"
+      "item": "arss:analog_and"
     }
   ],
   "result": {
-    "item": "arss:analog_xor_item",
+    "item": "arss:analog_xor",
     "count": 2
   }
 }

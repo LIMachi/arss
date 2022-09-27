@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "arss:analog_cell_item"
+          "name": "arss:analog_jukebox"
         }
       ],
       "conditions": [

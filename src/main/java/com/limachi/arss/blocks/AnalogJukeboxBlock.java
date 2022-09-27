@@ -34,9 +34,11 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class AnalogJukeboxBlock extends BaseEntityBlock {
 
     public static final Properties PROPS = Properties.of(Material.WOOD, MaterialColor.DIRT).strength(2.0F, 6.0F);
-    @RegisterBlock
+
+    @RegisterBlock(name = "analog_jukebox")
     public static RegistryObject<Block> R_BLOCK;
-    @RegisterBlockItem(jeiInfoKey = "jei.info.analog_jukebox")
+
+    @RegisterBlockItem(name = "analog_jukebox", block = "analog_jukebox", jeiInfoKey = "jei.info.analog_jukebox")
     public static RegistryObject<Item> R_ITEM;
 
     public AnalogJukeboxBlock() { super(PROPS); }

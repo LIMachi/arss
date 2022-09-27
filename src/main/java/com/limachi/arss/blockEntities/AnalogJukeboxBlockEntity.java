@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class AnalogJukeboxBlockEntity extends BaseOpaqueContainerBlockEntity {
 
-    @RegisterBlockEntity
+    @RegisterBlockEntity(name = "analog_jukebox", block = "analog_jukebox")
     public static RegistryObject<BlockEntityType<?>> TYPE;
 
     protected int playing = 0;

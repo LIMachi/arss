@@ -14,7 +14,7 @@
     }
   },
   "result": {
-    "item": "arss:analog_redstone_torch_item",
+    "item": "arss:analog_redstone_torch",
     "count": 8
   }
 }

@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "arss:delayer_item"
+          "name": "arss:analog_nor"
         }
       ],
       "conditions": [

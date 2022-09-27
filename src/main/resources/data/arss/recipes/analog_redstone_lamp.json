@@ -14,7 +14,7 @@
     }
   },
   "result": {
-    "item": "arss:analog_redstone_lamp_item",
+    "item": "arss:analog_redstone_lamp",
     "count": 8
   }
 }

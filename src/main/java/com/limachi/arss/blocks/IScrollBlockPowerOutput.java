@@ -46,7 +46,7 @@ public interface IScrollBlockPowerOutput extends IScrollBlock, IProbeInfoGiver {
 
     @Override
     default void addProbeInfo(ProbeMode mode, IProbeInfo info, Player player, Level level, BlockState state, IProbeHitData hit) {
-        if (!(state.getBlock() instanceof AnalogRedstoneBlockBlock))
+        if (!(state.getBlock() instanceof AnalogRedstoneBlock))
             info.text(Component.translatable("top.info.stored_power", state.getValue(BlockStateProperties.POWER).toString()));
         info.text(Component.translatable("top.info." + (state.getValue(ArssBlockStateProperties.CAN_SCROLL) ? "unlocked" : "locked")));
     }

@@ -33,18 +33,19 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @SuppressWarnings("unused")
 @ParametersAreNonnullByDefault
-public class AnalogNoteBlockBlock extends NoteBlock implements IProbeInfoGiver {
+public class AnalogNoteBlock extends NoteBlock implements IProbeInfoGiver {
 
     public static final Properties PROPS = Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(0.8F);
 
-    @RegisterBlock
+    @RegisterBlock(name = "analog_note_block")
     public static RegistryObject<Block> R_BLOCK;
-    @RegisterBlockItem(jeiInfoKey = "jei.info.analog_note_block")
+
+    @RegisterBlockItem(name = "analog_note_block", block = "analog_note_block", jeiInfoKey = "jei.info.analog_note_block")
     public static RegistryObject<Item> R_ITEM;
 
     public static final BooleanProperty HIGH = ArssBlockStateProperties.HIGH;
 
-    public AnalogNoteBlockBlock() {
+    public AnalogNoteBlock() {
         super(PROPS);
         registerDefaultState(stateDefinition.any().setValue(INSTRUMENT, NoteBlockInstrument.HARP).setValue(NOTE, 0).setValue(POWERED, false).setValue(HIGH, false));
     }

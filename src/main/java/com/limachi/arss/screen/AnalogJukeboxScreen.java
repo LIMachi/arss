@@ -14,7 +14,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.system.NonnullDefault;
 
-@RegisterMenuScreen
+@RegisterMenuScreen(menu = "analog_jukebox")
 @NonnullDefault
 @SuppressWarnings("unused")
 @OnlyIn(Dist.CLIENT)

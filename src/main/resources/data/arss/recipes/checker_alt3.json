@@ -12,11 +12,11 @@
       "item": "minecraft:comparator"
     },
     "A": {
-      "item": "arss:adder_item"
+      "item": "arss:adder"
     }
   },
   "result": {
-    "item": "arss:checker_item",
+    "item": "arss:checker",
     "count": 2
   }
 }

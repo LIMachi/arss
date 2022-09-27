@@ -1,7 +1,7 @@
 package com.limachi.arss.blocks.diodes;
 
 import com.limachi.arss.Arss;
-import com.limachi.arss.blocks.AnalogRedstoneBlockBlock;
+import com.limachi.arss.blocks.AnalogRedstoneBlock;
 import com.limachi.lim_lib.registries.Registries;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -140,10 +140,10 @@ public class DiodeBlockFactory {
 
             gBlock = Product::new;
         }
-        RegistryObject<Block> R_BLOCK = Registries.block(Arss.MOD_ID, fName + "_block", gBlock);
+        RegistryObject<Block> R_BLOCK = Registries.block(Arss.MOD_ID, fName, gBlock);
         if (hasPowerTint)
-            AnalogRedstoneBlockBlock.hasRedstoneTint(R_BLOCK);
-        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName + "_item", ()->new BlockItem(R_BLOCK.get(), Arss.getInstance().defaultProps()), "jei.info." + fName);
+            AnalogRedstoneBlock.hasRedstoneTint(R_BLOCK);
+        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName, ()->new BlockItem(R_BLOCK.get(), Arss.getInstance().defaultProps()), "jei.info." + fName);
         DIODE_BLOCKS.put(fName, new Pair<>(R_ITEM, R_BLOCK));
     }
 }

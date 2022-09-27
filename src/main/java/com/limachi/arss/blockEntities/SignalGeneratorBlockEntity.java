@@ -30,7 +30,7 @@ public class SignalGeneratorBlockEntity extends BlockEntity {
         for (int i = 0; i < 360; ++i) sineGraph[i] = (int)Math.round((Math.sin(((double)i / 180. * Math.PI)) + 1.) / 2. * 15.);
     }
 
-    public static final RegistryObject<BlockEntityType<SignalGeneratorBlockEntity>> TYPE = Registries.blockEntity(Arss.MOD_ID, "signal_generator_block_entity", SignalGeneratorBlockEntity::new, DiodeBlockFactory.getBlockRegister("signal_generator"));
+    public static final RegistryObject<BlockEntityType<SignalGeneratorBlockEntity>> TYPE = Registries.blockEntity(Arss.MOD_ID, "signal_generator", SignalGeneratorBlockEntity::new, DiodeBlockFactory.getBlockRegister("signal_generator"));
 
     public SignalGeneratorBlockEntity(BlockPos pos, BlockState state) { super(TYPE.get(), pos, state); }
 
