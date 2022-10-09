@@ -1,5 +1,6 @@
 package com.limachi.arss.blockEntities;
 
+import com.limachi.lim_lib.SoundUtils;
 import com.limachi.lim_lib.registries.annotations.RegisterBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -41,7 +42,7 @@ public class AnalogJukeboxBlockEntity extends BaseOpaqueContainerBlockEntity {
         if (level != null) {
             ItemStack record = rsPower > 0 ? getItem(rsPower - 1) : ItemStack.EMPTY;
             playing = record.isEmpty() ? 0 : rsPower;
-            level.levelEvent(1010, worldPosition, record.isEmpty() ? 0 : Item.getId(record.getItem()));
+            SoundUtils.startRecord(level, worldPosition, record);
             setChanged();
             level.updateNeighborsAt(worldPosition, level.getBlockState(worldPosition).getBlock());
         }
@@ -54,7 +55,7 @@ public class AnalogJukeboxBlockEntity extends BaseOpaqueContainerBlockEntity {
                     int power = level.getBestNeighborSignal(worldPosition);
                     if (power == i + 1) {
                         playing = power;
-                        level.levelEvent(1010, worldPosition, Item.getId(recordStack.getItem()));
+                        SoundUtils.startRecord(level, worldPosition, recordStack);
                     }
                     setItem(i, recordStack);
                     level.updateNeighborsAt(worldPosition, level.getBlockState(worldPosition).getBlock());
@@ -71,7 +72,7 @@ public class AnalogJukeboxBlockEntity extends BaseOpaqueContainerBlockEntity {
                 if (!record.isEmpty()) {
                     if (playing == i) {
                         playing = 0;
-                        level.levelEvent(1010, worldPosition, 0);
+                        SoundUtils.stopRecord(level, worldPosition);
                     }
                     double d0 = (double)(level.random.nextFloat() * 0.7F) + (double)0.15F;
                     double d1 = (double)(level.random.nextFloat() * 0.7F) + (double)0.060000002F + 0.6D;
@@ -91,7 +92,7 @@ public class AnalogJukeboxBlockEntity extends BaseOpaqueContainerBlockEntity {
         if (level != null) {
             if (playing > 0) {
                 playing = 0;
-                level.levelEvent(1010, worldPosition, 0);
+                SoundUtils.stopRecord(level, worldPosition);
             }
             for (int i = 0; i < getContainerSize(); ++i) {
                 ItemStack record = getItem(i);
@@ -126,7 +127,8 @@ public class AnalogJukeboxBlockEntity extends BaseOpaqueContainerBlockEntity {
     public void setChanged() {
         if (playing != 0 && getItem(playing - 1).isEmpty()) {
             playing = 0;
-            level.levelEvent(1010, worldPosition, 0);
+            if (level != null)
+                SoundUtils.stopRecord(level, worldPosition);
         }
         super.setChanged();
     }

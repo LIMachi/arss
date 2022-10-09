@@ -1,6 +1,7 @@
 package com.limachi.arss.blocks;
 
 import com.limachi.arss.ArssBlockStateProperties;
+import com.limachi.lim_lib.SoundUtils;
 import com.limachi.lim_lib.integration.theOneProbePlugin.IProbeInfoGiver;
 import com.limachi.lim_lib.registries.annotations.RegisterBlock;
 import com.limachi.lim_lib.registries.annotations.RegisterBlockItem;
@@ -10,7 +11,6 @@ import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -105,11 +105,8 @@ public class AnalogNoteBlock extends NoteBlock implements IProbeInfoGiver {
     public boolean triggerEvent(BlockState state, Level level, BlockPos pos, int p_55026_, int p_55027_) {
         int note = getNote(state, level, pos);
         if (note != -1) {
-            net.minecraftforge.event.level.NoteBlockEvent.Play e = new net.minecraftforge.event.level.NoteBlockEvent.Play(level, pos, state, note, state.getValue(INSTRUMENT));
-            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) return false;
-            float f = (float)Math.pow(2.f, (double)(e.getVanillaNoteId() - 12) / 12.0D);
-            level.playSound(null, pos, e.getInstrument().getSoundEvent(), SoundSource.RECORDS, 3.0F, f);
-            level.addParticle(ParticleTypes.NOTE, (double)pos.getX() + 0.5D, (double)pos.getY() + 1.2D, (double)pos.getZ() + 0.5D, (double)e.getVanillaNoteId() / 24.0D, 0.0D, 0.0D);
+            SoundUtils.playNoteWithEvent(level, pos, state.getValue(INSTRUMENT), note);
+            level.addParticle(ParticleTypes.NOTE, (double)pos.getX() + 0.5D, (double)pos.getY() + 1.2D, (double)pos.getZ() + 0.5D, (double)note / 24.0D, 0.0D, 0.0D);
             return true;
         }
         return false;

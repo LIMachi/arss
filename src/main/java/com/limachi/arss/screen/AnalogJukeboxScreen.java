@@ -2,7 +2,7 @@ package com.limachi.arss.screen;
 
 import com.limachi.arss.Arss;
 import com.limachi.arss.menu.AnalogJukeboxMenu;
-import com.limachi.lim_lib.registries.client.annotations.RegisterMenuScreen;
+import com.limachi.lim_lib.registries.clientAnnotations.RegisterMenuScreen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;

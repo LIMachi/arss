@@ -1,6 +1,7 @@
 package com.limachi.arss.blocks.diodes;
 
 import com.limachi.lim_lib.Configs;
+import com.limachi.lim_lib.SoundUtils;
 import com.limachi.lim_lib.integration.theOneProbePlugin.IProbeInfoGiver;
 import com.limachi.lim_lib.registries.StaticInit;
 import com.mojang.datafixers.util.Pair;
@@ -182,8 +183,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeI
         if (modeProp != null && player.getAbilities().mayBuild) {
             state = player.isShiftKeyDown() ? cycleBack(state, modeProp) : state.cycle(modeProp);
             Enum<?> s = state.getValue(modeProp);
-            float f = s.ordinal() * 0.05F + 0.5F;
-            level.playSound(player, pos, SoundEvents.COMPARATOR_CLICK, SoundSource.BLOCKS, 0.3F, f);
+            SoundUtils.playComparatorClick(level, pos, s.ordinal());
             player.displayClientMessage(Component.translatable("display.arss." + name + ".mode." + s), true);
             level.setBlock(pos, state, 2);
             refreshOutputState(level, pos, state);

@@ -31,6 +31,6 @@ issueTrackerURL="https://github.com/LIMachi/arss/issues"
 [[dependencies.arss]]
     modId="lim_lib"
     mandatory=true
-    versionRange="[1.19.2-A1.2.0,)"
+    versionRange="[1.19.2-A1.2.1,)"
     ordering="AFTER"
     side="BOTH"

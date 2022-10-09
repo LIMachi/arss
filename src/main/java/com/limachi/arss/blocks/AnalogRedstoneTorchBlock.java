@@ -5,6 +5,7 @@ import com.limachi.arss.ArssBlockStateProperties;
 import com.limachi.lim_lib.registries.Registries;
 import com.limachi.lim_lib.registries.Stage;
 import com.limachi.lim_lib.registries.StaticInit;
+import com.limachi.lim_lib.registries.annotations.HasRedstoneTint;
 import com.limachi.lim_lib.registries.annotations.RegisterBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,6 +38,7 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
 
     public static final BlockBehaviour.Properties PROPS = BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak().lightLevel((state) -> state.getValue(BlockStateProperties.LIT) ? 7 : 0).sound(SoundType.WOOD);
 
+    @HasRedstoneTint
     @RegisterBlock(name = "analog_redstone_torch")
     public static RegistryObject<Block> R_BLOCK;
 
@@ -45,8 +47,6 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
     @StaticInit(Stage.BLOCK)
     public static void generateWallVariantAndSetTint() {
         AnalogRedstoneWallTorchBlock.R_BLOCK = Registries.block(Arss.MOD_ID, "analog_redstone_wall_torch", AnalogRedstoneWallTorchBlock::new);
-        AnalogRedstoneBlock.hasRedstoneTint(R_BLOCK);
-        AnalogRedstoneBlock.hasRedstoneTint(AnalogRedstoneWallTorchBlock.R_BLOCK);
     }
 
     @StaticInit(Stage.ITEM)
@@ -100,6 +100,7 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
 
     public static class AnalogRedstoneWallTorchBlock extends RedstoneWallTorchBlock implements IScrollBlockPowerOutput {
 
+        @HasRedstoneTint
         public static RegistryObject<Block> R_BLOCK;
 
         public static final IntegerProperty POWER = BlockStateProperties.POWER;

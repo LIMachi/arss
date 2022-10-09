@@ -1,8 +1,7 @@
 package com.limachi.arss.blocks;
 
 import com.limachi.arss.ArssBlockStateProperties;
-import com.limachi.lim_lib.registries.Stage;
-import com.limachi.lim_lib.registries.StaticInit;
+import com.limachi.lim_lib.registries.annotations.HasRedstoneTint;
 import com.limachi.lim_lib.registries.annotations.RegisterBlock;
 import com.limachi.lim_lib.registries.annotations.RegisterBlockItem;
 import net.minecraft.core.BlockPos;
@@ -35,11 +34,9 @@ public class AnalogButtonBlock extends StoneButtonBlock implements IScrollBlockP
 
     public static final Properties PROPS = BlockBehaviour.Properties.of(Material.DECORATION).noCollission().strength(0.5F);
 
+    @HasRedstoneTint
     @RegisterBlock(name = "analog_button")
     public static RegistryObject<Block> R_BLOCK;
-
-    @StaticInit(Stage.BLOCK)
-    public static void setTint() { AnalogRedstoneBlock.hasRedstoneTint(R_BLOCK); }
 
     @RegisterBlockItem(name = "analog_button", block = "analog_button", jeiInfoKey = "jei.info.analog_button")
     public static RegistryObject<Item> R_ITEM;
