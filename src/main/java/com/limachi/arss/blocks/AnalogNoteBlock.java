@@ -2,11 +2,11 @@ package com.limachi.arss.blocks;
 
 import com.limachi.arss.ArssBlockStateProperties;
 import com.limachi.lim_lib.SoundUtils;
-import com.limachi.lim_lib.integration.theOneProbePlugin.IProbeInfoGiver;
 import com.limachi.lim_lib.registries.annotations.RegisterBlock;
 import com.limachi.lim_lib.registries.annotations.RegisterBlockItem;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.IProbeInfoAccessor;
 import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -33,7 +33,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @SuppressWarnings("unused")
 @ParametersAreNonnullByDefault
-public class AnalogNoteBlock extends NoteBlock implements IProbeInfoGiver {
+public class AnalogNoteBlock extends NoteBlock implements IProbeInfoAccessor {
 
     public static final Properties PROPS = Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(0.8F);
 

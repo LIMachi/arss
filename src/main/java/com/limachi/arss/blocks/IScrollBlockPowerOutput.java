@@ -2,10 +2,10 @@ package com.limachi.arss.blocks;
 
 import com.limachi.arss.Arss;
 import com.limachi.arss.ArssBlockStateProperties;
-import com.limachi.lim_lib.integration.theOneProbePlugin.IProbeInfoGiver;
 import com.limachi.lim_lib.scrollSystem.IScrollBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.IProbeInfoAccessor;
 import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  * can be implemented on block / blockentity
  * do remember that blocks are singleton and not blockentity when using 'this'
  */
-public interface IScrollBlockPowerOutput extends IScrollBlock, IProbeInfoGiver {
+public interface IScrollBlockPowerOutput extends IScrollBlock, IProbeInfoAccessor {
 
     static int clampModulus(int val, int base, int modulus) {
         while (val < base)

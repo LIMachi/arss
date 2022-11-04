@@ -2,20 +2,14 @@ package com.limachi.arss.blocks.diodes;
 
 import com.limachi.lim_lib.Configs;
 import com.limachi.lim_lib.SoundUtils;
-import com.limachi.lim_lib.integration.theOneProbePlugin.IProbeInfoGiver;
 import com.limachi.lim_lib.registries.StaticInit;
 import com.mojang.datafixers.util.Pair;
-import mcjty.theoneprobe.api.ElementAlignment;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
+import mcjty.theoneprobe.api.*;
 import mcjty.theoneprobe.apiimpl.styles.ItemStyle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -60,7 +54,7 @@ import java.util.List;
 
 @StaticInit
 @SuppressWarnings({"deprecation", "unused"})
-public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeInfoGiver {
+public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeInfoAccessor {
 
     @Configs.Config(reload = true, cmt="Read sides like the back (ex: will use the content of a chest on the side as a valid redstone signal)")
     static public boolean ALL_POWERS_ON_SIDES = true;
