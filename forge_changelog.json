@@ -3,13 +3,14 @@
   "promos": {
     "1.19.2-latest": "1.19.2-B1.0",
     "1.19.2-recommended": "1.19.2-B1.0",
-    "1.18.2-latest": "B1.5",
-    "1.18.2-recommended": "B1.5"
+    "1.18.2-latest": "1.18.2-B1.6",
+    "1.18.2-recommended": "1.18.2-B1.6"
   },
   "1.19.2": {
     "1.19.2-B1.0": "Ported to 1.19.2, now requires my library: LimLib. Moved help from tooltips to JEI info tab. Fixed most bugs and oversights. Added compatibility with The One Probe. Added french translation."
   },
   "1.18.2": {
+    "1.18.2-B1.6": "Standardisation of version naming, back port of 1.19.2 version, with a fix for diodes trying to generate a signal above 15. Now requires lim_lib version 1.18.2-B1.1.",
     "B1.5": "Bug fixes (Analog Jukebox): Non disc item can no longer be inserted. Disc stop playing when removed via hopper/pipe.",
     "B1.4": "Bug fixes: Removed invalid client calls server side. Fixed missing particles. Fixed missing tool type for breaking some blocks.",
     "B1.3": "Bug fixe: added missing loot tables to comparator and note block.",

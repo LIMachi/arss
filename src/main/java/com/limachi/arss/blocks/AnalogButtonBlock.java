@@ -7,6 +7,7 @@ import com.limachi.lim_lib.registries.annotations.RegisterBlockItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent; //VERSION 1.18.2
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -71,7 +72,10 @@ public class AnalogButtonBlock extends StoneButtonBlock implements IScrollBlockP
         if (held == Items.REDSTONE_TORCH || held == AnalogRedstoneTorchBlock.R_ITEM.get()) {
             boolean can_scroll = !state.getValue(ArssBlockStateProperties.CAN_SCROLL);
             level.setBlock(pos, state.setValue(ArssBlockStateProperties.CAN_SCROLL, can_scroll), 3);
-            player.displayClientMessage(Component.translatable("display.arss.scrollable_block.can_scroll." + can_scroll), true);
+            player.displayClientMessage(
+//                    Component.translatable( //VERSION 1.19.2
+                    new TranslatableComponent( //VERSION 1.18.2
+                            "display.arss.scrollable_block.can_scroll." + can_scroll), true);
             return InteractionResult.SUCCESS;
         }
         return super.use(state, level, pos, player, hand, hit);

@@ -11,6 +11,7 @@ import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent; //VERSION 1.18.2
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -86,7 +87,10 @@ public class AnalogNoteBlock extends NoteBlock implements IProbeInfoAccessor {
                 if (_new == -1) return InteractionResult.FAIL;
             }
             level.setBlock(pos, state.setValue(NOTE, _new != -1 ? _new : state.getValue(NOTE)).setValue(HIGH, !state.getValue(HIGH)), 3);
-            player.displayClientMessage(Component.translatable("display.arss.analog_note_block.high_pitch." + level.getBlockState(pos).getValue(HIGH)), true);
+            player.displayClientMessage(
+//                    Component.translatable( //VERSION 1.19.2
+                    new TranslatableComponent( //VERSION 1.18.2
+                            "display.arss.analog_note_block.high_pitch." + level.getBlockState(pos).getValue(HIGH)), true);
             playNote(level, pos);
             player.awardStat(Stats.TUNE_NOTEBLOCK);
             return InteractionResult.CONSUME;
@@ -114,6 +118,12 @@ public class AnalogNoteBlock extends NoteBlock implements IProbeInfoAccessor {
 
     @Override
     public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, Player player, Level level, BlockState blockState, IProbeHitData iProbeHitData) {
-        iProbeInfo.text(Component.translatable("top.info.pitch").append(Component.translatable("top.info.pitch." + (blockState.getValue(HIGH) ? "high" : "low"))));
+        iProbeInfo.text(
+//                Component.translatable( //VERSION 1.19.2
+                new TranslatableComponent( //VERSION 1.18.2
+                        "top.info.pitch").append(
+//                                Component.translatable( //VERSION 1.19.2
+                                new TranslatableComponent( //VERSION 1.18.2
+                                        "top.info.pitch." + (blockState.getValue(HIGH) ? "high" : "low"))));
     }
 }

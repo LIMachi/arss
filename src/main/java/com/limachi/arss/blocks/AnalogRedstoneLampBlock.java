@@ -5,7 +5,8 @@ import com.limachi.lim_lib.registries.annotations.RegisterBlock;
 import com.limachi.lim_lib.registries.annotations.RegisterBlockItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
+//import net.minecraft.util.RandomSource; //VERSION 1.19.2
+import java.util.Random; //VERSION 1.18.2
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -70,7 +71,10 @@ public class AnalogRedstoneLampBlock extends RedstoneLampBlock {
     }
 
     @Override
-    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rng) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos,
+//                     RandomSource //VERSION 1.19.2
+                             Random //VERSION 1.18.2
+                             rng) {
         if (state.getValue(LIT) && !level.hasNeighborSignal(pos))
             level.setBlock(pos, state.setValue(LIT, false).setValue(POWER, 0), 2);
     }

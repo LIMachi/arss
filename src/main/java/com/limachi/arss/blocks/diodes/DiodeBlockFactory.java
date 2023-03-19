@@ -24,6 +24,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.function.Supplier;
 
 @SuppressWarnings({"deprecation", "unused"})
@@ -42,6 +44,10 @@ public class DiodeBlockFactory {
     public static final Item.Properties I_PROPS = new Item.Properties().tab(Arss.getInstance().tab());
 
     private static final HashMap<String, Pair<RegistryObject<Item>, RegistryObject<Block>>> DIODE_BLOCKS = new HashMap<>();
+
+    public static Iterator<Map.Entry<String, Pair<RegistryObject<Item>, RegistryObject<Block>>>> iter() {
+        return DIODE_BLOCKS.entrySet().iterator();
+    }
 
     public static Block getBlock(String name) { return DIODE_BLOCKS.get(name).getSecond().get(); }
 

@@ -10,9 +10,10 @@ import mcjty.theoneprobe.apiimpl.styles.ItemStyle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent; //VERSION 1.18.2
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
+//import net.minecraft.util.RandomSource; //VERSION 1.19.2
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,6 +40,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 /**
  * common class for comparator like blocks (get power at the back by getting analog signal/item frame) and expect potential power on the sides (the highest value)
@@ -181,7 +183,10 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeI
                 state = player.isShiftKeyDown() ? cycleBack(state, modeProp) : state.cycle(modeProp);
                 Enum<?> s = state.getValue(modeProp);
                 SoundUtils.playComparatorClick(level, pos, s.ordinal());
-                player.displayClientMessage(Component.translatable("display.arss." + name + ".mode." + s), true);
+                player.displayClientMessage(
+//                        Component.translatable( //VERSION 1.19.2
+                        new TranslatableComponent( //VERSION 1.18.2
+                                "display.arss." + name + ".mode." + s), true);
                 level.setBlock(pos, state, 2);
                 refreshOutputState(level, pos, state);
                 return InteractionResult.sidedSuccess(level.isClientSide);
@@ -247,7 +252,10 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeI
     }
 
     @Override
-    public void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource rng) {
+    public void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull
+//    RandomSource //VERSION 1.19.2
+    Random //VERSION 1.18.2
+            rng) {
         refreshOutputState(level, pos, state);
         if (isTicking) {
             int delay = getDelay(state);
@@ -286,8 +294,17 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeI
     public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, Player player, Level level, BlockState blockState, IProbeHitData iProbeHitData) {
         IProbeInfo v = iProbeInfo.vertical(iProbeInfo.defaultLayoutStyle().spacing(2));
         IProbeInfo h = v.horizontal(iProbeInfo.defaultLayoutStyle().spacing(2).alignment(ElementAlignment.ALIGN_TOPLEFT));
-        h.item(new ItemStack(Items.REDSTONE), new ItemStyle().height(14).width(14)).text(Component.translatable("top.info.power", blockState.getValue(POWER).toString()));
+        h.item(new ItemStack(Items.REDSTONE), new ItemStyle().height(14).width(14)).text(
+//                Component.translatable( //VERSION 1.19.2
+                new TranslatableComponent( //VERSION 1.18.2
+                        "top.info.power", blockState.getValue(POWER).toString()));
         if (modeProp != null)
-            v.text(Component.translatable("top.info.mode").append(Component.translatable("display.arss." + name + ".mode." + blockState.getValue(modeProp))));
+            v.text(
+//                    Component.translatable( //VERSION 1.19.2
+                    new TranslatableComponent( //VERSION 1.18.2
+                            "top.info.mode").append(
+//                                    Component.translatable( //VERSION 1.19.2
+                                    new TranslatableComponent( //VERSION 1.18.2
+                                            "display.arss." + name + ".mode." + blockState.getValue(modeProp))));
     }
 }

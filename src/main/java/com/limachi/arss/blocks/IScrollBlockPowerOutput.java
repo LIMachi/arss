@@ -9,6 +9,8 @@ import mcjty.theoneprobe.api.IProbeInfoAccessor;
 import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent; //VERSION 1.18.2
+import net.minecraft.network.chat.TranslatableComponent; //VERSION 1.18.2
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -36,7 +38,10 @@ public interface IScrollBlockPowerOutput extends IScrollBlock, IProbeInfoAccesso
 
     @Override
     default void scrollFeedBack(Level level, BlockPos pos, int delta, Player player) {
-        player.displayClientMessage(Component.literal(Integer.toString(clampModulus(level.getBlockState(pos).getValue(BlockStateProperties.POWER) + delta, 1, 15))), true);
+        player.displayClientMessage(
+//                Component.literal( //VERSION 1.19.2
+                    new TextComponent( //VERSION 1.18.2
+                        Integer.toString(clampModulus(level.getBlockState(pos).getValue(BlockStateProperties.POWER) + delta, 1, 15))), true);
     }
 
     @Override
@@ -47,7 +52,13 @@ public interface IScrollBlockPowerOutput extends IScrollBlock, IProbeInfoAccesso
     @Override
     default void addProbeInfo(ProbeMode mode, IProbeInfo info, Player player, Level level, BlockState state, IProbeHitData hit) {
         if (!(state.getBlock() instanceof AnalogRedstoneBlock))
-            info.text(Component.translatable("top.info.stored_power", state.getValue(BlockStateProperties.POWER).toString()));
-        info.text(Component.translatable("top.info." + (state.getValue(ArssBlockStateProperties.CAN_SCROLL) ? "unlocked" : "locked")));
+            info.text(
+//                    Component.translatable( //VERSION 1.19.2
+                    new TranslatableComponent( //VERSION 1.18.2
+                            "top.info.stored_power", state.getValue(BlockStateProperties.POWER).toString()));
+        info.text(
+//                Component.translatable( //VERSION 1.19.2
+                new TranslatableComponent( //VERSION 1.18.2
+                        "top.info." + (state.getValue(ArssBlockStateProperties.CAN_SCROLL) ? "unlocked" : "locked")));
     }
 }

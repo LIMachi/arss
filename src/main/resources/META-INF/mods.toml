@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[43,)"
+loaderVersion="[40,)"
 license="All rights reserved"
 issueTrackerURL="https://github.com/LIMachi/arss/issues"
 
@@ -17,20 +17,20 @@ issueTrackerURL="https://github.com/LIMachi/arss/issues"
 [[dependencies.arss]]
     modId="forge"
     mandatory=true
-    versionRange="[43,)"
+    versionRange="[40,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.arss]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19.2,1.20)"
+    versionRange="[1.18.2,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.arss]]
     modId="lim_lib"
     mandatory=true
-    versionRange="[1.19.2-B1.0,)"
+    versionRange="[1.18.2-B1.1,)"
     ordering="AFTER"
     side="BOTH"

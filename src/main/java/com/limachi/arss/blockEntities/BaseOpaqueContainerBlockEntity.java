@@ -11,7 +11,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+//import net.minecraftforge.common.capabilities.ForgeCapabilities; VERSION 1.19.2
+import net.minecraftforge.items.CapabilityItemHandler; //VERSION 1.18.2
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -60,7 +61,10 @@ public class BaseOpaqueContainerBlockEntity extends BlockEntity implements Conta
     protected @Nonnull IItemHandler createUnSidedHandler() { return new InvWrapper(this); }
 
     public @Nonnull <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
-        if (!this.remove && cap == ForgeCapabilities.ITEM_HANDLER)
+        if (!this.remove && cap ==
+                CapabilityItemHandler.ITEM_HANDLER_CAPABILITY //VERSION 1.18.2
+//                ForgeCapabilities.ITEM_HANDLER //VERSION 1.19.2
+        )
             return itemHandler.cast();
         return super.getCapability(cap, side);
     }

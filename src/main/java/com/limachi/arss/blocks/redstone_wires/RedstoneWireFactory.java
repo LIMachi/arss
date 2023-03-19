@@ -21,12 +21,18 @@ import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 @ParametersAreNonnullByDefault
 public abstract class RedstoneWireFactory {
 
     private static final HashMap<String, Pair<RegistryObject<Item>, RegistryObject<Block>>> REDSTONE_WIRES = new HashMap<>();
+
+    public static Iterator<Map.Entry<String, Pair<RegistryObject<Item>, RegistryObject<Block>>>> iter() {
+        return REDSTONE_WIRES.entrySet().iterator();
+    }
 
     public static Block getBlock(String name) { return REDSTONE_WIRES.get(name).getSecond().get(); }
     public static RegistryObject<Block> getBlockRegister(String name) { return REDSTONE_WIRES.get(name).getSecond(); }

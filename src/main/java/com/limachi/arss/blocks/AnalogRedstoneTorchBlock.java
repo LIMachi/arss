@@ -10,8 +10,10 @@ import com.limachi.lim_lib.registries.annotations.RegisterBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent; //VERSION 1.18.2
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
+//import net.minecraft.util.RandomSource; //VERSION 1.19.2
+import java.util.Random; //VERSION 1.18.2
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -70,7 +72,10 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
     }
 
     @Override
-    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rng) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos,
+//                     RandomSource //VERSION 1.19.2
+                     Random //VERSION 1.18.2
+                     rng) {
         boolean flag = hasNeighborSignal(level, pos, state);
 
         if (state.getValue(LIT)) {
@@ -92,7 +97,10 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
         if (held == Items.REDSTONE_TORCH || held == AnalogRedstoneTorchBlock.R_ITEM.get()) {
             boolean can_scroll = !state.getValue(ArssBlockStateProperties.CAN_SCROLL);
             level.setBlock(pos, state.setValue(ArssBlockStateProperties.CAN_SCROLL, can_scroll), 3);
-            player.displayClientMessage(Component.translatable("display.arss.scrollable_block.can_scroll." + can_scroll), true);
+            player.displayClientMessage(
+//                    Component.translatable( //VERSION 1.19.2
+                    new TranslatableComponent( //VERSION 1.18.2
+                            "display.arss.scrollable_block.can_scroll." + can_scroll), true);
             return InteractionResult.SUCCESS;
         }
         return super.use(state, level, pos, player, hand, hit);
@@ -127,7 +135,10 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
         }
 
         @Override
-        public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rng) {
+        public void tick(BlockState state, ServerLevel level, BlockPos pos,
+//                     RandomSource //VERSION 1.19.2
+                         Random //VERSION 1.18.2
+                         rng) {
             boolean flag = hasNeighborSignal(level, pos, state);
 
             if (state.getValue(LIT)) {
@@ -149,7 +160,10 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
             if (held == Items.REDSTONE_TORCH || held == AnalogRedstoneTorchBlock.R_ITEM.get()) {
                 boolean can_scroll = !state.getValue(ArssBlockStateProperties.CAN_SCROLL);
                 level.setBlock(pos, state.setValue(ArssBlockStateProperties.CAN_SCROLL, can_scroll), 3);
-                player.displayClientMessage(Component.translatable("display.arss.scrollable_block.can_scroll." + can_scroll), true);
+                player.displayClientMessage(
+//                    Component.translatable( //VERSION 1.19.2
+                    new TranslatableComponent( //VERSION 1.18.2
+                                "display.arss.scrollable_block.can_scroll." + can_scroll), true);
                 return InteractionResult.SUCCESS;
             }
             return super.use(state, level, pos, player, hand, hit);
