@@ -2,6 +2,7 @@ package com.limachi.arss.blocks.diodes;
 
 import com.limachi.lim_lib.Configs;
 import com.limachi.lim_lib.SoundUtils;
+import com.limachi.lim_lib.blockEntities.IOnUseBlockListener;
 import com.limachi.lim_lib.registries.StaticInit;
 import com.mojang.datafixers.util.Pair;
 import mcjty.theoneprobe.api.*;
@@ -10,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -31,8 +33,8 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.ticks.TickPriority;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Iterator;
@@ -80,15 +82,15 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeI
     }
 
     @Override
-    protected int getDelay(@NotNull BlockState state) { return 2 * delay; }
+    protected int getDelay(@Nonnull BlockState state) { return 2 * delay; }
 
     @Override
-    protected int getOutputSignal(@NotNull BlockGetter level, @NotNull BlockPos pos, BlockState state) { return state.getValue(POWER); }
+    protected int getOutputSignal(@Nonnull BlockGetter level, @Nonnull BlockPos pos, BlockState state) { return state.getValue(POWER); }
 
     abstract protected BlockState calculateOutputSignal(boolean test, Level level, BlockPos pos, BlockState state);
 
     @Override
-    protected boolean shouldTurnOn(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state) {
+    protected boolean shouldTurnOn(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
         return calculateOutputSignal(true, level, pos, state).getValue(POWER) > 0;
     }
 
@@ -125,7 +127,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeI
         }
     }
 
-    protected int commonSignalGetter(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Direction back) {
+    protected int commonSignalGetter(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull Direction back) {
         int i = getDirectionalSignal(level, pos, state, back);
         BlockPos backPos = pos.relative(back);
         BlockState t_state = level.getBlockState(backPos);
@@ -140,11 +142,11 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeI
                 i = j;
             }
         }
-        return i;
+        return Mth.clamp(i, 0, 15);
     }
 
     @Override
-    protected int getInputSignal(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state) {
+    protected int getInputSignal(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
         return commonSignalGetter(level, pos, state, state.getValue(FACING));
     }
 
@@ -173,21 +175,28 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeI
     }
 
     @Override
-    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
-        if (modeProp != null && player.getAbilities().mayBuild) {
-            state = player.isShiftKeyDown() ? cycleBack(state, modeProp) : state.cycle(modeProp);
-            Enum<?> s = state.getValue(modeProp);
-            SoundUtils.playComparatorClick(level, pos, s.ordinal());
-            player.displayClientMessage(Component.translatable("display.arss." + name + ".mode." + s), true);
-            level.setBlock(pos, state, 2);
-            refreshOutputState(level, pos, state);
-            return InteractionResult.sidedSuccess(level.isClientSide);
+    public @Nonnull InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
+        if (player.getAbilities().mayBuild) {
+            if (modeProp != null) {
+                state = player.isShiftKeyDown() ? cycleBack(state, modeProp) : state.cycle(modeProp);
+                Enum<?> s = state.getValue(modeProp);
+                SoundUtils.playComparatorClick(level, pos, s.ordinal());
+                player.displayClientMessage(Component.translatable("display.arss." + name + ".mode." + s), true);
+                level.setBlock(pos, state, 2);
+                refreshOutputState(level, pos, state);
+                return InteractionResult.sidedSuccess(level.isClientSide);
+            } else if (this instanceof EntityBlock && level.getBlockEntity(pos) instanceof IOnUseBlockListener useListener) {
+                InteractionResult out = useListener.use(state, level, pos, player, hand, hit);
+                refreshOutputState(level, pos, state);
+                return out;
+            }
+
         }
         return InteractionResult.PASS;
     }
 
     @Override
-    protected void checkTickOnNeighbor(Level level, @NotNull BlockPos pos, @NotNull BlockState state) {
+    protected void checkTickOnNeighbor(Level level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
         if (!level.getBlockTicks().willTickThisTick(pos, this)) {
             BlockState newState = calculateOutputSignal(true, level, pos, state);
             if (newState != state) {
@@ -204,11 +213,11 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeI
     }
 
     static BlockState setPower(BlockState state, int power) {
-        return state.getValue(POWER) != power ? state.setValue(POWER, power) : state;
+        return state.getValue(POWER) != power ? state.setValue(POWER, Mth.clamp(power, 0, 15)) : state;
     }
 
     @Override
-    protected int getAlternateSignalAt(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull Direction dir) {
+    protected int getAlternateSignalAt(@Nonnull LevelReader level, @Nonnull BlockPos pos, @Nonnull Direction dir) {
         if (ALL_POWERS_ON_SIDES) {
             BlockPos start = pos.relative(dir.getOpposite());
             return commonSignalGetter((Level) level, start, level.getBlockState(start), dir);
@@ -238,7 +247,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeI
     }
 
     @Override
-    public void tick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource rng) {
+    public void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource rng) {
         refreshOutputState(level, pos, state);
         if (isTicking) {
             int delay = getDelay(state);
@@ -259,7 +268,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeI
     }
 
     @Override
-    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull LivingEntity player, @NotNull ItemStack stack) {
+    public void setPlacedBy(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull LivingEntity player, @Nonnull ItemStack stack) {
         if (isTicking || shouldTurnOn(level, pos, state))
             level.scheduleTick(pos, this, 1);
     }

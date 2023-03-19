@@ -20,8 +20,8 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.HashMap;
 import java.util.function.Supplier;
@@ -58,6 +58,8 @@ public class DiodeBlockFactory {
     public static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, Property<?> ... extraProps) { create(fName, fMode, fGen, PROPS, I_PROPS, 1, false, false, false, null, extraProps); }
 
     public static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, BlockEntityBuilder beb, Property<?> ... extraProps) { create(fName, fMode, fGen, PROPS, I_PROPS, 1, false, true, false, beb, extraProps); }
+
+    public static void create(String fName, SignalGenerator fGen, BlockEntityBuilder beb, Property<?> ... extraProps) { create(fName, null, fGen, PROPS, I_PROPS, 1, false, true, false, beb, extraProps); }
 
     public static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, boolean hasPowerTint, Property<?> ... extraProps) { create(fName, fMode, fGen, PROPS, I_PROPS, 1, false, false, hasPowerTint, null, extraProps); }
 
@@ -125,7 +127,7 @@ public class DiodeBlockFactory {
                     return fGen.calculateOutputSignal(test, level, pos, state);
                 }
 
-                public boolean triggerEvent(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, int e1, int e2) {
+                public boolean triggerEvent(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, int e1, int e2) {
                     super.triggerEvent(state, level, pos, e1, e2);
                     BlockEntity blockentity = level.getBlockEntity(pos);
                     return blockentity != null && blockentity.triggerEvent(e1, e2);
@@ -133,7 +135,7 @@ public class DiodeBlockFactory {
 
                 @Nullable
                 @Override
-                public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
+                public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
                     return beb.build(pos, state);
                 }
             }

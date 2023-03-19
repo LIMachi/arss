@@ -12,8 +12,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.BiConsumer;
@@ -34,12 +34,14 @@ public class SignalGeneratorBlockEntity extends BlockEntity {
 
     public SignalGeneratorBlockEntity(BlockPos pos, BlockState state) { super(TYPE.get(), pos, state); }
 
-    protected void saveAdditional(@NotNull CompoundTag tag) {
+    @Override
+    protected void saveAdditional(@Nonnull CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putInt("Step", step);
     }
 
-    public void load(@NotNull CompoundTag tag) {
+    @Override
+    public void load(@Nonnull CompoundTag tag) {
         super.load(tag);
         step = tag.getInt("Step");
     }

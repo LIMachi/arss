@@ -119,7 +119,7 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.19.2-43.1.25'
 
     dependencies {
-        implementation fg.deobf("com.limachi.lim_lib:lim_lib:1.19.2-${lim_lib_version}") { changing = true }
+        implementation fg.deobf("com.limachi.lim_lib:lim_lib:${mc_version}-${lim_lib_version}") { changing = true }
 
         // compile against the JEI API but do not include it at runtime
         compileOnly(fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}"))

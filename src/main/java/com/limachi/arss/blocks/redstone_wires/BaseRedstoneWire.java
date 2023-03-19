@@ -17,8 +17,8 @@ import net.minecraft.world.level.block.state.properties.RedstoneSide;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -44,12 +44,12 @@ public abstract class BaseRedstoneWire extends RedStoneWireBlock {
     }
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext ctx) {
+    public @Nonnull VoxelShape getShape(BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext ctx) {
         return SHAPES_CACHE.get(state.setValue(POWER, 0).setValue(range, 0));
     }
 
     @Override
-    protected @NotNull BlockState getMissingConnections(BlockGetter level, BlockState state, BlockPos pos) {
+    protected @Nonnull BlockState getMissingConnections(BlockGetter level, BlockState state, BlockPos pos) {
         boolean flag = !level.getBlockState(pos.above()).isRedstoneConductor(level, pos);
 
         for(Direction direction : Direction.Plane.HORIZONTAL) {
@@ -63,7 +63,7 @@ public abstract class BaseRedstoneWire extends RedStoneWireBlock {
     }
 
     @Override
-    protected @NotNull BlockState getConnectionState(BlockGetter level, BlockState state, BlockPos pos) {
+    protected @Nonnull BlockState getConnectionState(BlockGetter level, BlockState state, BlockPos pos) {
         boolean flag = isDot(state);
         state = getMissingConnections(level, defaultBlockState().setValue(POWER, state.getValue(POWER)).setValue(range, state.getValue(range)), pos);
         if (!flag || !isDot(state)) {
@@ -128,12 +128,12 @@ public abstract class BaseRedstoneWire extends RedStoneWireBlock {
     }
 
     @Override
-    protected @NotNull RedstoneSide getConnectingSide(BlockGetter level, BlockPos pos, Direction dir) {
+    protected @Nonnull RedstoneSide getConnectingSide(BlockGetter level, BlockPos pos, Direction dir) {
         return this.getConnectingSide(level, pos, dir, !level.getBlockState(pos.above()).isRedstoneConductor(level, pos));
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState state1, @NotNull Direction dir, @NotNull BlockState state2, @NotNull LevelAccessor level, @NotNull BlockPos pos1, @NotNull BlockPos pos2) {
+    public @Nonnull BlockState updateShape(@Nonnull BlockState state1, @Nonnull Direction dir, @Nonnull BlockState state2, @Nonnull LevelAccessor level, @Nonnull BlockPos pos1, @Nonnull BlockPos pos2) {
         if (dir == Direction.DOWN) {
             return state1;
         } else if (dir == Direction.UP) {
@@ -145,7 +145,7 @@ public abstract class BaseRedstoneWire extends RedStoneWireBlock {
     }
 
     @Override
-    protected void updatePowerStrength(@NotNull Level level, @NotNull BlockPos pos, BlockState state) {
+    protected void updatePowerStrength(@Nonnull Level level, @Nonnull BlockPos pos, BlockState state) {
         RedstoneWireFactory.PR i = calculate(level, pos);
         if (!(state.getValue(range).equals(i.range) && state.getValue(POWER).equals(i.power))) {
             if (level.getBlockState(pos) == state)
@@ -208,7 +208,7 @@ public abstract class BaseRedstoneWire extends RedStoneWireBlock {
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public @Nonnull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (player.getAbilities().mayBuild) {
             if (isCross(state) || isDot(state)) {
                 BlockState blockstate = isCross(state) ? defaultBlockState() : crossState;

@@ -11,7 +11,8 @@ import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class AnalogJukeboxBlockEntity extends BaseOpaqueContainerBlockEntity {
 
@@ -23,7 +24,7 @@ public class AnalogJukeboxBlockEntity extends BaseOpaqueContainerBlockEntity {
     public AnalogJukeboxBlockEntity(BlockPos pos, BlockState state) { super(TYPE.get(), pos, state, 15); }
 
     @Override
-    public void load(@NotNull CompoundTag tag) {
+    public void load(@Nonnull CompoundTag tag) {
         super.load(tag);
         playing = tag.getInt("Playing");
         if (playing > 0)
@@ -31,7 +32,7 @@ public class AnalogJukeboxBlockEntity extends BaseOpaqueContainerBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
+    protected void saveAdditional(@Nonnull CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putInt("Playing", playing);
     }

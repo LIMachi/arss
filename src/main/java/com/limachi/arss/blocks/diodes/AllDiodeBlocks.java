@@ -2,11 +2,11 @@ package com.limachi.arss.blocks.diodes;
 
 import com.limachi.arss.ArssBlockStateProperties;
 import com.limachi.arss.blockEntities.DelayerBlockEntity;
+import com.limachi.arss.blockEntities.ProgrammableAnalogGateBlockEntity;
 import com.limachi.arss.blockEntities.SignalGeneratorBlockEntity;
 import com.limachi.lim_lib.registries.StaticInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ComparatorMode;
@@ -17,6 +17,18 @@ import static com.limachi.arss.ArssBlockStateProperties.*;
 @StaticInit
 public class AllDiodeBlocks {
 
+    //new gate: programmable analog gate:
+    //craft: x5 gates (gate ratio 5/13 < cell gate ratio 1/2)
+    //CAC
+    //NDP
+    //CXC
+    //C->analog cell
+    //A->analog and
+    //N->better_comparator
+    //D->demuxer
+    //P->adder
+    //X->analog xor
+    //can program specific output for each of the 4 bits according to combination of 3 entries (similar to rftool's logic gate), each of the 8 combination can be toggled to 6 modes (on/off/keep/copy1/copy2/copy4/copy8)
     static {
         DiodeBlockFactory.create("adder", ADDER_MODE, AllDiodeBlocks::adder);
         DiodeBlockFactory.create("analog_and", AllDiodeBlocks::and);
@@ -33,6 +45,7 @@ public class AllDiodeBlocks {
         DiodeBlockFactory.create("edge_detector", EDGE_MODE, AllDiodeBlocks::edge, true, false, PREVIOUS_READ_POWER);
         DiodeBlockFactory.create("shifter", SHIFTER_MODE, AllDiodeBlocks::shifter);
         DiodeBlockFactory.create("signal_generator", GENERATOR_MODE, AllDiodeBlocks::generator, SignalGeneratorBlockEntity::new);
+//        DiodeBlockFactory.create("programmable_analog_gate", AllDiodeBlocks::programmable, ProgrammableAnalogGateBlockEntity::new);
     }
 
     static protected BlockState comparator(boolean test, Level level, BlockPos pos, BlockState state) {
@@ -89,13 +102,12 @@ public class AllDiodeBlocks {
     }
 
     static protected BlockState delayer(boolean test, Level level, BlockPos pos, BlockState state) {
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof DelayerBlockEntity) {
-            if (test) return setPower(state, ((DelayerBlockEntity) be).state());
+        if (level.getBlockEntity(pos) instanceof DelayerBlockEntity delayer) {
+            if (test) return setPower(state, delayer.state());
             int read = sGetInputSignal(level, pos, state);
             int ord = state.getValue(DELAYER_MODE).ordinal();
             int delay = ord < 4 ? (int)Math.pow(2, ord) - 1 : sGetAlternateSignal(level, pos, state);
-            return setPower(state, ((DelayerBlockEntity) be).step(read, delay));
+            return setPower(state, delayer.step(read, delay));
         }
         return state;
     }
@@ -143,12 +155,17 @@ public class AllDiodeBlocks {
     }
 
     static protected BlockState generator(boolean test, Level level, BlockPos pos, BlockState state) {
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof SignalGeneratorBlockEntity) {
+        if (level.getBlockEntity(pos) instanceof SignalGeneratorBlockEntity generator) {
             String mode = state.getValue(GENERATOR_MODE).toString();
-            if (test || sGetInputSignal(level, pos, state) == 0) return setPower(state, ((SignalGeneratorBlockEntity) be).state(mode, sGetAlternateSignals(level, pos, state)));
-            return setPower(state, ((SignalGeneratorBlockEntity) be).step(mode, sGetAlternateSignals(level, pos, state)));
+            if (test || sGetInputSignal(level, pos, state) == 0) return setPower(state, generator.state(mode, sGetAlternateSignals(level, pos, state)));
+            return setPower(state, generator.step(mode, sGetAlternateSignals(level, pos, state)));
         }
+        return state;
+    }
+
+    static protected BlockState programmable(boolean test, Level level, BlockPos pos, BlockState state) {
+        if (level.getBlockEntity(pos) instanceof ProgrammableAnalogGateBlockEntity gate)
+            return setPower(state, gate.getPower());
         return state;
     }
 }

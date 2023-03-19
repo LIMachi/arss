@@ -11,7 +11,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 @StaticInit(Stage.BLOCK_ENTITY)
 public class DelayerBlockEntity extends BlockEntity {
@@ -23,13 +24,13 @@ public class DelayerBlockEntity extends BlockEntity {
 
     public DelayerBlockEntity(BlockPos pos, BlockState state) { super(TYPE.get(), pos, state); }
 
-    protected void saveAdditional(@NotNull CompoundTag tag) {
+    protected void saveAdditional(@Nonnull CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putInt("Head", this.head);
         tag.putIntArray("Memory", memory);
     }
 
-    public void load(@NotNull CompoundTag tag) {
+    public void load(@Nonnull CompoundTag tag) {
         super.load(tag);
         head = tag.getInt("Head");
         int[] tmp = tag.getIntArray("Memory");
