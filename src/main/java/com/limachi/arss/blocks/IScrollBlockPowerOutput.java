@@ -3,10 +3,6 @@ package com.limachi.arss.blocks;
 import com.limachi.arss.Arss;
 import com.limachi.arss.ArssBlockStateProperties;
 import com.limachi.lim_lib.scrollSystem.IScrollBlock;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.IProbeInfoAccessor;
-import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent; //VERSION 1.18.2
@@ -20,7 +16,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  * can be implemented on block / blockentity
  * do remember that blocks are singleton and not blockentity when using 'this'
  */
-public interface IScrollBlockPowerOutput extends IScrollBlock, IProbeInfoAccessor {
+public interface IScrollBlockPowerOutput extends IScrollBlock {
 
     static int clampModulus(int val, int base, int modulus) {
         while (val < base)
@@ -47,18 +43,5 @@ public interface IScrollBlockPowerOutput extends IScrollBlock, IProbeInfoAccesso
     @Override
     default boolean canScroll(Player player, BlockPos pos) {
         return (Arss.SCROLL_KEY.getKeybinding().isUnbound() || Arss.SCROLL_KEY.getState(player)) && player.level.getBlockState(pos).getValue(ArssBlockStateProperties.CAN_SCROLL);
-    }
-
-    @Override
-    default void addProbeInfo(ProbeMode mode, IProbeInfo info, Player player, Level level, BlockState state, IProbeHitData hit) {
-        if (!(state.getBlock() instanceof AnalogRedstoneBlock))
-            info.text(
-//                    Component.translatable( //VERSION 1.19.2
-                    new TranslatableComponent( //VERSION 1.18.2
-                            "top.info.stored_power", state.getValue(BlockStateProperties.POWER).toString()));
-        info.text(
-//                Component.translatable( //VERSION 1.19.2
-                new TranslatableComponent( //VERSION 1.18.2
-                        "top.info." + (state.getValue(ArssBlockStateProperties.CAN_SCROLL) ? "unlocked" : "locked")));
     }
 }

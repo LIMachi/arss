@@ -6,7 +6,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '5.1.+'
 }
 
-version = '1.18.2-B1.6'
+version = '1.18.2-B1.7'
 group = 'com.limachi.arss'
 archivesBaseName = 'arss'
 
@@ -121,7 +121,8 @@ dependencies {
     dependencies {
         implementation fg.deobf("com.limachi.lim_lib:lim_lib:${mc_version}-${lim_lib_version}") { changing = true }
 
-        compileOnly(fg.deobf("mezz.jei:jei-${jei_version}"))
+        compileOnly(fg.deobf("mezz.jei:jei-${jei_version}:api"))
+        runtimeOnly(fg.deobf("mezz.jei:jei-${jei_version}"))
 
         implementation(fg.deobf("curse.maven:the-one-probe-245211:${top_file}"))
     }

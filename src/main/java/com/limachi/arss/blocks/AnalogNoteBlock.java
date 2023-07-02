@@ -4,10 +4,6 @@ import com.limachi.arss.ArssBlockStateProperties;
 import com.limachi.lim_lib.SoundUtils;
 import com.limachi.lim_lib.registries.annotations.RegisterBlock;
 import com.limachi.lim_lib.registries.annotations.RegisterBlockItem;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.IProbeInfoAccessor;
-import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -34,7 +30,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @SuppressWarnings("unused")
 @ParametersAreNonnullByDefault
-public class AnalogNoteBlock extends NoteBlock implements IProbeInfoAccessor {
+public class AnalogNoteBlock extends NoteBlock {
 
     public static final Properties PROPS = Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(0.8F);
 
@@ -114,16 +110,5 @@ public class AnalogNoteBlock extends NoteBlock implements IProbeInfoAccessor {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, Player player, Level level, BlockState blockState, IProbeHitData iProbeHitData) {
-        iProbeInfo.text(
-//                Component.translatable( //VERSION 1.19.2
-                new TranslatableComponent( //VERSION 1.18.2
-                        "top.info.pitch").append(
-//                                Component.translatable( //VERSION 1.19.2
-                                new TranslatableComponent( //VERSION 1.18.2
-                                        "top.info.pitch." + (blockState.getValue(HIGH) ? "high" : "low"))));
     }
 }

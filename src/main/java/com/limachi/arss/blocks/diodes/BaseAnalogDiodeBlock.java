@@ -5,8 +5,6 @@ import com.limachi.lim_lib.SoundUtils;
 import com.limachi.lim_lib.blockEntities.IOnUseBlockListener;
 import com.limachi.lim_lib.registries.StaticInit;
 import com.mojang.datafixers.util.Pair;
-import mcjty.theoneprobe.api.*;
-import mcjty.theoneprobe.apiimpl.styles.ItemStyle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -58,7 +56,7 @@ import java.util.Random;
 
 @StaticInit
 @SuppressWarnings({"deprecation", "unused"})
-public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeInfoAccessor {
+public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
 
     @Configs.Config(reload = true, cmt="Read sides like the back (ex: will use the content of a chest on the side as a valid redstone signal)")
     static public boolean ALL_POWERS_ON_SIDES = true;
@@ -81,6 +79,10 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeI
         builder.add(FACING, POWERED, POWER);
         if (modeProp != null)
             builder.add(modeProp);
+    }
+
+    public Pair<String, EnumProperty<?>> instanceType() {
+        return new Pair<>(name, modeProp);
     }
 
     @Override
@@ -288,23 +290,5 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IProbeI
             return strength;
         BlockState state = level.getBlockState(target);
         return Math.max(strength, state.is(Blocks.REDSTONE_WIRE) ? state.getValue(RedStoneWireBlock.POWER) : 0);
-    }
-
-    @Override
-    public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, Player player, Level level, BlockState blockState, IProbeHitData iProbeHitData) {
-        IProbeInfo v = iProbeInfo.vertical(iProbeInfo.defaultLayoutStyle().spacing(2));
-        IProbeInfo h = v.horizontal(iProbeInfo.defaultLayoutStyle().spacing(2).alignment(ElementAlignment.ALIGN_TOPLEFT));
-        h.item(new ItemStack(Items.REDSTONE), new ItemStyle().height(14).width(14)).text(
-//                Component.translatable( //VERSION 1.19.2
-                new TranslatableComponent( //VERSION 1.18.2
-                        "top.info.power", blockState.getValue(POWER).toString()));
-        if (modeProp != null)
-            v.text(
-//                    Component.translatable( //VERSION 1.19.2
-                    new TranslatableComponent( //VERSION 1.18.2
-                            "top.info.mode").append(
-//                                    Component.translatable( //VERSION 1.19.2
-                                    new TranslatableComponent( //VERSION 1.18.2
-                                            "display.arss." + name + ".mode." + blockState.getValue(modeProp))));
     }
 }

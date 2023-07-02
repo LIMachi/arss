@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = Arss.MOD_ID)
 public class Client1_18_2 {
     private static final HashMap<RegistryObject<?>, RenderType> renderLayers = new HashMap<>();
 
@@ -33,11 +33,13 @@ public class Client1_18_2 {
     static void clientSetup(final FMLClientSetupEvent event)
     {
         for (Map.Entry<RegistryObject<?>, RenderType> entry : renderLayers.entrySet()) {
-            Object o = entry.getKey().get();
-            if (o instanceof Block)
-                ItemBlockRenderTypes.setRenderLayer((Block)o, entry.getValue());
-            if (o instanceof Fluid)
-                ItemBlockRenderTypes.setRenderLayer((Fluid)o, entry.getValue());
+            if (entry.getKey() != null) {
+                Object o = entry.getKey().get();
+                if (o instanceof Block)
+                    ItemBlockRenderTypes.setRenderLayer((Block) o, entry.getValue());
+                if (o instanceof Fluid)
+                    ItemBlockRenderTypes.setRenderLayer((Fluid) o, entry.getValue());
+            }
         }
     }
 }
