@@ -89,7 +89,7 @@ public abstract class RedstoneWireFactory {
         }
         RegistryObject<Block> R_BLOCK = Registries.block(Arss.MOD_ID, fName, Product::new);
         RedstoneUtils.hasRedstoneTint(R_BLOCK);
-        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName, ()->new BlockItem(R_BLOCK.get(), Arss.getInstance().defaultProps()), "jei.info." + fName);
+        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName, ()->new BlockItem(R_BLOCK.get(), new Item.Properties()), "jei.info." + fName);
         REDSTONE_WIRES.put(fName, new Pair<>(R_ITEM, R_BLOCK));
     }
 }

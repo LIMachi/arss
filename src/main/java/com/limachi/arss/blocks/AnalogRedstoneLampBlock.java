@@ -5,8 +5,7 @@ import com.limachi.lim_lib.registries.annotations.RegisterBlock;
 import com.limachi.lim_lib.registries.annotations.RegisterBlockItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-//import net.minecraft.util.RandomSource; //VERSION 1.19.2
-import java.util.Random; //VERSION 1.18.2
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -16,7 +15,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -25,8 +23,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @StaticInit
 @ParametersAreNonnullByDefault
 public class AnalogRedstoneLampBlock extends RedstoneLampBlock {
-
-    public static final Properties PROPS = BlockBehaviour.Properties.of(Material.BUILDABLE_GLASS).lightLevel(AnalogRedstoneLampBlock::litBlockEmission).strength(0.3F).sound(SoundType.GLASS);
 
     @RegisterBlock(name = "analog_redstone_lamp")
     public static RegistryObject<Block> R_BLOCK;
@@ -40,7 +36,7 @@ public class AnalogRedstoneLampBlock extends RedstoneLampBlock {
         return state.getValue(BlockStateProperties.LIT) ? state.getValue(POWER) : 0;
     }
 
-    public AnalogRedstoneLampBlock() { super(PROPS); }
+    public AnalogRedstoneLampBlock() { super(BlockBehaviour.Properties.copy(Blocks.REDSTONE_LAMP)); }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -71,10 +67,7 @@ public class AnalogRedstoneLampBlock extends RedstoneLampBlock {
     }
 
     @Override
-    public void tick(BlockState state, ServerLevel level, BlockPos pos,
-//                     RandomSource //VERSION 1.19.2
-                             Random //VERSION 1.18.2
-                             rng) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rng) {
         if (state.getValue(LIT) && !level.hasNeighborSignal(pos))
             level.setBlock(pos, state.setValue(LIT, false).setValue(POWER, 0), 2);
     }

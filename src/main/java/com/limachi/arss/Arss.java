@@ -2,8 +2,6 @@ package com.limachi.arss;
 
 import com.limachi.lim_lib.KeyMapController;
 import com.limachi.lim_lib.ModBase;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod(Arss.MOD_ID)
@@ -13,9 +11,7 @@ public class Arss extends ModBase
 
     public static final String MOD_ID = "arss";
 
-    public static final CreativeModeTab TAB = createTab(MOD_ID, ()->()->Items.COMPARATOR);
-
-    public Arss() { super(MOD_ID, "Analog_Redstone_Suite", TAB); }
+    public Arss() { super(MOD_ID, "Analog_Redstone_Suite", null); }
 
     public static Arss getInstance() { return (Arss)INSTANCES.get(MOD_ID); }
 }

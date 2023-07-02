@@ -5,8 +5,6 @@ import com.limachi.arss.ArssBlockStateProperties;
 import com.limachi.lim_lib.scrollSystem.IScrollBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent; //VERSION 1.18.2
-import net.minecraft.network.chat.TranslatableComponent; //VERSION 1.18.2
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -34,14 +32,11 @@ public interface IScrollBlockPowerOutput extends IScrollBlock {
 
     @Override
     default void scrollFeedBack(Level level, BlockPos pos, int delta, Player player) {
-        player.displayClientMessage(
-//                Component.literal( //VERSION 1.19.2
-                    new TextComponent( //VERSION 1.18.2
-                        Integer.toString(clampModulus(level.getBlockState(pos).getValue(BlockStateProperties.POWER) + delta, 1, 15))), true);
+        player.displayClientMessage(Component.literal(Integer.toString(clampModulus(level.getBlockState(pos).getValue(BlockStateProperties.POWER) + delta, 1, 15))), true);
     }
 
     @Override
     default boolean canScroll(Player player, BlockPos pos) {
-        return (Arss.SCROLL_KEY.getKeybinding().isUnbound() || Arss.SCROLL_KEY.getState(player)) && player.level.getBlockState(pos).getValue(ArssBlockStateProperties.CAN_SCROLL);
+        return (Arss.SCROLL_KEY.getKeybinding().isUnbound() || Arss.SCROLL_KEY.getState(player)) && player.level().getBlockState(pos).getValue(ArssBlockStateProperties.CAN_SCROLL);
     }
 }

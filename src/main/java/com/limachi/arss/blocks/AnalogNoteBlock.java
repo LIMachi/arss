@@ -7,7 +7,6 @@ import com.limachi.lim_lib.registries.annotations.RegisterBlockItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent; //VERSION 1.18.2
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -15,13 +14,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.NoteBlock;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -32,8 +31,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class AnalogNoteBlock extends NoteBlock {
 
-    public static final Properties PROPS = Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(0.8F);
-
     @RegisterBlock(name = "analog_note_block")
     public static RegistryObject<Block> R_BLOCK;
 
@@ -43,7 +40,7 @@ public class AnalogNoteBlock extends NoteBlock {
     public static final BooleanProperty HIGH = ArssBlockStateProperties.HIGH;
 
     public AnalogNoteBlock() {
-        super(PROPS);
+        super(BlockBehaviour.Properties.copy(Blocks.NOTE_BLOCK));
         registerDefaultState(stateDefinition.any().setValue(INSTRUMENT, NoteBlockInstrument.HARP).setValue(NOTE, 0).setValue(POWERED, false).setValue(HIGH, false));
     }
 
@@ -83,10 +80,7 @@ public class AnalogNoteBlock extends NoteBlock {
                 if (_new == -1) return InteractionResult.FAIL;
             }
             level.setBlock(pos, state.setValue(NOTE, _new != -1 ? _new : state.getValue(NOTE)).setValue(HIGH, !state.getValue(HIGH)), 3);
-            player.displayClientMessage(
-//                    Component.translatable( //VERSION 1.19.2
-                    new TranslatableComponent( //VERSION 1.18.2
-                            "display.arss.analog_note_block.high_pitch." + level.getBlockState(pos).getValue(HIGH)), true);
+            player.displayClientMessage(Component.translatable("display.arss.analog_note_block.high_pitch." + level.getBlockState(pos).getValue(HIGH)), true);
             playNote(level, pos);
             player.awardStat(Stats.TUNE_NOTEBLOCK);
             return InteractionResult.CONSUME;

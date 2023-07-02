@@ -6,7 +6,6 @@ import com.limachi.lim_lib.registries.annotations.RegisterMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
@@ -35,7 +34,7 @@ public class AnalogJukeboxMenu extends AbstractContainerMenu {
     //use 'open' server side
     protected AnalogJukeboxMenu(int id, Inventory playerInv, Container container, BlockPos pos) {
         super(MENU.get(), id);
-        accessor = ContainerLevelAccess.create(playerInv.player.level, pos);
+        accessor = ContainerLevelAccess.create(playerInv.player.level(), pos);
         for (int row = 0; row < 2; ++row)
             for (int column = 0; column < 8; ++column) {
                 if (row == 0 && column == 0) continue;
@@ -70,15 +69,9 @@ public class AnalogJukeboxMenu extends AbstractContainerMenu {
     public static void open(Player player, AnalogJukeboxBlockEntity be) {
         Level level = be.getLevel();
         if (level != null && !level.isClientSide())
-            NetworkHooks.
-//                    openScreen //VERSION 1.19.2
-                    openGui //VERSION 1.18.2
-                            ((ServerPlayer) player, new MenuProvider() {
+            NetworkHooks.openScreen((ServerPlayer) player, new MenuProvider() {
                 @Override
-                public @Nonnull Component getDisplayName() { return
-//                        Component.translatable( //VERSION 1.19.2
-                        new TranslatableComponent( //VERSION 1.18.2
-                                "screen.title.analog_jukebox"); }
+                public @Nonnull Component getDisplayName() { return Component.translatable("screen.title.analog_jukebox"); }
 
                 @Override
                 public AbstractContainerMenu createMenu(int id, Inventory inventory, Player p_39956_) { return new AnalogJukeboxMenu(id, inventory, be, be.getBlockPos()); }

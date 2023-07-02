@@ -10,10 +10,8 @@ import com.limachi.lim_lib.registries.annotations.RegisterBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent; //VERSION 1.18.2
 import net.minecraft.server.level.ServerLevel;
-//import net.minecraft.util.RandomSource; //VERSION 1.19.2
-import java.util.Random; //VERSION 1.18.2
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -27,7 +25,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -37,8 +34,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @SuppressWarnings({"unused", "deprecation"})
 @ParametersAreNonnullByDefault
 public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScrollBlockPowerOutput {
-
-    public static final BlockBehaviour.Properties PROPS = BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak().lightLevel((state) -> state.getValue(BlockStateProperties.LIT) ? 7 : 0).sound(SoundType.WOOD);
 
     @HasRedstoneTint
     @RegisterBlock(name = "analog_redstone_torch")
@@ -53,14 +48,14 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
 
     @StaticInit(Stage.ITEM)
     public static void generateItem() {
-        R_ITEM = Registries.item(Arss.MOD_ID, "analog_redstone_torch", ()->new StandingAndWallBlockItem(R_BLOCK.get(), AnalogRedstoneWallTorchBlock.R_BLOCK.get(), new Item.Properties().tab(Arss.getInstance().tab())), "jei.info.analog_redstone_torch");
+        R_ITEM = Registries.item(Arss.MOD_ID, "analog_redstone_torch", ()->new StandingAndWallBlockItem(R_BLOCK.get(), AnalogRedstoneWallTorchBlock.R_BLOCK.get(), new Item.Properties(), Direction.DOWN), "jei.info.analog_redstone_torch");
     }
 
 
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
 
     public AnalogRedstoneTorchBlock() {
-        super(PROPS);
+        super(BlockBehaviour.Properties.copy(Blocks.REDSTONE_TORCH));
         registerDefaultState(stateDefinition.any().setValue(LIT, true).setValue(POWER, 15).setValue(ArssBlockStateProperties.CAN_SCROLL, true));
     }
 
@@ -72,10 +67,7 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
     }
 
     @Override
-    public void tick(BlockState state, ServerLevel level, BlockPos pos,
-//                     RandomSource //VERSION 1.19.2
-                     Random //VERSION 1.18.2
-                     rng) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rng) {
         boolean flag = hasNeighborSignal(level, pos, state);
 
         if (state.getValue(LIT)) {
@@ -97,10 +89,7 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
         if (held == Items.REDSTONE_TORCH || held == AnalogRedstoneTorchBlock.R_ITEM.get()) {
             boolean can_scroll = !state.getValue(ArssBlockStateProperties.CAN_SCROLL);
             level.setBlock(pos, state.setValue(ArssBlockStateProperties.CAN_SCROLL, can_scroll), 3);
-            player.displayClientMessage(
-//                    Component.translatable( //VERSION 1.19.2
-                    new TranslatableComponent( //VERSION 1.18.2
-                            "display.arss.scrollable_block.can_scroll." + can_scroll), true);
+            player.displayClientMessage(Component.translatable("display.arss.scrollable_block.can_scroll." + can_scroll), true);
             return InteractionResult.SUCCESS;
         }
         return super.use(state, level, pos, player, hand, hit);
@@ -114,7 +103,7 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
         public static final IntegerProperty POWER = BlockStateProperties.POWER;
 
         public AnalogRedstoneWallTorchBlock() {
-            super(PROPS.dropsLike(AnalogRedstoneTorchBlock.R_BLOCK.get()));
+            super(BlockBehaviour.Properties.copy(Blocks.REDSTONE_TORCH).dropsLike(AnalogRedstoneTorchBlock.R_BLOCK.get()));
             registerDefaultState(stateDefinition.any().setValue(LIT, true).setValue(POWER, 15).setValue(ArssBlockStateProperties.CAN_SCROLL, true));
         }
 
@@ -135,10 +124,7 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
         }
 
         @Override
-        public void tick(BlockState state, ServerLevel level, BlockPos pos,
-//                     RandomSource //VERSION 1.19.2
-                         Random //VERSION 1.18.2
-                         rng) {
+        public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rng) {
             boolean flag = hasNeighborSignal(level, pos, state);
 
             if (state.getValue(LIT)) {
@@ -160,10 +146,7 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
             if (held == Items.REDSTONE_TORCH || held == AnalogRedstoneTorchBlock.R_ITEM.get()) {
                 boolean can_scroll = !state.getValue(ArssBlockStateProperties.CAN_SCROLL);
                 level.setBlock(pos, state.setValue(ArssBlockStateProperties.CAN_SCROLL, can_scroll), 3);
-                player.displayClientMessage(
-//                    Component.translatable( //VERSION 1.19.2
-                    new TranslatableComponent( //VERSION 1.18.2
-                                "display.arss.scrollable_block.can_scroll." + can_scroll), true);
+                player.displayClientMessage(Component.translatable("display.arss.scrollable_block.can_scroll." + can_scroll), true);
                 return InteractionResult.SUCCESS;
             }
             return super.use(state, level, pos, player, hand, hit);

@@ -7,7 +7,6 @@ import com.limachi.lim_lib.registries.annotations.RegisterBlockItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent; //VERSION 1.18.2
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -20,9 +19,10 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -31,9 +31,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @SuppressWarnings("unused")
 @ParametersAreNonnullByDefault
-public class AnalogButtonBlock extends StoneButtonBlock implements IScrollBlockPowerOutput {
-
-    public static final Properties PROPS = BlockBehaviour.Properties.of(Material.DECORATION).noCollission().strength(0.5F);
+public class AnalogButtonBlock extends ButtonBlock implements IScrollBlockPowerOutput {
 
     @HasRedstoneTint
     @RegisterBlock(name = "analog_button")
@@ -45,7 +43,7 @@ public class AnalogButtonBlock extends StoneButtonBlock implements IScrollBlockP
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
 
     public AnalogButtonBlock() {
-        super(PROPS);
+        super(BlockBehaviour.Properties.of().noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY), BlockSetType.STONE, 20, false);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(POWERED, false).setValue(FACE, AttachFace.WALL).setValue(POWER, 15).setValue(ArssBlockStateProperties.CAN_SCROLL, true));
     }
 
@@ -72,10 +70,7 @@ public class AnalogButtonBlock extends StoneButtonBlock implements IScrollBlockP
         if (held == Items.REDSTONE_TORCH || held == AnalogRedstoneTorchBlock.R_ITEM.get()) {
             boolean can_scroll = !state.getValue(ArssBlockStateProperties.CAN_SCROLL);
             level.setBlock(pos, state.setValue(ArssBlockStateProperties.CAN_SCROLL, can_scroll), 3);
-            player.displayClientMessage(
-//                    Component.translatable( //VERSION 1.19.2
-                    new TranslatableComponent( //VERSION 1.18.2
-                            "display.arss.scrollable_block.can_scroll." + can_scroll), true);
+            player.displayClientMessage(Component.translatable("display.arss.scrollable_block.can_scroll." + can_scroll), true);
             return InteractionResult.SUCCESS;
         }
         return super.use(state, level, pos, player, hand, hit);

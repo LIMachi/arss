@@ -8,10 +8,9 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent; //VERSION 1.18.2
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-//import net.minecraft.util.RandomSource; //VERSION 1.19.2
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,6 +21,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -115,7 +115,10 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
             Direction direction = state.getValue(FACING);
             Direction clock = direction.getClockWise();
             Direction counter = direction.getCounterClockWise();
-            return Pair.of(instance.getAlternateSignalAt(level, pos.relative(clock), clock), instance.getAlternateSignalAt(level, pos.relative(counter), counter));
+            return Pair.of(
+//                    instance.getAlternateSignalAt(level, pos.relative(clock), clock), instance.getAlternateSignalAt(level, pos.relative(counter), counter)
+                    0, 0 //FIXME: see BaseAnalogDiodeBlock#getAlternateSignalAt
+            );
         }
         return Pair.of(0, 0);
     }
@@ -185,10 +188,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
                 state = player.isShiftKeyDown() ? cycleBack(state, modeProp) : state.cycle(modeProp);
                 Enum<?> s = state.getValue(modeProp);
                 SoundUtils.playComparatorClick(level, pos, s.ordinal());
-                player.displayClientMessage(
-//                        Component.translatable( //VERSION 1.19.2
-                        new TranslatableComponent( //VERSION 1.18.2
-                                "display.arss." + name + ".mode." + s), true);
+                player.displayClientMessage(Component.translatable("display.arss." + name + ".mode." + s), true);
                 level.setBlock(pos, state, 2);
                 refreshOutputState(level, pos, state);
                 return InteractionResult.sidedSuccess(level.isClientSide);
@@ -223,14 +223,14 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
         return state.getValue(POWER) != power ? state.setValue(POWER, Mth.clamp(power, 0, 15)) : state;
     }
 
-    @Override
-    protected int getAlternateSignalAt(@Nonnull LevelReader level, @Nonnull BlockPos pos, @Nonnull Direction dir) {
-        if (ALL_POWERS_ON_SIDES) {
-            BlockPos start = pos.relative(dir.getOpposite());
-            return commonSignalGetter((Level) level, start, level.getBlockState(start), dir);
-        }
-        return super.getAlternateSignalAt(level, pos, dir);
-    }
+//    @Override //FIXME: Compare to vanilla diodes
+//    protected int getAlternateSignalAt(@Nonnull LevelReader level, @Nonnull BlockPos pos, @Nonnull Direction dir) {
+//        if (ALL_POWERS_ON_SIDES) {
+//            BlockPos start = pos.relative(dir.getOpposite());
+//            return commonSignalGetter((Level) level, start, level.getBlockState(start), dir);
+//        }
+//        return super.getAlternateSignalAt(level, pos, dir);
+//    }
 
     private void refreshOutputState(Level level, BlockPos pos, BlockState state) {
         BlockState newState = calculateOutputSignal(false, level, pos, state);
@@ -254,10 +254,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
     }
 
     @Override
-    public void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull
-//    RandomSource //VERSION 1.19.2
-    Random //VERSION 1.18.2
-            rng) {
+    public void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource rng) {
         refreshOutputState(level, pos, state);
         if (isTicking) {
             int delay = getDelay(state);

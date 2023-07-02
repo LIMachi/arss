@@ -14,11 +14,10 @@ import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -29,15 +28,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class AnalogJukeboxBlock extends BaseEntityBlock {
 
-    public static final Properties PROPS = Properties.of(Material.WOOD, MaterialColor.DIRT).strength(2.0F, 6.0F);
-
     @RegisterBlock(name = "analog_jukebox")
     public static RegistryObject<Block> R_BLOCK;
 
     @RegisterBlockItem(name = "analog_jukebox", block = "analog_jukebox", jeiInfoKey = "jei.info.analog_jukebox")
     public static RegistryObject<Item> R_ITEM;
 
-    public AnalogJukeboxBlock() { super(PROPS); }
+    public AnalogJukeboxBlock() { super(Properties.copy(Blocks.JUKEBOX)); }
 
     /**
      * since record item have their own logic for rigth click on jukebox, might have to code insertion here

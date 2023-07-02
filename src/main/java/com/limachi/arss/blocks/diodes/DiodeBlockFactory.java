@@ -10,6 +10,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -18,7 +19,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.material.Material;
 import net.minecraftforge.registries.RegistryObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,8 +40,8 @@ public class DiodeBlockFactory {
         BlockEntity build(BlockPos pos, BlockState state);
     }
 
-    public static final BlockBehaviour.Properties PROPS = BlockBehaviour.Properties.of(Material.DECORATION).instabreak().sound(SoundType.STONE);
-    public static final Item.Properties I_PROPS = new Item.Properties().tab(Arss.getInstance().tab());
+    public static final BlockBehaviour.Properties PROPS = BlockBehaviour.Properties.copy(Blocks.COMPARATOR);
+    public static final Item.Properties I_PROPS = new Item.Properties();
 
     private static final HashMap<String, Pair<RegistryObject<Item>, RegistryObject<Block>>> DIODE_BLOCKS = new HashMap<>();
 
@@ -151,7 +151,7 @@ public class DiodeBlockFactory {
         RegistryObject<Block> R_BLOCK = Registries.block(Arss.MOD_ID, fName, gBlock);
         if (hasPowerTint)
             RedstoneUtils.hasRedstoneTint(R_BLOCK);
-        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName, ()->new BlockItem(R_BLOCK.get(), Arss.getInstance().defaultProps()), "jei.info." + fName);
+        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName, ()->new BlockItem(R_BLOCK.get(), I_PROPS), "jei.info." + fName);
         DIODE_BLOCKS.put(fName, new Pair<>(R_ITEM, R_BLOCK));
     }
 }

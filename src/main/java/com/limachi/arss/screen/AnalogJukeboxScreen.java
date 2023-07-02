@@ -4,7 +4,7 @@ import com.limachi.arss.Arss;
 import com.limachi.arss.menu.AnalogJukeboxMenu;
 import com.limachi.lim_lib.registries.clientAnnotations.RegisterMenuScreen;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -33,11 +33,10 @@ public class AnalogJukeboxScreen extends AbstractContainerScreen<AnalogJukeboxMe
     }
 
     @Override
-    protected void renderBg(PoseStack ps, float tick, int mouseX, int mouseY) {
-        renderBackground(ps);
+    protected void renderBg(GuiGraphics gui, float tick, int mouseX, int mouseY) {
+        renderBackground(gui);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.setShaderTexture(0, BACKGROUND);
-        blit(ps, leftPos, topPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
+        gui.blit(BACKGROUND, leftPos, topPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
     }
 }
