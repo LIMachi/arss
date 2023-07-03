@@ -6,7 +6,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '5.1.+'
 }
 
-version = "${mc_version}-B1.7"
+version = "${mc_version}-B1.8"
 group = 'com.limachi.arss'
 archivesBaseName = 'arss'
 

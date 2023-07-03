@@ -59,8 +59,26 @@ public class AnalogJukeboxMenu extends AbstractContainerMenu {
 
     //disable shift-click
     @Override
-    public @Nonnull ItemStack quickMoveStack(Player p_38941_, int p_38942_) {
-        return ItemStack.EMPTY;
+    public @Nonnull ItemStack quickMoveStack(Player player, int index) {
+        ItemStack itemstack = ItemStack.EMPTY;
+        Slot slot = this.slots.get(index);
+
+        if (slot != null && slot.hasItem()) {
+            ItemStack itemstack1 = slot.getItem();
+            itemstack = itemstack1.copy();
+            if (index < 15) {
+                if (!this.moveItemStackTo(itemstack1, 15, this.slots.size(), true))
+                    return ItemStack.EMPTY;
+            } else if (!this.moveItemStackTo(itemstack1, 0, 15, false))
+                return ItemStack.EMPTY;
+
+            if (itemstack1.isEmpty())
+                slot.setByPlayer(ItemStack.EMPTY);
+            else
+                slot.setChanged();
+        }
+
+        return itemstack;
     }
 
     @Override

@@ -43,7 +43,10 @@ public class AnalogJukeboxBlockEntity extends BaseOpaqueContainerBlockEntity {
         if (level != null) {
             ItemStack record = rsPower > 0 ? getItem(rsPower - 1) : ItemStack.EMPTY;
             playing = record.isEmpty() ? 0 : rsPower;
-            SoundUtils.startRecord(level, worldPosition, record);
+            if (playing != 0)
+                SoundUtils.startRecord(level, worldPosition, record);
+            else
+                SoundUtils.stopRecord(level, worldPosition);
             setChanged();
             level.updateNeighborsAt(worldPosition, level.getBlockState(worldPosition).getBlock());
         }

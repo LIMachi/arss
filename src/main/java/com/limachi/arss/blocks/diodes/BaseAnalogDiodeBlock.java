@@ -17,11 +17,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -38,7 +36,6 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 /**
  * common class for comparator like blocks (get power at the back by getting analog signal/item frame) and expect potential power on the sides (the highest value)
@@ -81,9 +78,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
             builder.add(modeProp);
     }
 
-    public Pair<String, EnumProperty<?>> instanceType() {
-        return new Pair<>(name, modeProp);
-    }
+    public Pair<String, EnumProperty<?>> instanceType() { return new Pair<>(name, modeProp); }
 
     @Override
     protected int getDelay(@Nonnull BlockState state) { return 2 * delay; }
@@ -115,10 +110,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
             Direction direction = state.getValue(FACING);
             Direction clock = direction.getClockWise();
             Direction counter = direction.getCounterClockWise();
-            return Pair.of(
-//                    instance.getAlternateSignalAt(level, pos.relative(clock), clock), instance.getAlternateSignalAt(level, pos.relative(counter), counter)
-                    0, 0 //FIXME: see BaseAnalogDiodeBlock#getAlternateSignalAt
-            );
+            return Pair.of(instance.getAlternateSignalAt(level, pos.relative(clock), clock), instance.getAlternateSignalAt(level, pos.relative(counter), counter));
         }
         return Pair.of(0, 0);
     }
@@ -223,14 +215,13 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
         return state.getValue(POWER) != power ? state.setValue(POWER, Mth.clamp(power, 0, 15)) : state;
     }
 
-//    @Override //FIXME: Compare to vanilla diodes
-//    protected int getAlternateSignalAt(@Nonnull LevelReader level, @Nonnull BlockPos pos, @Nonnull Direction dir) {
-//        if (ALL_POWERS_ON_SIDES) {
-//            BlockPos start = pos.relative(dir.getOpposite());
-//            return commonSignalGetter((Level) level, start, level.getBlockState(start), dir);
-//        }
-//        return super.getAlternateSignalAt(level, pos, dir);
-//    }
+    protected int getAlternateSignalAt(@Nonnull LevelReader level, @Nonnull BlockPos pos, @Nonnull Direction dir) {
+        if (ALL_POWERS_ON_SIDES) {
+            BlockPos start = pos.relative(dir.getOpposite());
+            return commonSignalGetter((Level) level, start, level.getBlockState(start), dir);
+        }
+        return level.getControlInputSignal(pos.relative(dir), dir, this.sideInputDiodesOnly());
+    }
 
     private void refreshOutputState(Level level, BlockPos pos, BlockState state) {
         BlockState newState = calculateOutputSignal(false, level, pos, state);
