@@ -52,18 +52,16 @@ public class AnalogJukeboxMenu extends AbstractContainerMenu {
             addSlot(new Slot(playerInv, column, 8 + column * 18, 142));
     }
 
-    //Client only
     public AnalogJukeboxMenu(int id, Inventory playerInv, FriendlyByteBuf buff) {
         this(id, playerInv, new SimpleContainer(15), BlockPos.ZERO);
     }
 
-    //disable shift-click
     @Override
     public @Nonnull ItemStack quickMoveStack(Player player, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
 
-        if (slot != null && slot.hasItem()) {
+        if (slot.hasItem()) {
             ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
             if (index < 15) {

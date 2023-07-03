@@ -6,12 +6,10 @@ import com.limachi.lim_lib.registries.annotations.RegisterBlock;
 import com.limachi.lim_lib.registries.annotations.RegisterBlockItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -60,13 +58,6 @@ public class AnalogRedstoneBlock extends PoweredBlock implements IScrollBlockPow
 
     @Override
     public @Nonnull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        Item held = player.getItemInHand(hand).getItem();
-        if (held == Items.REDSTONE_TORCH || held == AnalogRedstoneTorchBlock.R_ITEM.get()) {
-            boolean can_scroll = !state.getValue(ArssBlockStateProperties.CAN_SCROLL);
-            level.setBlock(pos, state.setValue(ArssBlockStateProperties.CAN_SCROLL, can_scroll), 3);
-            player.displayClientMessage(Component.translatable("display.arss.scrollable_block.can_scroll." + can_scroll), true);
-            return InteractionResult.SUCCESS;
-        }
-        return super.use(state, level, pos, player, hand, hit);
+        return use(state, level, pos, player, hand, ()->super.use(state, level, pos, player, hand, hit));
     }
 }

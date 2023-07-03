@@ -12,7 +12,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,9 +22,7 @@ import net.minecraftforge.registries.RegistryObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 @SuppressWarnings({"deprecation", "unused"})
@@ -71,67 +68,42 @@ public class DiodeBlockFactory {
 
     public static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, BlockBehaviour.Properties props, Item.Properties iProps, int fDelay, boolean fTickOnceAfterUpdate, boolean fIsTicking, boolean hasPowerTint, BlockEntityBuilder beb, Property<?> ... extraProps) {
         Supplier<Block> gBlock;
-        if (beb == null) {
-            class Product extends BaseAnalogDiodeBlock {
 
-                protected Product() {
-                    super(props);
-                    delay = fDelay;
-                    name = fName;
-                    modeProp = fMode;
-                    tickOnceAfterUpdate = fTickOnceAfterUpdate;
-                    isTicking = fIsTicking;
-                    BlockState builder = stateDefinition.any();
-                    builder = builder.setValue(FACING, Direction.NORTH).setValue(POWERED, false).setValue(POWER, 0);
-                    //for now let the mode default to a random value, hopefully the first element of the enum
-                    registerDefaultState(builder);
-                }
+        class Product extends BaseAnalogDiodeBlock {
 
-                @Override
-                protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-                    builder.add(FACING, POWERED, POWER);
-                    if (fMode != null)
-                        builder.add(fMode);
-                    if (extraProps.length > 0)
-                        builder.add(extraProps);
-                }
-
-                @Override
-                protected BlockState calculateOutputSignal(boolean test, Level level, BlockPos pos, BlockState state) {
-                    return fGen.calculateOutputSignal(test, level, pos, state);
-                }
+            protected Product() {
+                super(props);
+                delay = fDelay;
+                name = fName;
+                modeProp = fMode;
+                tickOnceAfterUpdate = fTickOnceAfterUpdate;
+                isTicking = fIsTicking;
+                BlockState builder = stateDefinition.any();
+                builder = builder.setValue(FACING, Direction.NORTH).setValue(POWERED, false).setValue(POWER, 0);
+                registerDefaultState(builder);
             }
 
-            gBlock = Product::new;
+            @Override
+            protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+                builder.add(FACING, POWERED, POWER);
+                if (fMode != null)
+                    builder.add(fMode);
+                if (extraProps.length > 0)
+                    builder.add(extraProps);
+            }
+
+            @Override
+            protected BlockState calculateOutputSignal(boolean test, Level level, BlockPos pos, BlockState state) {
+                return fGen.calculateOutputSignal(test, level, pos, state);
+            }
         }
+
+        if (beb == null)
+            gBlock = Product::new;
         else {
-            class Product extends BaseAnalogDiodeBlock implements EntityBlock {
+            class Product2 extends Product implements EntityBlock {
 
-                protected Product() {
-                    super(props);
-                    delay = fDelay;
-                    name = fName;
-                    modeProp = fMode;
-                    tickOnceAfterUpdate = fTickOnceAfterUpdate;
-                    isTicking = fIsTicking;
-                    BlockState builder = stateDefinition.any();
-                    builder = builder.setValue(FACING, Direction.NORTH).setValue(POWERED, false).setValue(POWER, 0);
-                    registerDefaultState(builder);
-                }
-
-                @Override
-                protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-                    builder.add(FACING, POWERED, POWER);
-                    if (fMode != null)
-                        builder.add(fMode);
-                    if (extraProps.length > 0)
-                        builder.add(extraProps);
-                }
-
-                @Override
-                protected BlockState calculateOutputSignal(boolean test, Level level, BlockPos pos, BlockState state) {
-                    return fGen.calculateOutputSignal(test, level, pos, state);
-                }
+                protected Product2() {}
 
                 public boolean triggerEvent(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, int e1, int e2) {
                     super.triggerEvent(state, level, pos, e1, e2);
@@ -146,12 +118,12 @@ public class DiodeBlockFactory {
                 }
             }
 
-            gBlock = Product::new;
+            gBlock = Product2::new;
         }
         RegistryObject<Block> R_BLOCK = Registries.block(Arss.MOD_ID, fName, gBlock);
         if (hasPowerTint)
             RedstoneUtils.hasRedstoneTint(R_BLOCK);
-        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName, ()->new BlockItem(R_BLOCK.get(), I_PROPS), "jei.info." + fName);
+        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName, ()->new BlockItem(R_BLOCK.get(), I_PROPS), "jei.info." + fName, new ArrayList<>(Collections.singleton("automatic")));
         DIODE_BLOCKS.put(fName, new Pair<>(R_ITEM, R_BLOCK));
     }
 }

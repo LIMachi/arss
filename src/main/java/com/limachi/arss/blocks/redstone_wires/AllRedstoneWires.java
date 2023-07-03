@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 @StaticInit
+@SuppressWarnings("unused")
 public class AllRedstoneWires {
     public static final BlockBehaviour.Properties B_PROPS = BlockBehaviour.Properties.copy(Blocks.REDSTONE_WIRE);
     public static final Item.Properties I_PROPS = new Item.Properties();

@@ -15,6 +15,7 @@ import static com.limachi.arss.blocks.diodes.BaseAnalogDiodeBlock.*;
 import static com.limachi.arss.ArssBlockStateProperties.*;
 
 @StaticInit
+@SuppressWarnings("unused")
 public class AllDiodeBlocks {
 
     //new gate: programmable analog gate:

@@ -20,9 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("unused")
 @ParametersAreNonnullByDefault
@@ -89,7 +87,7 @@ public abstract class RedstoneWireFactory {
         }
         RegistryObject<Block> R_BLOCK = Registries.block(Arss.MOD_ID, fName, Product::new);
         RedstoneUtils.hasRedstoneTint(R_BLOCK);
-        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName, ()->new BlockItem(R_BLOCK.get(), new Item.Properties()), "jei.info." + fName);
+        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName, ()->new BlockItem(R_BLOCK.get(), new Item.Properties()), "jei.info." + fName, new ArrayList<>(Collections.singleton("automatic")));
         REDSTONE_WIRES.put(fName, new Pair<>(R_ITEM, R_BLOCK));
     }
 }

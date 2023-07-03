@@ -69,29 +69,6 @@ public class AnalogJukeboxBlockEntity extends BaseOpaqueContainerBlockEntity {
         return false;
     }
 
-    public void dropRecord() {
-        if (level != null) {
-            for (int i = getContainerSize() - 1; i >= 0; --i) {
-                ItemStack record = getItem(i);
-                if (!record.isEmpty()) {
-                    if (playing == i) {
-                        playing = 0;
-                        SoundUtils.stopRecord(level, worldPosition);
-                    }
-                    double d0 = (double)(level.random.nextFloat() * 0.7F) + (double)0.15F;
-                    double d1 = (double)(level.random.nextFloat() * 0.7F) + (double)0.060000002F + 0.6D;
-                    double d2 = (double)(level.random.nextFloat() * 0.7F) + (double)0.15F;
-                    ItemEntity itementity = new ItemEntity(level, (double)worldPosition.getX() + d0, (double)worldPosition.getY() + d1, (double)worldPosition.getZ() + d2, record.copy());
-                    itementity.setDefaultPickUpDelay();
-                    level.addFreshEntity(itementity);
-                    removeItem(i, 1);
-                    level.updateNeighborsAt(worldPosition, level.getBlockState(worldPosition).getBlock());
-                    return;
-                }
-            }
-        }
-    }
-
     public void dropAllRecords() {
         if (level != null) {
             if (playing > 0) {
