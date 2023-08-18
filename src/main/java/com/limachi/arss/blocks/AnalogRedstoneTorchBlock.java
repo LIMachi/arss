@@ -1,14 +1,19 @@
 package com.limachi.arss.blocks;
 
 import com.limachi.arss.Arss;
-import com.limachi.arss.ArssBlockStateProperties;
+import com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties;
+import com.limachi.arss.items.ICustomItemRenderers;
+import com.limachi.arss.client.CustomItemStackRenderer;
 import com.limachi.lim_lib.registries.Registries;
 import com.limachi.lim_lib.registries.Stage;
 import com.limachi.lim_lib.registries.StaticInit;
 import com.limachi.lim_lib.registries.annotations.HasRedstoneTint;
 import com.limachi.lim_lib.registries.annotations.RegisterBlock;
+import com.limachi.lim_lib.registries.annotations.RegisterItem;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -25,12 +30,14 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
 
 @SuppressWarnings({"unused", "deprecation"})
 @ParametersAreNonnullByDefault
@@ -40,18 +47,51 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
     @RegisterBlock(name = "analog_redstone_torch")
     public static RegistryObject<Block> R_BLOCK;
 
-    public static RegistryObject<Item> R_ITEM;
-
     @StaticInit(Stage.BLOCK)
     public static void generateWallVariantAndSetTint() {
         AnalogRedstoneWallTorchBlock.R_BLOCK = Registries.block(Arss.MOD_ID, "analog_redstone_wall_torch", AnalogRedstoneWallTorchBlock::new);
     }
 
-    @StaticInit(Stage.ITEM)
-    public static void generateItem() {
-        R_ITEM = Registries.item(Arss.MOD_ID, "analog_redstone_torch", ()->new StandingAndWallBlockItem(R_BLOCK.get(), AnalogRedstoneWallTorchBlock.R_BLOCK.get(), new Item.Properties(), Direction.DOWN), "jei.info.analog_redstone_torch", new ArrayList<>(Collections.singleton("automatic")));
+    public static class AnalogRedstoneTorchItem extends StandingAndWallBlockItem implements ICustomItemRenderers {
+        @RegisterItem(name = "analog_redstone_torch")
+        public static RegistryObject<Item> R_ITEM;
+
+        public AnalogRedstoneTorchItem() {
+            super(R_BLOCK.get(), AnalogRedstoneWallTorchBlock.R_BLOCK.get(), new Item.Properties(), Direction.DOWN);
+        }
+
+        @Override
+        public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+            consumer.accept(new IClientItemExtensions() {
+                @Override
+                public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                    return CustomItemStackRenderer.getInstance();
+                }
+            });
+        }
+
+        @Override
+        public ItemStack itemRenderer() {
+            return new ItemStack(Items.REDSTONE_TORCH);
+        }
+
+        @Override
+        public BlockState blockRenderer() {
+            return null;
+        }
+
+        @Override
+        public BlockState self() {
+//            return AnalogRedstoneWallTorchBlock.R_BLOCK.get().defaultBlockState().setValue(AnalogRedstoneWallTorchBlock.FACING, Direction.SOUTH);
+            return R_BLOCK.get().defaultBlockState();
+        }
     }
 
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> components, TooltipFlag flags) {
+        super.appendHoverText(stack, level, components, flags);
+        Arss.commonHoverText("analog_redstone_torch", components);
+    }
 
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
 

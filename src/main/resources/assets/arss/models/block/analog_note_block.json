@@ -1,6 +1,6 @@
 {
   "parent": "block/block",
-  "render_type": "minecraft:translucent",
+  "render_type": "minecraft:cutout",
   "textures": {
     "sides": "minecraft:block/note_block",
     "decal": "arss:item/arss_decal",

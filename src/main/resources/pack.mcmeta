@@ -1,6 +1,8 @@
 {
     "pack": {
-        "description": "Analog Restone Suite (arss) Resources",
-        "pack_format": 9
-    }
+        "description": {
+            "text": "${mod_id} resources"
+        },
+        "pack_format": ${pack_format_number}
+}
 }

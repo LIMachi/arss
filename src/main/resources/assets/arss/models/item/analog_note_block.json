@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "arss:item/analog_note_block"
-  }
+  "parent": "arss:item/base_block_with_redstone_dot"
 }

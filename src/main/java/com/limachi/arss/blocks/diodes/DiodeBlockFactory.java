@@ -4,10 +4,17 @@ import com.limachi.arss.Arss;
 import com.limachi.lim_lib.RedstoneUtils;
 import com.limachi.lim_lib.registries.Registries;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -84,6 +91,12 @@ public class DiodeBlockFactory {
             }
 
             @Override
+            public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> components, TooltipFlag flags) {
+                super.appendHoverText(stack, level, components, flags);
+                Arss.commonHoverText(fName, components);
+            }
+
+            @Override
             protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
                 builder.add(FACING, POWERED, POWER);
                 if (fMode != null)
@@ -123,7 +136,7 @@ public class DiodeBlockFactory {
         RegistryObject<Block> R_BLOCK = Registries.block(Arss.MOD_ID, fName, gBlock);
         if (hasPowerTint)
             RedstoneUtils.hasRedstoneTint(R_BLOCK);
-        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName, ()->new BlockItem(R_BLOCK.get(), I_PROPS), "jei.info." + fName, new ArrayList<>(Collections.singleton("automatic")));
+        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName, ()->new BlockItem(R_BLOCK.get(), I_PROPS), null, new ArrayList<>(Collections.singleton("automatic")));
         DIODE_BLOCKS.put(fName, new Pair<>(R_ITEM, R_BLOCK));
     }
 }

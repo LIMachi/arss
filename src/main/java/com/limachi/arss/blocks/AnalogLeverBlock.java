@@ -1,15 +1,18 @@
 package com.limachi.arss.blocks;
 
-import com.limachi.arss.ArssBlockStateProperties;
+import com.limachi.arss.Arss;
+import com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties;
+import com.limachi.arss.items.BlockItemWithCustomRenderer;
 import com.limachi.lim_lib.registries.annotations.HasRedstoneTint;
 import com.limachi.lim_lib.registries.annotations.RegisterBlock;
-import com.limachi.lim_lib.registries.annotations.RegisterBlockItem;
+import com.limachi.lim_lib.registries.annotations.RegisterItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -25,7 +28,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 
 @SuppressWarnings("unused")
 @ParametersAreNonnullByDefault
@@ -35,8 +40,19 @@ public class AnalogLeverBlock extends LeverBlock implements IScrollBlockPowerOut
     @RegisterBlock(name = "analog_lever")
     public static RegistryObject<Block> R_BLOCK;
 
-    @RegisterBlockItem(name = "analog_lever", block = "analog_lever", jeiInfoKey = "jei.info.analog_lever")
-    public static RegistryObject<Item> R_ITEM;
+    public static class AnalogLever extends BlockItemWithCustomRenderer {
+
+        @RegisterItem
+        public static RegistryObject<BlockItem> R_ITEM;
+
+        public AnalogLever() { super(R_BLOCK.get(), new Item.Properties(), Items.LEVER); }
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> components, TooltipFlag flags) {
+        super.appendHoverText(stack, level, components, flags);
+        Arss.commonHoverText("analog_lever", components);
+    }
 
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
 

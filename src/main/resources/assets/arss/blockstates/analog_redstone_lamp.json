@@ -1,10 +1,52 @@
 {
   "variants": {
-    "lit=false": {
-      "model": "arss:block/analog_redstone_lamp/off"
+    "power=0": {
+      "model": "arss:block/analog_redstone_lamp/0"
     },
-    "lit=true": {
-      "model": "arss:block/analog_redstone_lamp/on"
+    "power=1": {
+      "model": "arss:block/analog_redstone_lamp/1"
+    },
+    "power=2": {
+      "model": "arss:block/analog_redstone_lamp/2"
+    },
+    "power=3": {
+      "model": "arss:block/analog_redstone_lamp/3"
+    },
+    "power=4": {
+      "model": "arss:block/analog_redstone_lamp/4"
+    },
+    "power=5": {
+      "model": "arss:block/analog_redstone_lamp/5"
+    },
+    "power=6": {
+      "model": "arss:block/analog_redstone_lamp/6"
+    },
+    "power=7": {
+      "model": "arss:block/analog_redstone_lamp/7"
+    },
+    "power=8": {
+      "model": "arss:block/analog_redstone_lamp/8"
+    },
+    "power=9": {
+      "model": "arss:block/analog_redstone_lamp/9"
+    },
+    "power=10": {
+      "model": "arss:block/analog_redstone_lamp/10"
+    },
+    "power=11": {
+      "model": "arss:block/analog_redstone_lamp/11"
+    },
+    "power=12": {
+      "model": "arss:block/analog_redstone_lamp/12"
+    },
+    "power=13": {
+      "model": "arss:block/analog_redstone_lamp/13"
+    },
+    "power=14": {
+      "model": "arss:block/analog_redstone_lamp/14"
+    },
+    "power=15": {
+      "model": "arss:block/analog_redstone_lamp/15"
     }
   }
 }

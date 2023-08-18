@@ -1,4 +1,6 @@
 {
+    "ambientocclusion": false,
+    "render_type": "minecraft:cutout",
     "textures": {
         "texture": "minecraft:block/stone",
         "particle": "minecraft:block/stone",

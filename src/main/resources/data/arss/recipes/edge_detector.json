@@ -4,9 +4,14 @@
     {
       "item": "minecraft:observer"
     },
-    {
-      "item": "minecraft:comparator"
-    }
+    [
+      {
+        "item": "minecraft:comparator"
+      },
+      {
+        "item": "arss:better_comparator"
+      }
+    ]
   ],
   "result": {
     "item": "arss:edge_detector"

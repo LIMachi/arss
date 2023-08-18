@@ -1,17 +1,21 @@
 package com.limachi.arss.blocks;
 
-import com.limachi.arss.ArssBlockStateProperties;
-import com.limachi.lim_lib.SoundUtils;
+import com.limachi.arss.Arss;
+import com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties;
+import com.limachi.arss.items.BlockItemWithCustomRenderer;
 import com.limachi.lim_lib.registries.annotations.RegisterBlock;
-import com.limachi.lim_lib.registries.annotations.RegisterBlockItem;
+import com.limachi.lim_lib.registries.annotations.RegisterItem;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -25,7 +29,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 
 @SuppressWarnings("unused")
 @ParametersAreNonnullByDefault
@@ -34,8 +40,19 @@ public class AnalogNoteBlock extends NoteBlock {
     @RegisterBlock(name = "analog_note_block")
     public static RegistryObject<Block> R_BLOCK;
 
-    @RegisterBlockItem(name = "analog_note_block", block = "analog_note_block", jeiInfoKey = "jei.info.analog_note_block")
-    public static RegistryObject<Item> R_ITEM;
+    public static class AnalogNoteBlockItem extends BlockItemWithCustomRenderer {
+
+        @RegisterItem(name = "analog_note_block")
+        public static RegistryObject<BlockItem> R_ITEM;
+
+        public AnalogNoteBlockItem() { super(R_BLOCK.get(), new Item.Properties(), Blocks.NOTE_BLOCK); }
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> components, TooltipFlag flags) {
+        super.appendHoverText(stack, level, components, flags);
+        Arss.commonHoverText("analog_note_block", components);
+    }
 
     public static final BooleanProperty HIGH = ArssBlockStateProperties.HIGH;
 
@@ -60,12 +77,13 @@ public class AnalogNoteBlock extends NoteBlock {
         if (_new != state.getValue(NOTE))
             level.setBlock(pos, state.setValue(NOTE, _new != -1 ? _new : state.getValue(NOTE)).setValue(POWERED, power > 0), 3);
         if (power > 0)
-            playNote(level, pos);
+            playNote(state, level, pos);
     }
 
-    private void playNote(Level level, BlockPos pos) {
-        if (level.getBlockState(pos.above()).isAir())
+    private void playNote(BlockState state, Level level, BlockPos pos) {
+        if (state.getValue(INSTRUMENT).worksAboveNoteBlock() || level.getBlockState(pos.above()).isAir()) {
             level.blockEvent(pos, this, 0, 0);
+        }
     }
 
     @Override
@@ -81,7 +99,7 @@ public class AnalogNoteBlock extends NoteBlock {
             }
             level.setBlock(pos, state.setValue(NOTE, _new != -1 ? _new : state.getValue(NOTE)).setValue(HIGH, !state.getValue(HIGH)), 3);
             player.displayClientMessage(Component.translatable("display.arss.analog_note_block.high_pitch." + level.getBlockState(pos).getValue(HIGH)), true);
-            playNote(level, pos);
+            playNote(state, level, pos);
             player.awardStat(Stats.TUNE_NOTEBLOCK);
             return InteractionResult.CONSUME;
         }
@@ -89,20 +107,11 @@ public class AnalogNoteBlock extends NoteBlock {
 
     protected int getNote(BlockState state, Level level, BlockPos pos) {
         int power = level.getBestNeighborSignal(pos);
-        return power > 0 ? power + (state.getValue(HIGH) ? 9 : -1) : -1;
+        return power + (state.getValue(HIGH) ? 9 : 0);
     }
 
     @Override
-    public void attack(BlockState state, Level level, BlockPos pos, Player player) {}
-
-    @Override
     public boolean triggerEvent(BlockState state, Level level, BlockPos pos, int p_55026_, int p_55027_) {
-        int note = getNote(state, level, pos);
-        if (note != -1) {
-            SoundUtils.playNoteWithEvent(level, pos, state.getValue(INSTRUMENT), note);
-            level.addParticle(ParticleTypes.NOTE, (double)pos.getX() + 0.5D, (double)pos.getY() + 1.2D, (double)pos.getZ() + 0.5D, (double)note / 24.0D, 0.0D, 0.0D);
-            return true;
-        }
-        return false;
+        return super.triggerEvent(state.setValue(NOTE, getNote(state, level, pos)), level, pos, p_55026_, p_55027_);
     }
 }

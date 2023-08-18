@@ -12,9 +12,14 @@
     "J": {
       "item": "minecraft:jukebox"
     },
-    "C": {
-      "item": "minecraft:comparator"
-    }
+    "C": [
+      {
+        "item": "minecraft:comparator"
+      },
+      {
+        "item": "arss:better_comparator"
+      }
+    ]
   },
   "result": {
     "item": "arss:analog_jukebox",

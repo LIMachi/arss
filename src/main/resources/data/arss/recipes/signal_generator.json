@@ -1,19 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "SRS",
+    " C ",
     "RQR",
-    "SRS"
+    "SSS"
   ],
   "key": {
+    "C": {
+      "item": "minecraft:clock"
+    },
     "R": {
-      "item": "minecraft:redstone"
+      "item": "minecraft:redstone_torch"
     },
     "Q": {
       "item": "minecraft:quartz"
     },
     "S": {
-      "item": "minecraft:stone_slab"
+      "item": "minecraft:stone"
     }
   },
   "result": {

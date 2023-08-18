@@ -100,8 +100,10 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
     }
 
     public static int sGetAlternateSignal(LevelReader level, BlockPos pos, BlockState state) {
-        if (state.getBlock() instanceof BaseAnalogDiodeBlock)
-            return ((BaseAnalogDiodeBlock)state.getBlock()).getAlternateSignal(level, pos, state);
+        if (state.getBlock() instanceof BaseAnalogDiodeBlock) {
+            Pair<Integer, Integer> s = sGetAlternateSignals(level, pos, state);
+            return Math.max(s.getFirst(), s.getSecond());
+        }
         return 0;
     }
 
@@ -199,12 +201,9 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
         if (!level.getBlockTicks().willTickThisTick(pos, this)) {
             BlockState newState = calculateOutputSignal(true, level, pos, state);
             if (newState != state) {
-                    boolean turn_on = shouldTurnOn(level, pos, state);
                     TickPriority tickpriority = TickPriority.HIGH;
                     if (shouldPrioritize(level, pos, state))
                         tickpriority = TickPriority.VERY_HIGH;
-                    else if (turn_on)
-                        tickpriority = TickPriority.EXTREMELY_HIGH;
                     level.scheduleTick(pos, this, getDelay(state), tickpriority);
 
             }

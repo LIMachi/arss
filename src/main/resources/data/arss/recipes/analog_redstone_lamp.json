@@ -9,9 +9,14 @@
     "L": {
       "item": "minecraft:redstone_lamp"
     },
-    "C": {
-      "item": "minecraft:comparator"
-    }
+    "C": [
+      {
+        "item": "minecraft:comparator"
+      },
+      {
+        "item": "arss:better_comparator"
+      }
+    ]
   },
   "result": {
     "item": "arss:analog_redstone_lamp",

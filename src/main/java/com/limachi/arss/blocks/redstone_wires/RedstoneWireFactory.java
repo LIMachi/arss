@@ -6,10 +6,14 @@ import com.limachi.lim_lib.registries.Registries;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,6 +23,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.RegistryObject;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 
@@ -80,6 +85,12 @@ public abstract class RedstoneWireFactory {
             protected Product() { super(bProps, fRange, fMaxRange, fRangeFalloff); }
 
             @Override
+            public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> components, TooltipFlag flags) {
+                super.appendHoverText(stack, level, components, flags);
+                Arss.commonHoverText(fName, components);
+            }
+
+            @Override
             protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
                 super.createBlockStateDefinition(builder);
                 builder.add(fRange);
@@ -87,7 +98,7 @@ public abstract class RedstoneWireFactory {
         }
         RegistryObject<Block> R_BLOCK = Registries.block(Arss.MOD_ID, fName, Product::new);
         RedstoneUtils.hasRedstoneTint(R_BLOCK);
-        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName, ()->new BlockItem(R_BLOCK.get(), new Item.Properties()), "jei.info." + fName, new ArrayList<>(Collections.singleton("automatic")));
+        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName, ()->new BlockItem(R_BLOCK.get(), new Item.Properties()), null, new ArrayList<>(Collections.singleton("automatic")));
         REDSTONE_WIRES.put(fName, new Pair<>(R_ITEM, R_BLOCK));
     }
 }

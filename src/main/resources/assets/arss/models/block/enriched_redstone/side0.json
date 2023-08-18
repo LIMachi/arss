@@ -3,6 +3,6 @@
     "render_type": "minecraft:cutout",
     "textures": {
         "line": "arss:block/enriched_redstone/line0",
-        "overlay": "arss:block/enriched_redstone/overlay_line"
+        "overlay": "arss:block/enriched_redstone/line0_overlay"
     }
 }

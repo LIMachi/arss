@@ -3,7 +3,7 @@
     "render_type": "minecraft:cutout",
     "textures": {
         "particle": "arss:block/perfected_redstone/dot",
-        "overlay": "arss:block/perfected_redstone/overlay"
+        "overlay": "arss:block/perfected_redstone/dot_overlay"
     },
     "elements": [
         {   "from": [ 0, 0.25, 0 ],

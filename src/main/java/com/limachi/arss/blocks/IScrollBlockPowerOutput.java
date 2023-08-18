@@ -1,7 +1,7 @@
 package com.limachi.arss.blocks;
 
 import com.limachi.arss.Arss;
-import com.limachi.arss.ArssBlockStateProperties;
+import com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties;
 import com.limachi.lim_lib.scrollSystem.IScrollBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -49,7 +49,7 @@ public interface IScrollBlockPowerOutput extends IScrollBlock {
 
     default @Nonnull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, Supplier<InteractionResult> alternative) {
         Item held = player.getItemInHand(hand).getItem();
-        if (held == Items.REDSTONE_TORCH || held == AnalogRedstoneTorchBlock.R_ITEM.get()) {
+        if (held == Items.REDSTONE_TORCH || held == AnalogRedstoneTorchBlock.AnalogRedstoneTorchItem.R_ITEM.get()) {
             boolean can_scroll = !state.getValue(ArssBlockStateProperties.CAN_SCROLL);
             level.setBlock(pos, state.setValue(ArssBlockStateProperties.CAN_SCROLL, can_scroll), 3);
             player.displayClientMessage(Component.translatable("display.arss.scrollable_block.can_scroll." + can_scroll), true);

@@ -1,6 +1,6 @@
 package com.limachi.arss.blocks.redstone_wires;
 
-import com.limachi.arss.ArssBlockStateProperties;
+import com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties;
 import com.limachi.lim_lib.registries.StaticInit;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Blocks;

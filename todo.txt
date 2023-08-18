@@ -1,4 +1,44 @@
-OK translate back the JEI info from French to English
-OK finish a version of LimLib that can be uploaded to curse forge
-backport all change from 1.19.2 to 1.18.2 (will probably be the last update for 1.18.2, unless we finally have models/textures)
-OK will probably move some code from this version of the mod to my lib (in prevision of adding more redstone interactions with Dimensional Bags)
+vanilla redstone:
+redstone dust -> OK
+redstone torch -> OK
+redstone block -> OK
+repeater -> OK (delayer/cell)
+comparator -> OK
+target block -> meh
+lever -> OK
+button -> could make wood variants with delay
+pressure plates -> meh
+(calibrated) sculk sensor -> OK (book with all vibrations listed and usable in a lectern as a selector)
+sculk shrieker -> ignore
+block of amethyst -> Ok (instrument swapper)
+whool -> ignore
+tripwire hook -> there is something there, maybe signal strength based on where the wire was tripped? PROBLEM: minecraft hard coded a lot of the behaviors there, would require a few hacks to work
+string -> see tripwire hook
+lectern -> meh
+daylight sensor -> new diode that use it as component and produce signals at a specific time of day/night?
+lightning rod -> meh
+(sticky) piston -> meh
+slime/honey block -> meh
+dispenser -> meh
+dropper -> meh
+hopper -> meh
+chest/barrel/furnace -> meh
+trapped chest -> meh
+chiseled bookshelf -> meh
+jukebox -> OK
+observer -> OK (edge detector, there is still room for other update like gates)
+note block -> OK
+composter -> meh
+cauldron -> meh
+(powered/detector/activator) rail -> meh
+(hopper/chest/furnace/tnt) minecart -> meh
+boat with chest -> meh
+(iron) door -> meh
+fence gate -> meh
+(iron) trapdoor -> meh
+tnt -> just no
+redstone lamp -> OK
+bell -> ... make it sound farther the stronger the signal lever, as an alarm
+big dripleaf -> ignore
+armor stand -> meh
+redstone ore -> meh

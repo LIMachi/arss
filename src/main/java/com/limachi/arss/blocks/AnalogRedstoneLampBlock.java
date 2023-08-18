@@ -1,13 +1,20 @@
 package com.limachi.arss.blocks;
 
+import com.limachi.arss.Arss;
+import com.limachi.arss.items.BlockItemWithCustomRenderer;
 import com.limachi.lim_lib.registries.StaticInit;
 import com.limachi.lim_lib.registries.annotations.RegisterBlock;
-import com.limachi.lim_lib.registries.annotations.RegisterBlockItem;
+import com.limachi.lim_lib.registries.annotations.RegisterItem;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -17,7 +24,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraftforge.registries.RegistryObject;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 
 @SuppressWarnings("unused")
 @StaticInit
@@ -27,8 +36,19 @@ public class AnalogRedstoneLampBlock extends RedstoneLampBlock {
     @RegisterBlock(name = "analog_redstone_lamp")
     public static RegistryObject<Block> R_BLOCK;
 
-    @RegisterBlockItem(name = "analog_redstone_lamp", block = "analog_redstone_lamp", jeiInfoKey = "jei.info.analog_redstone_lamp")
-    public static RegistryObject<Item> R_ITEM;
+    public static class AnalogRedstoneLamp extends BlockItemWithCustomRenderer {
+
+        @RegisterItem
+        public static RegistryObject<BlockItem> R_ITEM;
+
+        public AnalogRedstoneLamp() { super(R_BLOCK.get(), new Item.Properties(), Blocks.REDSTONE_LAMP); }
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> components, TooltipFlag flags) {
+        super.appendHoverText(stack, level, components, flags);
+        Arss.commonHoverText("analog_redstone_lamp", components);
+    }
 
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
 
@@ -36,7 +56,7 @@ public class AnalogRedstoneLampBlock extends RedstoneLampBlock {
         return state.getValue(BlockStateProperties.LIT) ? state.getValue(POWER) : 0;
     }
 
-    public AnalogRedstoneLampBlock() { super(BlockBehaviour.Properties.copy(Blocks.REDSTONE_LAMP)); }
+    public AnalogRedstoneLampBlock() { super(BlockBehaviour.Properties.copy(Blocks.REDSTONE_LAMP).lightLevel(AnalogRedstoneLampBlock::litBlockEmission)); }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {

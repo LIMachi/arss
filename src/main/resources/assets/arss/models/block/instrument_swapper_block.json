@@ -1,0 +1,24 @@
+{
+  "parent": "block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "sides": "arss:block/instrument_swapper_sides",
+    "top": "arss:block/instrument_swapper_top",
+    "bottom": "arss:block/instrument_swapper_bottom",
+    "decal": "arss:item/arss_decal",
+    "particle": "arss:block/instrument_swapper_sides"
+  },
+  "elements": [
+    { "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "down": { "texture": "#bottom", "cullface": "down" },
+        "up": { "texture": "#top", "cullface": "up" },
+        "north": { "texture": "#sides", "cullface": "north" },
+        "south": { "texture": "#sides", "cullface": "south" },
+        "west": { "texture": "#sides", "cullface": "west" },
+        "east": { "texture": "#sides", "cullface": "east" }
+      }
+    }
+  ]
+}

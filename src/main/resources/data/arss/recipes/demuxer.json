@@ -9,9 +9,14 @@
     "T": {
       "item": "minecraft:redstone_torch"
     },
-    "C": {
-      "item": "minecraft:comparator"
-    }
+    "C": [
+      {
+        "item": "minecraft:comparator"
+      },
+      {
+        "item": "arss:better_comparator"
+      }
+    ]
   },
   "result": {
     "item": "arss:demuxer",

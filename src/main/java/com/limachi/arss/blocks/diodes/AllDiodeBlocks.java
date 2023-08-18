@@ -1,6 +1,6 @@
 package com.limachi.arss.blocks.diodes;
 
-import com.limachi.arss.ArssBlockStateProperties;
+import com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties;
 import com.limachi.arss.blockEntities.DelayerBlockEntity;
 import com.limachi.arss.blockEntities.ProgrammableAnalogGateBlockEntity;
 import com.limachi.arss.blockEntities.SignalGeneratorBlockEntity;
@@ -12,24 +12,12 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ComparatorMode;
 
 import static com.limachi.arss.blocks.diodes.BaseAnalogDiodeBlock.*;
-import static com.limachi.arss.ArssBlockStateProperties.*;
+import static com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties.*;
 
 @StaticInit
 @SuppressWarnings("unused")
 public class AllDiodeBlocks {
 
-    //new gate: programmable analog gate:
-    //craft: x5 gates (gate ratio 5/13 < cell gate ratio 1/2)
-    //CAC
-    //NDP
-    //CXC
-    //C->analog cell
-    //A->analog and
-    //N->better_comparator
-    //D->demuxer
-    //P->adder
-    //X->analog xor
-    //can program specific output for each of the 4 bits according to combination of 3 entries (similar to rftool's logic gate), each of the 8 combination can be toggled to 6 modes (on/off/keep/copy1/copy2/copy4/copy8)
     static {
         DiodeBlockFactory.create("adder", ADDER_MODE, AllDiodeBlocks::adder);
         DiodeBlockFactory.create("analog_and", AllDiodeBlocks::and);
@@ -46,7 +34,6 @@ public class AllDiodeBlocks {
         DiodeBlockFactory.create("edge_detector", EDGE_MODE, AllDiodeBlocks::edge, true, false, PREVIOUS_READ_POWER);
         DiodeBlockFactory.create("shifter", SHIFTER_MODE, AllDiodeBlocks::shifter);
         DiodeBlockFactory.create("signal_generator", GENERATOR_MODE, AllDiodeBlocks::generator, SignalGeneratorBlockEntity::new);
-//        DiodeBlockFactory.create("programmable_analog_gate", AllDiodeBlocks::programmable, ProgrammableAnalogGateBlockEntity::new);
     }
 
     static protected BlockState comparator(boolean test, Level level, BlockPos pos, BlockState state) {

@@ -122,6 +122,5 @@ public class BaseOpaqueContainerBlockEntity extends BlockEntity implements Conta
     public void clearContent() {
         for (int i = 0; i < getContainerSize(); ++i)
             items.set(i, ItemStack.EMPTY);
-        setChanged();
     }
 }

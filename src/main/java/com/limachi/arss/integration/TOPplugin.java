@@ -1,9 +1,10 @@
 package com.limachi.arss.integration;
 
 import com.limachi.arss.Arss;
-import com.limachi.arss.ArssBlockStateProperties;
+import com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties;
 import com.limachi.arss.blocks.AnalogNoteBlock;
 import com.limachi.arss.blocks.AnalogRedstoneBlock;
+import com.limachi.arss.blocks.AnalogRedstoneLampBlock;
 import com.limachi.arss.blocks.IScrollBlockPowerOutput;
 import com.limachi.arss.blocks.diodes.BaseAnalogDiodeBlock;
 import com.mojang.datafixers.util.Pair;
@@ -15,7 +16,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -44,12 +44,17 @@ public class TOPplugin implements Function<ITheOneProbe, Void>, IProbeInfoProvid
             EnumProperty<?> modeProp = p.getSecond();
             IProbeInfo v = info.vertical(info.defaultLayoutStyle().spacing(2));
             IProbeInfo h = v.horizontal(info.defaultLayoutStyle().spacing(2).alignment(ElementAlignment.ALIGN_TOPLEFT));
-            h.item(new ItemStack(Items.REDSTONE), new ItemStyle().height(14).width(14)).text(Component.translatable("top.info.power", state.getValue(RedStoneWireBlock.POWER).toString()));
+            h.item(new ItemStack(Items.REDSTONE), new ItemStyle().height(14).width(14)).text(Component.translatable("top.info.power", state.getValue(BlockStateProperties.POWER).toString()));
             if (modeProp != null)
                 v.text(Component.translatable("top.info.mode").append(Component.translatable("display.arss." + name + ".mode." + state.getValue(modeProp))));
         }
         if (state.getBlock() instanceof AnalogNoteBlock) {
             info.text(Component.translatable("top.info.pitch").append(Component.translatable("top.info.pitch." + (state.getValue(ArssBlockStateProperties.HIGH) ? "high" : "low"))));
+        }
+        if (state.getBlock() instanceof AnalogRedstoneLampBlock) {
+            IProbeInfo v = info.vertical(info.defaultLayoutStyle().spacing(2));
+            IProbeInfo h = v.horizontal(info.defaultLayoutStyle().spacing(2).alignment(ElementAlignment.ALIGN_TOPLEFT));
+            h.item(new ItemStack(Items.GLOWSTONE_DUST), new ItemStyle().height(14).width(14)).text(Component.translatable("top.info.light_level", state.getValue(BlockStateProperties.POWER).toString()));
         }
     }
 

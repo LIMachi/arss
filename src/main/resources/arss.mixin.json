@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_17",
+  "package": "com.limachi.arss.mixin",
+  "mixins": [
+    "NoteBlockMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "refmap": "arss.refmap.json",
+  "client": [
+  ]
+}
