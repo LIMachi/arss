@@ -22,6 +22,8 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 
 import java.util.function.Function;
 
+import static com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties.SIDES;
+
 public class TOPplugin implements Function<ITheOneProbe, Void>, IProbeInfoProvider {
     public static final ResourceLocation ID = new ResourceLocation(Arss.MOD_ID, "top_block");
 
@@ -47,6 +49,7 @@ public class TOPplugin implements Function<ITheOneProbe, Void>, IProbeInfoProvid
             h.item(new ItemStack(Items.REDSTONE), new ItemStyle().height(14).width(14)).text(Component.translatable("top.info.power", state.getValue(BlockStateProperties.POWER).toString()));
             if (modeProp != null)
                 v.text(Component.translatable("top.info.mode").append(Component.translatable("display.arss." + name + ".mode." + state.getValue(modeProp))));
+            v.text(Component.translatable("top.info.sides").append(Component.translatable("top.info.sides_state." + state.getValue(SIDES))));
         }
         if (state.getBlock() instanceof AnalogNoteBlock) {
             info.text(Component.translatable("top.info.pitch").append(Component.translatable("top.info.pitch." + (state.getValue(ArssBlockStateProperties.HIGH) ? "high" : "low"))));

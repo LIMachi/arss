@@ -1,6 +1,0 @@
-{
-  "parent": "arss:block/diode_base/other/on",
-  "textures": {
-    "top": "arss:block/diodes/analog_and"
-  }
-}

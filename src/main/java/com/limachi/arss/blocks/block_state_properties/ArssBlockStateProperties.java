@@ -78,8 +78,8 @@ public class ArssBlockStateProperties {
     public enum DelayerMode implements StringRepresentable {
         ONE("1"),
         TWO("2"),
+        THREE("3"),
         FOUR("4"),
-        EIGHT("8"),
         SIDE_CONTROL("side_control");
 
         private final String name;
@@ -115,9 +115,48 @@ public class ArssBlockStateProperties {
         public @Nonnull String getSerializedName() { return this.name; }
     }
 
+    public enum SideToggling implements StringRepresentable {
+        ALL_ACTIVE("all_active"),
+        RIGHT_DISABLED("right_disabled"),
+        LEFT_DISABLED("left_disabled"),
+        BOTH_SIDE_DISABLED("both_side_disabled"), //only a few selected gates can use this property
+        INPUT_DISABLED("input_disabled"); //only combinator gates with agnostic side can use this property
+
+        private final String name;
+        SideToggling(String name) { this.name = name; }
+        public String toString() { return this.getSerializedName(); }
+        public @Nonnull String getSerializedName() { return this.name; }
+
+        public SideToggling cycle(boolean up, boolean includeBothSides, boolean includeInput) {
+            if (up)
+                return switch (this) {
+                    case ALL_ACTIVE -> RIGHT_DISABLED;
+                    case RIGHT_DISABLED -> LEFT_DISABLED;
+                    case LEFT_DISABLED -> includeBothSides ? BOTH_SIDE_DISABLED : includeInput ? INPUT_DISABLED : ALL_ACTIVE;
+                    case BOTH_SIDE_DISABLED -> includeInput ? INPUT_DISABLED : ALL_ACTIVE;
+                    case INPUT_DISABLED -> ALL_ACTIVE;
+                };
+            else
+                return switch (this) {
+                    case ALL_ACTIVE -> includeInput ? INPUT_DISABLED : includeBothSides ? BOTH_SIDE_DISABLED : LEFT_DISABLED;
+                    case RIGHT_DISABLED -> ALL_ACTIVE;
+                    case LEFT_DISABLED -> RIGHT_DISABLED;
+                    case BOTH_SIDE_DISABLED -> LEFT_DISABLED;
+                    case INPUT_DISABLED -> includeBothSides ? BOTH_SIDE_DISABLED : LEFT_DISABLED;
+                };
+        }
+
+        public boolean acceptRight() {
+            return this != RIGHT_DISABLED && this != BOTH_SIDE_DISABLED;
+        }
+
+        public boolean acceptLeft() {
+            return this != LEFT_DISABLED && this != BOTH_SIDE_DISABLED;
+        }
+    }
+
     public static final IntegerProperty ENRICHED_RS_RANGE = IntegerProperty.create("range", 0, 4);
     public static final IntegerProperty PERFECTED_RS_RANGE = IntegerProperty.create("range", 0, 32);
-    public static final IntegerProperty PREVIOUS_READ_POWER = IntegerProperty.create("previous_read_power", 0, 15);
     public static final EnumProperty<MemoryMode> MEMORY_MODE = EnumProperty.create("mode", MemoryMode.class);
     public static final EnumProperty<AdderMode> ADDER_MODE = EnumProperty.create("mode", AdderMode.class);
     public static final EnumProperty<CheckerMode> CHECKER_MODE = EnumProperty.create("mode", CheckerMode.class);
@@ -127,5 +166,7 @@ public class ArssBlockStateProperties {
     public static final EnumProperty<ShifterMode> SHIFTER_MODE = EnumProperty.create("mode", ShifterMode.class);
     public static final BooleanProperty HIGH = BooleanProperty.create("high");
     public static final EnumProperty<SignalGeneratorMode> GENERATOR_MODE = EnumProperty.create("mode", SignalGeneratorMode.class);
+    public static final EnumProperty<SideToggling> SIDES = EnumProperty.create("sides", SideToggling.class);
     public static final BooleanProperty CAN_SCROLL = BooleanProperty.create("can_scroll");
+    public static final BooleanProperty HIDE_DOT = BooleanProperty.create("hide_dot");
 }

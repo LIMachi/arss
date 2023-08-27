@@ -1,6 +1,0 @@
-{
-  "parent": "arss:block/diode_base/other/off",
-  "textures": {
-    "top": "arss:block/diodes/demuxer_bit3"
-  }
-}

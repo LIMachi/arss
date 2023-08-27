@@ -1,7 +1,17 @@
 {
-  "variants": {
-    "": {
-      "model": "arss:block/analog_jukebox"
+  "multipart": [
+    {
+      "apply": {
+        "model": "minecraft:block/jukebox"
+      }
+    },
+    {
+      "when": {
+        "hide_dot": false
+      },
+      "apply": {
+        "model": "arss:block/decal"
+      }
     }
-  }
+  ]
 }

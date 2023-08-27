@@ -1,15 +1,15 @@
 package com.limachi.arss.blocks.diodes;
 
 import com.limachi.arss.Arss;
+import com.limachi.arss.blockEntities.GenericDiodeBlockEntity;
+import com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties;
+import com.limachi.lim_lib.Log;
 import com.limachi.lim_lib.RedstoneUtils;
 import com.limachi.lim_lib.registries.Registries;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -35,12 +35,12 @@ import java.util.function.Supplier;
 @SuppressWarnings({"deprecation", "unused"})
 public class DiodeBlockFactory {
     @FunctionalInterface
-    interface SignalGenerator {
-        BlockState calculateOutputSignal(boolean test, Level level, BlockPos pos, BlockState state);
+    public interface SignalGenerator {
+        int calculateOutputSignal(boolean test, Level level, BlockPos pos, BlockState state);
     }
 
     @FunctionalInterface
-    interface BlockEntityBuilder {
+    public interface BlockEntityBuilder {
         BlockEntity build(BlockPos pos, BlockState state);
     }
 
@@ -61,19 +61,55 @@ public class DiodeBlockFactory {
 
     public static RegistryObject<Item> getItemRegister(String name) { return DIODE_BLOCKS.get(name).getFirst(); }
 
-    public static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, boolean fTickOnceAfterUpdate, boolean fIsTicking, Property<?>... extraProps) { create(fName, fMode, fGen, PROPS, I_PROPS, 1, fTickOnceAfterUpdate, fIsTicking, false, null, extraProps); }
+    public static final class Builder {
+        private String name = "Must be a valid registry key";
+        @Nullable
+        private EnumProperty<?> mode = null;
+        private SignalGenerator generator = (b, l, p, s)->{
+            Log.error("Invalid gate generator for: " + name);
+            return 0;
+        };
+        private BlockBehaviour.Properties blockProperties = PROPS;
+        private Item.Properties itemProperties = I_PROPS;
+        private int delay = 1;
+        private boolean tickOnceAfterUpdate = false;
+        private boolean ticking = false;
+        private boolean hasPowerTint = false;
+        @Nullable
+        private BlockEntityBuilder blockEntityBuilder = GenericDiodeBlockEntity::new;
+        private final List<Property<?>> extraProperties = new ArrayList<>();
 
-    public static void create(String fName, SignalGenerator fGen, Property<?> ... extraProps) { create(fName, null, fGen, PROPS, I_PROPS, 1, false, false, false, null, extraProps); }
+        private boolean canToggleBothSides = false;
+        private boolean canToggleInput = false;
 
-    public static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, Property<?> ... extraProps) { create(fName, fMode, fGen, PROPS, I_PROPS, 1, false, false, false, null, extraProps); }
+        private Builder() {}
 
-    public static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, BlockEntityBuilder beb, Property<?> ... extraProps) { create(fName, fMode, fGen, PROPS, I_PROPS, 1, false, true, false, beb, extraProps); }
+        public void finish() {
+            create(name, mode, generator, blockProperties, itemProperties, delay, tickOnceAfterUpdate, ticking, hasPowerTint, blockEntityBuilder, canToggleBothSides, canToggleInput, extraProperties);
+        }
 
-    public static void create(String fName, SignalGenerator fGen, BlockEntityBuilder beb, Property<?> ... extraProps) { create(fName, null, fGen, PROPS, I_PROPS, 1, false, true, false, beb, extraProps); }
+        public Builder mode(@Nullable EnumProperty<?> mode) { this.mode = mode; return this; }
+        public Builder blockProperties(BlockBehaviour.Properties blockProperties) { this.blockProperties = blockProperties; return this; }
+        public Builder itemProperties(Item.Properties itemProperties) { this.itemProperties = itemProperties; return this; }
+        public Builder delay(int delay) { this.delay = delay; return this; }
+        public Builder tickOnceAfterUpdate(boolean state) { tickOnceAfterUpdate = state; return this; }
+        public Builder ticking(boolean state) { ticking = state; return this; }
+        public Builder hasPowerTint(boolean state) { hasPowerTint = state; return this; }
+        public Builder blockEntityBuilder(@Nullable BlockEntityBuilder builder) { this.blockEntityBuilder = builder; return this; }
+        public Builder addProperties(Property<?> ... properties) { extraProperties.addAll(List.of(properties)); return this; }
+        public Builder addProperties(Collection<Property<?>> properties) { extraProperties.addAll(properties); return this; }
+        public Builder canToggleBothSides(boolean state) { canToggleBothSides = state; return this; }
+        public Builder canToggleInput(boolean state) { canToggleInput = state; return this; }
+    }
 
-    public static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, boolean hasPowerTint, Property<?> ... extraProps) { create(fName, fMode, fGen, PROPS, I_PROPS, 1, false, false, hasPowerTint, null, extraProps); }
+    public static Builder builder(@Nonnull String name, @Nonnull SignalGenerator generator) {
+        Builder out = new Builder();
+        out.name = name;
+        out.generator = generator;
+        return out;
+    }
 
-    public static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, BlockBehaviour.Properties props, Item.Properties iProps, int fDelay, boolean fTickOnceAfterUpdate, boolean fIsTicking, boolean hasPowerTint, BlockEntityBuilder beb, Property<?> ... extraProps) {
+    private static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, BlockBehaviour.Properties props, Item.Properties iProps, int fDelay, boolean fTickOnceAfterUpdate, boolean fIsTicking, boolean hasPowerTint, BlockEntityBuilder beb, boolean canToggleBothSides, boolean canToggleInput, List<Property<?>> extraProps) {
         Supplier<Block> gBlock;
 
         class Product extends BaseAnalogDiodeBlock {
@@ -98,16 +134,21 @@ public class DiodeBlockFactory {
 
             @Override
             protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-                builder.add(FACING, POWERED, POWER);
+                builder.add(FACING, POWERED, POWER, ArssBlockStateProperties.SIDES);
                 if (fMode != null)
                     builder.add(fMode);
-                if (extraProps.length > 0)
-                    builder.add(extraProps);
+                for (Property<?> prop : extraProps)
+                    builder.add(prop);
             }
 
             @Override
-            protected BlockState calculateOutputSignal(boolean test, Level level, BlockPos pos, BlockState state) {
+            protected int calculateOutputSignal(boolean test, Level level, BlockPos pos, BlockState state) {
                 return fGen.calculateOutputSignal(test, level, pos, state);
+            }
+
+            @Override
+            protected ArssBlockStateProperties.SideToggling cycleSideStates(ArssBlockStateProperties.SideToggling current, boolean shifting) {
+                return current.cycle(!shifting, canToggleBothSides, canToggleInput);
             }
         }
 

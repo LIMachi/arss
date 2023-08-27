@@ -1,0 +1,189 @@
+{
+  "variants": {
+    "facing=east,mode=random,powered=false": {
+      "y": 270,
+      "model": "arss:block/diodes/signal_generator/random_off"
+    },
+    "facing=east,mode=random,powered=true": {
+      "y": 270,
+      "model": "arss:block/diodes/signal_generator/random_on"
+    },
+    "facing=north,mode=random,powered=false": {
+      "y": 180,
+      "model": "arss:block/diodes/signal_generator/random_off"
+    },
+    "facing=north,mode=random,powered=true": {
+      "y": 180,
+      "model": "arss:block/diodes/signal_generator/random_on"
+    },
+    "facing=south,mode=random,powered=false": {
+      "model": "arss:block/diodes/signal_generator/random_off"
+    },
+    "facing=south,mode=random,powered=true": {
+      "model": "arss:block/diodes/signal_generator/random_on"
+    },
+    "facing=west,mode=random,powered=false": {
+      "y": 90,
+      "model": "arss:block/diodes/signal_generator/random_off"
+    },
+    "facing=west,mode=random,powered=true": {
+      "y": 90,
+      "model": "arss:block/diodes/signal_generator/random_on"
+    },
+
+    "facing=east,mode=saw,powered=false": {
+      "y": 270,
+      "model": "arss:block/diodes/signal_generator/saw_off"
+    },
+    "facing=east,mode=saw,powered=true": {
+      "y": 270,
+      "model": "arss:block/diodes/signal_generator/saw_on"
+    },
+    "facing=north,mode=saw,powered=false": {
+      "y": 180,
+      "model": "arss:block/diodes/signal_generator/saw_off"
+    },
+    "facing=north,mode=saw,powered=true": {
+      "y": 180,
+      "model": "arss:block/diodes/signal_generator/saw_on"
+    },
+    "facing=south,mode=saw,powered=false": {
+      "model": "arss:block/diodes/signal_generator/saw_off"
+    },
+    "facing=south,mode=saw,powered=true": {
+      "model": "arss:block/diodes/signal_generator/saw_on"
+    },
+    "facing=west,mode=saw,powered=false": {
+      "y": 90,
+      "model": "arss:block/diodes/signal_generator/saw_off"
+    },
+    "facing=west,mode=saw,powered=true": {
+      "y": 90,
+      "model": "arss:block/diodes/signal_generator/saw_on"
+    },
+
+    "facing=east,mode=inverse_saw,powered=false": {
+      "y": 270,
+      "model": "arss:block/diodes/signal_generator/inverse_saw_off"
+    },
+    "facing=east,mode=inverse_saw,powered=true": {
+      "y": 270,
+      "model": "arss:block/diodes/signal_generator/inverse_saw_on"
+    },
+    "facing=north,mode=inverse_saw,powered=false": {
+      "y": 180,
+      "model": "arss:block/diodes/signal_generator/inverse_saw_off"
+    },
+    "facing=north,mode=inverse_saw,powered=true": {
+      "y": 180,
+      "model": "arss:block/diodes/signal_generator/inverse_saw_on"
+    },
+    "facing=south,mode=inverse_saw,powered=false": {
+      "model": "arss:block/diodes/signal_generator/inverse_saw_off"
+    },
+    "facing=south,mode=inverse_saw,powered=true": {
+      "model": "arss:block/diodes/signal_generator/inverse_saw_on"
+    },
+    "facing=west,mode=inverse_saw,powered=false": {
+      "y": 90,
+      "model": "arss:block/diodes/signal_generator/inverse_saw_off"
+    },
+    "facing=west,mode=inverse_saw,powered=true": {
+      "y": 90,
+      "model": "arss:block/diodes/signal_generator/inverse_saw_on"
+    },
+
+    "facing=east,mode=triangle,powered=false": {
+      "y": 270,
+      "model": "arss:block/diodes/signal_generator/triangle_off"
+    },
+    "facing=east,mode=triangle,powered=true": {
+      "y": 270,
+      "model": "arss:block/diodes/signal_generator/triangle_on"
+    },
+    "facing=north,mode=triangle,powered=false": {
+      "y": 180,
+      "model": "arss:block/diodes/signal_generator/triangle_off"
+    },
+    "facing=north,mode=triangle,powered=true": {
+      "y": 180,
+      "model": "arss:block/diodes/signal_generator/triangle_on"
+    },
+    "facing=south,mode=triangle,powered=false": {
+      "model": "arss:block/diodes/signal_generator/triangle_off"
+    },
+    "facing=south,mode=triangle,powered=true": {
+      "model": "arss:block/diodes/signal_generator/triangle_on"
+    },
+    "facing=west,mode=triangle,powered=false": {
+      "y": 90,
+      "model": "arss:block/diodes/signal_generator/triangle_off"
+    },
+    "facing=west,mode=triangle,powered=true": {
+      "y": 90,
+      "model": "arss:block/diodes/signal_generator/triangle_on"
+    },
+
+    "facing=east,mode=sine,powered=false": {
+      "y": 270,
+      "model": "arss:block/diodes/signal_generator/sine_off"
+    },
+    "facing=east,mode=sine,powered=true": {
+      "y": 270,
+      "model": "arss:block/diodes/signal_generator/sine_on"
+    },
+    "facing=north,mode=sine,powered=false": {
+      "y": 180,
+      "model": "arss:block/diodes/signal_generator/sine_off"
+    },
+    "facing=north,mode=sine,powered=true": {
+      "y": 180,
+      "model": "arss:block/diodes/signal_generator/sine_on"
+    },
+    "facing=south,mode=sine,powered=false": {
+      "model": "arss:block/diodes/signal_generator/sine_off"
+    },
+    "facing=south,mode=sine,powered=true": {
+      "model": "arss:block/diodes/signal_generator/sine_on"
+    },
+    "facing=west,mode=sine,powered=false": {
+      "y": 90,
+      "model": "arss:block/diodes/signal_generator/sine_off"
+    },
+    "facing=west,mode=sine,powered=true": {
+      "y": 90,
+      "model": "arss:block/diodes/signal_generator/sine_on"
+    },
+
+    "facing=east,mode=square,powered=false": {
+      "y": 270,
+      "model": "arss:block/diodes/signal_generator/square_off"
+    },
+    "facing=east,mode=square,powered=true": {
+      "y": 270,
+      "model": "arss:block/diodes/signal_generator/square_on"
+    },
+    "facing=north,mode=square,powered=false": {
+      "y": 180,
+      "model": "arss:block/diodes/signal_generator/square_off"
+    },
+    "facing=north,mode=square,powered=true": {
+      "y": 180,
+      "model": "arss:block/diodes/signal_generator/square_on"
+    },
+    "facing=south,mode=square,powered=false": {
+      "model": "arss:block/diodes/signal_generator/square_off"
+    },
+    "facing=south,mode=square,powered=true": {
+      "model": "arss:block/diodes/signal_generator/square_on"
+    },
+    "facing=west,mode=square,powered=false": {
+      "y": 90,
+      "model": "arss:block/diodes/signal_generator/square_off"
+    },
+    "facing=west,mode=square,powered=true": {
+      "y": 90,
+      "model": "arss:block/diodes/signal_generator/square_on"
+    }
+  }
+}

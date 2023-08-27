@@ -7,7 +7,6 @@ import com.limachi.lim_lib.registries.Stage;
 import com.limachi.lim_lib.registries.StaticInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.RegistryObject;
@@ -15,7 +14,7 @@ import net.minecraftforge.registries.RegistryObject;
 import javax.annotation.Nonnull;
 
 @StaticInit(Stage.BLOCK_ENTITY)
-public class DelayerBlockEntity extends BlockEntity {
+public class DelayerBlockEntity extends GenericDiodeBlockEntity {
 
     private final int[] memory = new int[16];
     private int head = 0;

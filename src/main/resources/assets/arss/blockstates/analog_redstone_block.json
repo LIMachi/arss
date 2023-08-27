@@ -1,7 +1,17 @@
 {
-  "variants": {
-    "": {
-      "model": "arss:block/analog_redstone_block"
+  "multipart": [
+    {
+      "apply": {
+        "model": "arss:block/analog_redstone_block"
+      }
+    },
+    {
+      "when": {
+        "hide_dot": false
+      },
+      "apply": {
+        "model": "arss:block/decal"
+      }
     }
-  }
+  ]
 }

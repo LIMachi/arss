@@ -1,5 +1,8 @@
 package com.limachi.arss.blocks.diodes;
 
+import com.limachi.arss.blockEntities.GenericDiodeBlockEntity;
+import com.limachi.arss.blocks.AnalogRedstoneTorchBlock;
+import com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties;
 import com.limachi.lim_lib.Configs;
 import com.limachi.lim_lib.SoundUtils;
 import com.limachi.lim_lib.blockEntities.IOnUseBlockListener;
@@ -16,7 +19,9 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -30,12 +35,16 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.ticks.TickPriority;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import static com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties.HIDE_DOT;
+import static com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties.SIDES;
 
 /**
  * common class for comparator like blocks (get power at the back by getting analog signal/item frame) and expect potential power on the sides (the highest value)
@@ -73,7 +82,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, POWERED, POWER);
+        builder.add(FACING, POWERED, POWER, SIDES);
         if (modeProp != null)
             builder.add(modeProp);
     }
@@ -86,15 +95,17 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
     @Override
     protected int getOutputSignal(@Nonnull BlockGetter level, @Nonnull BlockPos pos, BlockState state) { return state.getValue(POWER); }
 
-    abstract protected BlockState calculateOutputSignal(boolean test, Level level, BlockPos pos, BlockState state);
+    abstract protected int calculateOutputSignal(boolean test, Level level, BlockPos pos, BlockState state);
+
+    abstract protected ArssBlockStateProperties.SideToggling cycleSideStates(ArssBlockStateProperties.SideToggling current, boolean shifting);
 
     @Override
     protected boolean shouldTurnOn(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
-        return calculateOutputSignal(true, level, pos, state).getValue(POWER) > 0;
+        return calculateOutputSignal(true, level, pos, state) > 0;
     }
 
     public static int sGetInputSignal(Level level, BlockPos pos, BlockState state) {
-        if (state.getBlock() instanceof BaseAnalogDiodeBlock)
+        if (state.getBlock() instanceof BaseAnalogDiodeBlock && state.getValue(SIDES) != ArssBlockStateProperties.SideToggling.INPUT_DISABLED)
             return ((BaseAnalogDiodeBlock)state.getBlock()).getInputSignal(level, pos, state);
         return 0;
     }
@@ -111,8 +122,11 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
         if (state.getBlock() instanceof BaseAnalogDiodeBlock instance) {
             Direction direction = state.getValue(FACING);
             Direction clock = direction.getClockWise();
+            ArssBlockStateProperties.SideToggling sides = state.getValue(SIDES);
+            int left = sides.acceptLeft() ? instance.getAlternateSignalAt(level, pos.relative(clock), clock) : 0;
             Direction counter = direction.getCounterClockWise();
-            return Pair.of(instance.getAlternateSignalAt(level, pos.relative(clock), clock), instance.getAlternateSignalAt(level, pos.relative(counter), counter));
+            int right = sides.acceptRight() ? instance.getAlternateSignalAt(level, pos.relative(counter), counter) : 0;
+            return Pair.of(left, right);
         }
         return Pair.of(0, 0);
     }
@@ -177,18 +191,27 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
 
     @Override
     public @Nonnull InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
+        Item held = player.getItemInHand(hand).getItem();
+        if (held == Items.REDSTONE_TORCH || held == AnalogRedstoneTorchBlock.AnalogRedstoneTorchItem.R_ITEM.get()) {
+            ArssBlockStateProperties.SideToggling newSidedness = cycleSideStates(state.getValue(SIDES), player.isShiftKeyDown());
+            state = state.setValue(SIDES, newSidedness);
+            level.setBlock(pos, state, 3);
+            player.displayClientMessage(Component.translatable("display.arss.diode_block.sidedness." + newSidedness), true);
+            refreshOutputState(level, pos, state, true);
+            return InteractionResult.SUCCESS;
+        }
         if (player.getAbilities().mayBuild) {
             if (modeProp != null) {
                 state = player.isShiftKeyDown() ? cycleBack(state, modeProp) : state.cycle(modeProp);
                 Enum<?> s = state.getValue(modeProp);
                 SoundUtils.playComparatorClick(level, pos, s.ordinal());
                 player.displayClientMessage(Component.translatable("display.arss." + name + ".mode." + s), true);
-                level.setBlock(pos, state, 2);
-                refreshOutputState(level, pos, state);
+                level.setBlockAndUpdate(pos, state);
+                refreshOutputState(level, pos, state, true);
                 return InteractionResult.sidedSuccess(level.isClientSide);
             } else if (this instanceof EntityBlock && level.getBlockEntity(pos) instanceof IOnUseBlockListener useListener) {
                 InteractionResult out = useListener.use(state, level, pos, player, hand, hit);
-                refreshOutputState(level, pos, state);
+                refreshOutputState(level, pos, state, isTicking);
                 return out;
             }
 
@@ -197,21 +220,20 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
     }
 
     @Override
-    protected void checkTickOnNeighbor(Level level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
+    protected void checkTickOnNeighbor(@NotNull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
         if (!level.getBlockTicks().willTickThisTick(pos, this)) {
-            BlockState newState = calculateOutputSignal(true, level, pos, state);
-            if (newState != state) {
-                    TickPriority tickpriority = TickPriority.HIGH;
-                    if (shouldPrioritize(level, pos, state))
-                        tickpriority = TickPriority.VERY_HIGH;
-                    level.scheduleTick(pos, this, getDelay(state), tickpriority);
-
-            }
+            int newPower = calculateOutputSignal(true, level, pos, state);
+            if (newPower != state.getValue(POWER))
+                level.scheduleTick(pos, this, getDelay(state), shouldPrioritize(level, pos, state) ? TickPriority.HIGH : TickPriority.NORMAL);
         }
     }
 
-    static BlockState setPower(BlockState state, int power) {
-        return state.getValue(POWER) != power ? state.setValue(POWER, Mth.clamp(power, 0, 15)) : state;
+    static int setPower(Level level, BlockPos pos, BlockState state, int power) {
+        if (level.getBlockEntity(pos) instanceof GenericDiodeBlockEntity be) {
+            be.setOutput(Mth.clamp(power, 0, 15));
+            return be.getOutput();
+        }
+        return 0;
     }
 
     protected int getAlternateSignalAt(@Nonnull LevelReader level, @Nonnull BlockPos pos, @Nonnull Direction dir) {
@@ -222,19 +244,24 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
         return level.getControlInputSignal(pos.relative(dir), dir, this.sideInputDiodesOnly());
     }
 
-    private void refreshOutputState(Level level, BlockPos pos, BlockState state) {
-        BlockState newState = calculateOutputSignal(false, level, pos, state);
-
-        if (state != newState) {
-            boolean flag1 = newState.getValue(POWER) > 0;
+    private void refreshOutputState(Level level, BlockPos pos, BlockState state, boolean recalculate) {
+        int nextPower = 0;
+        if (recalculate) {
+            nextPower = calculateOutputSignal(false, level, pos, state);
+            if (level.getBlockEntity(pos) instanceof GenericDiodeBlockEntity be)
+                be.setOutput(nextPower);
+        } else if (level.getBlockEntity(pos) instanceof GenericDiodeBlockEntity be)
+            nextPower = be.getOutput();
+        if (state.getValue(POWER) != nextPower) {
+            boolean flag1 = nextPower > 0;
             boolean flag = state.getValue(POWERED);
 
             if (flag && !flag1)
-                level.setBlock(pos, newState.setValue(POWERED, false), 2);
+                level.setBlock(pos, state.setValue(POWERED, false).setValue(POWER, 0), 2);
             else if (!flag && flag1)
-                level.setBlock(pos, newState.setValue(POWERED, true), 2);
+                level.setBlock(pos, state.setValue(POWERED, true).setValue(POWER, nextPower), 2);
             else
-                level.setBlock(pos, newState, 2);
+                level.setBlock(pos, state.setValue(POWER, nextPower), 2);
 
             if (tickOnceAfterUpdate)
                 level.scheduleTick(pos, this, getDelay(state));
@@ -245,7 +272,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
 
     @Override
     public void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource rng) {
-        refreshOutputState(level, pos, state);
+        refreshOutputState(level, pos, state, isTicking);
         if (isTicking) {
             int delay = getDelay(state);
             level.scheduleTick(pos, this, delay > 0 ? delay : 1);

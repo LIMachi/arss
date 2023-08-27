@@ -2,6 +2,7 @@ package com.limachi.arss.blocks;
 
 import com.limachi.arss.Arss;
 import com.limachi.arss.items.BlockItemWithCustomRenderer;
+import com.limachi.lim_lib.KeyMapController;
 import com.limachi.lim_lib.registries.StaticInit;
 import com.limachi.lim_lib.registries.annotations.RegisterBlock;
 import com.limachi.lim_lib.registries.annotations.RegisterItem;
@@ -9,10 +10,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -22,11 +23,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.registries.RegistryObject;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+
+import static com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties.HIDE_DOT;
 
 @SuppressWarnings("unused")
 @StaticInit
@@ -56,12 +61,15 @@ public class AnalogRedstoneLampBlock extends RedstoneLampBlock {
         return state.getValue(BlockStateProperties.LIT) ? state.getValue(POWER) : 0;
     }
 
-    public AnalogRedstoneLampBlock() { super(BlockBehaviour.Properties.copy(Blocks.REDSTONE_LAMP).lightLevel(AnalogRedstoneLampBlock::litBlockEmission)); }
+    public AnalogRedstoneLampBlock() {
+        super(BlockBehaviour.Properties.copy(Blocks.REDSTONE_LAMP).lightLevel(AnalogRedstoneLampBlock::litBlockEmission));
+        registerDefaultState(stateDefinition.any().setValue(HIDE_DOT, false));
+    }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(POWER);
+        builder.add(POWER, HIDE_DOT);
     }
 
     @Override
@@ -77,8 +85,8 @@ public class AnalogRedstoneLampBlock extends RedstoneLampBlock {
             int p = state.getValue(POWER);
             int s = level.getBestNeighborSignal(pos);
             if (p != s) {
-                if (flag && s == 0)
-                    level.scheduleTick(pos, this, 4);
+                if (s == 0)
+                    level.setBlock(pos, state.setValue(LIT, false).setValue(POWER, 0), 2);
                 else
                     level.setBlock(pos, state.setValue(LIT, true).setValue(POWER, s), 2);
             }
@@ -87,8 +95,15 @@ public class AnalogRedstoneLampBlock extends RedstoneLampBlock {
     }
 
     @Override
-    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rng) {
-        if (state.getValue(LIT) && !level.hasNeighborSignal(pos))
-            level.setBlock(pos, state.setValue(LIT, false).setValue(POWER, 0), 2);
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rng) {}
+
+    @Override
+    public @Nonnull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        Item held = player.getItemInHand(hand).getItem();
+        if ((held == Items.REDSTONE_TORCH || held == AnalogRedstoneTorchBlock.AnalogRedstoneTorchItem.R_ITEM.get()) && !KeyMapController.SNEAK.getState(player)) {
+            level.setBlock(pos, state.setValue(HIDE_DOT, !state.getValue(HIDE_DOT)), 3);
+            return InteractionResult.SUCCESS;
+        }
+        return super.use(state, level, pos, player, hand, hit);
     }
 }

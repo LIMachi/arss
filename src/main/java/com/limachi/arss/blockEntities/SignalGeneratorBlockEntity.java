@@ -8,7 +8,6 @@ import com.limachi.lim_lib.registries.StaticInit;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.RegistryObject;
@@ -20,7 +19,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 @StaticInit(Stage.BLOCK_ENTITY)
-public class SignalGeneratorBlockEntity extends BlockEntity {
+public class SignalGeneratorBlockEntity extends GenericDiodeBlockEntity {
 
     private int step = 0;
     private static final int[] sineGraph = new int[360];

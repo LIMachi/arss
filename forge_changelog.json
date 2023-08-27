@@ -1,14 +1,15 @@
 {
   "homepage": "https://www.curseforge.com/minecraft/mc-mods/analog-redstone-suite",
   "promos": {
-    "1.20.1-latest": "0.3.0",
-    "1.20.1-recommended": "0.3.0",
+    "1.20.1-latest": "1.20.1-0.4.0",
+    "1.20.1-recommended": "1.20.1-0.4.0",
     "1.19.2-latest": "1.19.2-B1.0",
     "1.19.2-recommended": "1.19.2-B1.0",
     "1.18.2-latest": "1.18.2-B1.7",
     "1.18.2-recommended": "1.18.2-B1.7"
   },
   "1.20.1": {
+    "1.20.1-0.4.0": "Fixed 1 tick pulse behavior on diodes, fixed unplayable 0 (lowest) note on analog noteblock, fixed noteblock playing on any block update, analog redstone lamp are now immediate (power off immediately instead of waiting 2 redstone ticks), added a way to disable some inputs on diodes by using a redstone torch, added camouflage setting (shift rightclick with torch) to lamp, note block, jukebox and redstone block. Fixed delayer having behavior not matching the texture displayed.",
     "1.20.1-0.3.0": "Fixed many bugs on the Jukebox, added back the documentation on tooltips, added Instrument Swapper block, added 'Sculk Vibrations' book, added vanilla parity for the Analog Note Block (can be played manually with left click), fixed broken tick delay on diodes (making most of them taking 2 ticks instead of 1 to update).",
     "1.20.1-0.2.0": "Ported to neo forge, changed version naming convention, jukebox now emit particles (like vanilla) and start playing on inserting if redstone matches the slot.",
     "1.20.1-B1.8": "Ported to 1.20.1, jukebox stop the record (as intended) when selecting an empty slot, shift-click in a jukebox is fixed."

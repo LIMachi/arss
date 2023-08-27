@@ -1,154 +1,103 @@
 {
-  "variants": {
-    "facing=east,mode=1,powered=false": {
-      "y": 270,
-      "model": "arss:block/diodes/demuxer/bit1_off"
-    },
-    "facing=east,mode=1,powered=true": {
-      "y": 270,
-      "model": "arss:block/diodes/demuxer/bit1_on"
-    },
-    "facing=north,mode=1,powered=false": {
-      "y": 180,
-      "model": "arss:block/diodes/demuxer/bit1_off"
-    },
-    "facing=north,mode=1,powered=true": {
-      "y": 180,
-      "model": "arss:block/diodes/demuxer/bit1_on"
-    },
-    "facing=south,mode=1,powered=false": {
-      "model": "arss:block/diodes/demuxer/bit1_off"
-    },
-    "facing=south,mode=1,powered=true": {
-      "model": "arss:block/diodes/demuxer/bit1_on"
-    },
-    "facing=west,mode=1,powered=false": {
-      "y": 90,
-      "model": "arss:block/diodes/demuxer/bit1_off"
-    },
-    "facing=west,mode=1,powered=true": {
-      "y": 90,
-      "model": "arss:block/diodes/demuxer/bit1_on"
-    },
-    "facing=east,mode=2,powered=false": {
-      "y": 270,
-      "model": "arss:block/diodes/demuxer/bit2_off"
-    },
-    "facing=east,mode=2,powered=true": {
-      "y": 270,
-      "model": "arss:block/diodes/demuxer/bit2_on"
-    },
-    "facing=north,mode=2,powered=false": {
-      "y": 180,
-      "model": "arss:block/diodes/demuxer/bit2_off"
-    },
-    "facing=north,mode=2,powered=true": {
-      "y": 180,
-      "model": "arss:block/diodes/demuxer/bit2_on"
-    },
-    "facing=south,mode=2,powered=false": {
-      "model": "arss:block/diodes/demuxer/bit2_off"
-    },
-    "facing=south,mode=2,powered=true": {
-      "model": "arss:block/diodes/demuxer/bit2_on"
-    },
-    "facing=west,mode=2,powered=false": {
-      "y": 90,
-      "model": "arss:block/diodes/demuxer/bit2_off"
-    },
-    "facing=west,mode=2,powered=true": {
-      "y": 90,
-      "model": "arss:block/diodes/demuxer/bit2_on"
-    },
-    "facing=east,mode=4,powered=false": {
-      "y": 270,
-      "model": "arss:block/diodes/demuxer/bit3_off"
-    },
-    "facing=east,mode=4,powered=true": {
-      "y": 270,
-      "model": "arss:block/diodes/demuxer/bit3_on"
-    },
-    "facing=north,mode=4,powered=false": {
-      "y": 180,
-      "model": "arss:block/diodes/demuxer/bit3_off"
-    },
-    "facing=north,mode=4,powered=true": {
-      "y": 180,
-      "model": "arss:block/diodes/demuxer/bit3_on"
-    },
-    "facing=south,mode=4,powered=false": {
-      "model": "arss:block/diodes/demuxer/bit3_off"
-    },
-    "facing=south,mode=4,powered=true": {
-      "model": "arss:block/diodes/demuxer/bit3_on"
-    },
-    "facing=west,mode=4,powered=false": {
-      "y": 90,
-      "model": "arss:block/diodes/demuxer/bit3_off"
-    },
-    "facing=west,mode=4,powered=true": {
-      "y": 90,
-      "model": "arss:block/diodes/demuxer/bit3_on"
-    },
-    "facing=east,mode=8,powered=false": {
-      "y": 270,
-      "model": "arss:block/diodes/demuxer/bit4_off"
-    },
-    "facing=east,mode=8,powered=true": {
-      "y": 270,
-      "model": "arss:block/diodes/demuxer/bit4_on"
-    },
-    "facing=north,mode=8,powered=false": {
-      "y": 180,
-      "model": "arss:block/diodes/demuxer/bit4_off"
-    },
-    "facing=north,mode=8,powered=true": {
-      "y": 180,
-      "model": "arss:block/diodes/demuxer/bit4_on"
-    },
-    "facing=south,mode=8,powered=false": {
-      "model": "arss:block/diodes/demuxer/bit4_off"
-    },
-    "facing=south,mode=8,powered=true": {
-      "model": "arss:block/diodes/demuxer/bit4_on"
-    },
-    "facing=west,mode=8,powered=false": {
-      "y": 90,
-      "model": "arss:block/diodes/demuxer/bit4_off"
-    },
-    "facing=west,mode=8,powered=true": {
-      "y": 90,
-      "model": "arss:block/diodes/demuxer/bit4_on"
-    },
-    "facing=east,mode=side_control,powered=false": {
-      "y": 270,
-      "model": "arss:block/diodes/demuxer/auto_off"
-    },
-    "facing=east,mode=side_control,powered=true": {
-      "y": 270,
-      "model": "arss:block/diodes/demuxer/auto_on"
-    },
-    "facing=north,mode=side_control,powered=false": {
-      "y": 180,
-      "model": "arss:block/diodes/demuxer/auto_off"
-    },
-    "facing=north,mode=side_control,powered=true": {
-      "y": 180,
-      "model": "arss:block/diodes/demuxer/auto_on"
-    },
-    "facing=south,mode=side_control,powered=false": {
-      "model": "arss:block/diodes/demuxer/auto_off"
-    },
-    "facing=south,mode=side_control,powered=true": {
-      "model": "arss:block/diodes/demuxer/auto_on"
-    },
-    "facing=west,mode=side_control,powered=false": {
-      "y": 90,
-      "model": "arss:block/diodes/demuxer/auto_off"
-    },
-    "facing=west,mode=side_control,powered=true": {
-      "y": 90,
-      "model": "arss:block/diodes/demuxer/auto_on"
-    }
-  }
+  "multipart": [
+    { "when": { "facing": "south" },
+      "apply": { "model": "arss:block/diode_base/slab" } },
+    { "when": { "facing": "south" },
+      "apply": { "model": "arss:block/diode_base/plate" } },
+    { "when": { "AND": [ { "facing": "south" }, { "powered": false } ] },
+      "apply": { "model": "arss:block/diode_base/mode_off" } },
+    { "when": { "AND": [ { "facing": "south" }, { "powered": true } ] },
+      "apply": { "model": "arss:block/diode_base/mode_on" } },
+    { "when": { "AND": [ { "facing": "south" }, { "mode": "1" }] },
+      "apply": { "model": "arss:block/diodes/demuxer/bit_1" } },
+    { "when": { "AND": [ { "facing": "south" }, { "mode": "2" }] },
+      "apply": { "model": "arss:block/diodes/demuxer/bit_2" } },
+    { "when": { "AND": [ { "facing": "south" }, { "mode": "4" }] },
+      "apply": { "model": "arss:block/diodes/demuxer/bit_3" } },
+    { "when": { "AND": [ { "facing": "south" }, { "mode": "8" }] },
+      "apply": { "model": "arss:block/diodes/demuxer/bit_4" } },
+    { "when": { "AND": [ { "facing": "south" }, { "mode": "side_control" }] },
+      "apply": { "model": "arss:block/diodes/demuxer/auto" } },
+    { "when": { "AND": [ { "facing": "south" }, { "sides": "right_disabled|both_side_disabled" } ] },
+      "apply": { "model": "arss:block/diode_base/right_disabled" } },
+    { "when": { "AND": [ { "facing": "south" }, { "sides": "left_disabled|both_side_disabled" } ] },
+      "apply": { "model": "arss:block/diode_base/left_disabled" } },
+    { "when": { "AND": [ { "facing": "south" }, { "sides": "input_disabled" } ] },
+      "apply": { "model": "arss:block/diode_base/input_disabled" } },
+
+    { "when": { "facing": "west" },
+      "apply": { "y": 90, "model": "arss:block/diode_base/slab" } },
+    { "when": { "facing": "west" },
+      "apply": { "y": 90, "model": "arss:block/diode_base/plate" } },
+    { "when": { "AND": [ { "facing": "west" }, { "powered": false } ] },
+      "apply": { "y": 90, "model": "arss:block/diode_base/mode_off" } },
+    { "when": { "AND": [ { "facing": "west" }, { "powered": true } ] },
+      "apply": { "y": 90, "model": "arss:block/diode_base/mode_on" } },
+    { "when": { "AND": [ { "facing": "west" }, { "mode": "1" }] },
+      "apply": { "y": 90, "model": "arss:block/diodes/demuxer/bit_1" } },
+    { "when": { "AND": [ { "facing": "west" }, { "mode": "2" }] },
+      "apply": { "y": 90, "model": "arss:block/diodes/demuxer/bit_2" } },
+    { "when": { "AND": [ { "facing": "west" }, { "mode": "4" }] },
+      "apply": { "y": 90, "model": "arss:block/diodes/demuxer/bit_3" } },
+    { "when": { "AND": [ { "facing": "west" }, { "mode": "8" }] },
+      "apply": { "y": 90, "model": "arss:block/diodes/demuxer/bit_4" } },
+    { "when": { "AND": [ { "facing": "west" }, { "mode": "side_control" }] },
+      "apply": { "y": 90, "model": "arss:block/diodes/demuxer/auto" } },
+    { "when": { "AND": [ { "facing": "west" }, { "sides": "right_disabled|both_side_disabled" } ] },
+      "apply": { "y": 90, "model": "arss:block/diode_base/right_disabled" } },
+    { "when": { "AND": [ { "facing": "west" }, { "sides": "left_disabled|both_side_disabled" } ] },
+      "apply": { "y": 90, "model": "arss:block/diode_base/left_disabled" } },
+    { "when": { "AND": [ { "facing": "west" }, { "sides": "input_disabled" } ] },
+      "apply": { "y": 90, "model": "arss:block/diode_base/input_disabled" } },
+
+    { "when": { "facing": "north" },
+      "apply": { "y": 180, "model": "arss:block/diode_base/slab" } },
+    { "when": { "facing": "north" },
+      "apply": { "y": 180, "model": "arss:block/diode_base/plate" } },
+    { "when": { "AND": [ { "facing": "north" }, { "powered": false } ] },
+      "apply": { "y": 180, "model": "arss:block/diode_base/mode_off" } },
+    { "when": { "AND": [ { "facing": "north" }, { "powered": true } ] },
+      "apply": { "y": 180, "model": "arss:block/diode_base/mode_on" } },
+    { "when": { "AND": [ { "facing": "north" }, { "mode": "1" }] },
+      "apply": { "y": 180, "model": "arss:block/diodes/demuxer/bit_1" } },
+    { "when": { "AND": [ { "facing": "north" }, { "mode": "2" }] },
+      "apply": { "y": 180, "model": "arss:block/diodes/demuxer/bit_2" } },
+    { "when": { "AND": [ { "facing": "north" }, { "mode": "4" }] },
+      "apply": { "y": 180, "model": "arss:block/diodes/demuxer/bit_3" } },
+    { "when": { "AND": [ { "facing": "north" }, { "mode": "8" }] },
+      "apply": { "y": 180, "model": "arss:block/diodes/demuxer/bit_4" } },
+    { "when": { "AND": [ { "facing": "north" }, { "mode": "side_control" }] },
+      "apply": { "y": 180, "model": "arss:block/diodes/demuxer/auto" } },
+    { "when": { "AND": [ { "facing": "north" }, { "sides": "right_disabled|both_side_disabled" } ] },
+      "apply": { "y": 180, "model": "arss:block/diode_base/right_disabled" } },
+    { "when": { "AND": [ { "facing": "north" }, { "sides": "left_disabled|both_side_disabled" } ] },
+      "apply": { "y": 180, "model": "arss:block/diode_base/left_disabled" } },
+    { "when": { "AND": [ { "facing": "north" }, { "sides": "input_disabled" } ] },
+      "apply": { "y": 180, "model": "arss:block/diode_base/input_disabled" } },
+
+    { "when": { "facing": "east" },
+      "apply": { "y": 270, "model": "arss:block/diode_base/slab" } },
+    { "when": { "facing": "east" },
+      "apply": { "y": 270, "model": "arss:block/diode_base/plate" } },
+    { "when": { "AND": [ { "facing": "east" }, { "powered": false } ] },
+      "apply": { "y": 270, "model": "arss:block/diode_base/mode_off" } },
+    { "when": { "AND": [ { "facing": "east" }, { "powered": true } ] },
+      "apply": { "y": 270, "model": "arss:block/diode_base/mode_on" } },
+    { "when": { "AND": [ { "facing": "east" }, { "mode": "1" }] },
+      "apply": { "y": 270, "model": "arss:block/diodes/demuxer/bit_1" } },
+    { "when": { "AND": [ { "facing": "east" }, { "mode": "2" }] },
+      "apply": { "y": 270, "model": "arss:block/diodes/demuxer/bit_2" } },
+    { "when": { "AND": [ { "facing": "east" }, { "mode": "4" }] },
+      "apply": { "y": 270, "model": "arss:block/diodes/demuxer/bit_3" } },
+    { "when": { "AND": [ { "facing": "east" }, { "mode": "8" }] },
+      "apply": { "y": 270, "model": "arss:block/diodes/demuxer/bit_4" } },
+    { "when": { "AND": [ { "facing": "east" }, { "mode": "side_control" }] },
+      "apply": { "y": 270, "model": "arss:block/diodes/demuxer/auto" } },
+    { "when": { "AND": [ { "facing": "east" }, { "sides": "right_disabled|both_side_disabled" } ] },
+      "apply": { "y": 270, "model": "arss:block/diode_base/right_disabled" } },
+    { "when": { "AND": [ { "facing": "east" }, { "sides": "left_disabled|both_side_disabled" } ] },
+      "apply": { "y": 270, "model": "arss:block/diode_base/left_disabled" } },
+    { "when": { "AND": [ { "facing": "east" }, { "sides": "input_disabled" } ] },
+      "apply": { "y": 270, "model": "arss:block/diode_base/input_disabled" } }
+  ]
 }

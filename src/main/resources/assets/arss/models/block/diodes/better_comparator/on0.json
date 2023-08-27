@@ -1,6 +1,0 @@
-{
-  "parent": "arss:block/diode_base/2_modes/on0",
-  "textures": {
-    "top": "arss:block/diodes/comparator_on"
-  }
-}

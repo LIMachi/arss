@@ -15,14 +15,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -30,6 +28,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+
+import static com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties.HIDE_DOT;
 
 @SuppressWarnings({"unused", "deprecation"})
 @ParametersAreNonnullByDefault
@@ -46,7 +46,15 @@ public class AnalogJukeboxBlock extends BaseEntityBlock {
         public AnalogJukebox() { super(R_BLOCK.get(), new Item.Properties(), Blocks.JUKEBOX); }
     }
 
-    public AnalogJukeboxBlock() { super(Properties.copy(Blocks.JUKEBOX)); }
+    public AnalogJukeboxBlock() {
+        super(Properties.copy(Blocks.JUKEBOX));
+        registerDefaultState(stateDefinition.any().setValue(HIDE_DOT, false));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(HIDE_DOT);
+    }
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> components, TooltipFlag flags) {
@@ -60,6 +68,10 @@ public class AnalogJukeboxBlock extends BaseEntityBlock {
     @Override
     public @Nonnull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         ItemStack recordStack = player.getItemInHand(hand);
+        if (recordStack.getItem() == Items.REDSTONE_TORCH || recordStack.getItem() == AnalogRedstoneTorchBlock.AnalogRedstoneTorchItem.R_ITEM.get()) {
+            level.setBlock(pos, state.setValue(HIDE_DOT, !state.getValue(HIDE_DOT)), 3);
+            return InteractionResult.SUCCESS;
+        }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof AnalogJukeboxBlockEntity) {
             if (recordStack.getItem() instanceof RecordItem) {

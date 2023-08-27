@@ -1,34 +1,71 @@
 {
-  "variants": {
-    "facing=east,powered=false": {
-      "y": 270,
-      "model": "arss:block/diodes/analog_nor/off"
-    },
-    "facing=east,powered=true": {
-      "y": 270,
-      "model": "arss:block/diodes/analog_nor/on"
-    },
-    "facing=north,powered=false": {
-      "y": 180,
-      "model": "arss:block/diodes/analog_nor/off"
-    },
-    "facing=north,powered=true": {
-      "y": 180,
-      "model": "arss:block/diodes/analog_nor/on"
-    },
-    "facing=south,powered=false": {
-      "model": "arss:block/diodes/analog_nor/off"
-    },
-    "facing=south,powered=true": {
-      "model": "arss:block/diodes/analog_nor/on"
-    },
-    "facing=west,powered=false": {
-      "y": 90,
-      "model": "arss:block/diodes/analog_nor/off"
-    },
-    "facing=west,powered=true": {
-      "y": 90,
-      "model": "arss:block/diodes/analog_nor/on"
-    }
-  }
+  "multipart": [
+    { "when": { "facing": "south" },
+      "apply": { "model": "arss:block/diode_base/slab" } },
+    { "when": { "facing": "south" },
+      "apply": { "model": "arss:block/diode_base/plate" } },
+    { "when": { "AND": [ { "facing": "south"}, { "powered": false } ] },
+      "apply": { "model": "arss:block/diode_base/mode_off" } },
+    { "when": { "AND": [ { "facing": "south"}, { "powered": true } ] },
+      "apply": { "model": "arss:block/diode_base/mode_on" } },
+    { "when": { "facing": "south" },
+      "apply": { "model": "arss:block/diodes/analog_nor" } },
+    { "when": { "AND": [ { "facing": "south"}, { "sides": "right_disabled|both_side_disabled"} ] },
+      "apply": { "model": "arss:block/diode_base/right_disabled" } },
+    { "when": { "AND": [ { "facing": "south"}, { "sides": "left_disabled|both_side_disabled"} ] },
+      "apply": { "model": "arss:block/diode_base/left_disabled" } },
+    { "when": { "AND": [ { "facing": "south"}, { "sides": "input_disabled"} ] },
+      "apply": { "model": "arss:block/diode_base/input_disabled" } },
+
+    { "when": { "facing": "west" },
+      "apply": { "y": 90, "model": "arss:block/diode_base/slab" } },
+    { "when": { "facing": "west" },
+      "apply": { "y": 90, "model": "arss:block/diode_base/plate" } },
+    { "when": { "AND": [ { "facing": "west"}, { "powered": false } ] },
+      "apply": { "y": 90, "model": "arss:block/diode_base/mode_off" } },
+    { "when": { "AND": [ { "facing": "west"}, { "powered": true } ] },
+      "apply": { "y": 90, "model": "arss:block/diode_base/mode_on" } },
+    { "when": { "facing": "west" },
+      "apply": { "y": 90, "model": "arss:block/diodes/analog_nor" } },
+    { "when": { "AND": [ { "facing": "west"}, { "sides": "right_disabled|both_side_disabled"} ] },
+      "apply": { "y": 90, "model": "arss:block/diode_base/right_disabled" } },
+    { "when": { "AND": [ { "facing": "west"}, { "sides": "left_disabled|both_side_disabled"} ] },
+      "apply": { "y": 90, "model": "arss:block/diode_base/left_disabled" } },
+    { "when": { "AND": [ { "facing": "west"}, { "sides": "input_disabled"} ] },
+      "apply": { "y": 90, "model": "arss:block/diode_base/input_disabled" } },
+
+    { "when": { "facing": "north" },
+      "apply": { "y": 180, "model": "arss:block/diode_base/slab" } },
+    { "when": { "facing": "north" },
+      "apply": { "y": 180, "model": "arss:block/diode_base/plate" } },
+    { "when": { "AND": [ { "facing": "north"}, { "powered": false } ] },
+      "apply": { "y": 180, "model": "arss:block/diode_base/mode_off" } },
+    { "when": { "AND": [ { "facing": "north"}, { "powered": true } ] },
+      "apply": { "y": 180, "model": "arss:block/diode_base/mode_on" } },
+    { "when": { "facing": "north" },
+      "apply": { "y": 180, "model": "arss:block/diodes/analog_nor" } },
+    { "when": { "AND": [ { "facing": "north"}, { "sides": "right_disabled|both_side_disabled"} ] },
+      "apply": { "y": 180, "model": "arss:block/diode_base/right_disabled" } },
+    { "when": { "AND": [ { "facing": "north"}, { "sides": "left_disabled|both_side_disabled"} ] },
+      "apply": { "y": 180, "model": "arss:block/diode_base/left_disabled" } },
+    { "when": { "AND": [ { "facing": "north"}, { "sides": "input_disabled"} ] },
+      "apply": { "y": 180, "model": "arss:block/diode_base/input_disabled" } },
+
+    { "when": { "facing": "east" },
+      "apply": { "y": 270, "model": "arss:block/diode_base/slab" } },
+    { "when": { "facing": "east" },
+      "apply": { "y": 270, "model": "arss:block/diode_base/plate" } },
+    { "when": { "AND": [ { "facing": "east"}, { "powered": false } ] },
+      "apply": { "y": 270, "model": "arss:block/diode_base/mode_off" } },
+    { "when": { "AND": [ { "facing": "east"}, { "powered": true } ] },
+      "apply": { "y": 270, "model": "arss:block/diode_base/mode_on" } },
+    { "when": { "facing": "east" },
+      "apply": { "y": 270, "model": "arss:block/diodes/analog_nor" } },
+    { "when": { "AND": [ { "facing": "east"}, { "sides": "right_disabled|both_side_disabled"} ] },
+      "apply": { "y": 270, "model": "arss:block/diode_base/right_disabled" } },
+    { "when": { "AND": [ { "facing": "east"}, { "sides": "left_disabled|both_side_disabled"} ] },
+      "apply": { "y": 270, "model": "arss:block/diode_base/left_disabled" } },
+    { "when": { "AND": [ { "facing": "east"}, { "sides": "input_disabled"} ] },
+      "apply": { "y": 270, "model": "arss:block/diode_base/input_disabled" } }
+  ]
 }
