@@ -55,6 +55,28 @@
   "display.arss.diode_block.sidedness.both_side_disabled": "No sides",
   "display.arss.diode_block.sidedness.input_disabled": "Sides only",
 
+  "display.arss.keyboard_item.linked_to": "Keyboard linked to: %s",
+  "display.arss.keyboard_item.cant_link_to": "Invalid block: %s",
+  "display.arss.keyboard_item.clear_link": "Keyboard unlinked",
+
+  "display.arss.keyboard_item.semitone.0": "C",
+  "display.arss.keyboard_item.semitone.1": "C#",
+  "display.arss.keyboard_item.semitone.2": "D",
+  "display.arss.keyboard_item.semitone.3": "D#",
+  "display.arss.keyboard_item.semitone.4": "E",
+  "display.arss.keyboard_item.semitone.5": "F",
+  "display.arss.keyboard_item.semitone.6": "F#",
+  "display.arss.keyboard_item.semitone.7": "G",
+  "display.arss.keyboard_item.semitone.8": "G#",
+  "display.arss.keyboard_item.semitone.9": "A",
+  "display.arss.keyboard_item.semitone.10": "A#",
+  "display.arss.keyboard_item.semitone.11": "B",
+
+  "display.arss.keyboard_item.toggle_keyboard.false": "Stopped keyboard",
+  "display.arss.keyboard_item.toggle_keyboard.true": "Activated keyboard",
+
+  "display.arss.redstone_booster.used": "Boosted",
+
   "block.arss.adder": "Adder",
   "block.arss.analog_and": "Analog And",
   "block.arss.analog_button": "Analog Button",
@@ -80,6 +102,9 @@
   "block.arss.signal_generator": "Signal Generator",
   "block.arss.analog_jukebox": "Analog Jukebox",
   "block.arss.instrument_swapper_block": "Instrument Swapper",
+
+  "item.arss.keyboard_item": "Remote keyboard",
+  "item.arss.easter_egg_redstone_booster": "Redstone booster",
 
   "key.hold_to_scroll": "Hold to scroll",
   "key.categories.arss": "Analog Redstone Suite",
@@ -119,6 +144,7 @@
   "tooltip.help.shift.analog_note_block": "§bThis note block plays a §fsound§b with the pitch dependent on the §csignal strength§b.\n\n§aRight-clicking§b the block will switch between ranges '§6high§b' and '§6low§b'.§r",
   "tooltip.help.shift.enriched_redstone": "§bThis redstone dust is mixed with conductive metals to improve §aefficiency§b and transport §adistance§b.\n\nLoses §cone signal strength§b every §f4 blocks§b instead of every §f1 block§b.§r",
   "tooltip.help.shift.perfected_redstone": "§bThis redstone dust is considered to be an alloy of conductive materials bound together (through sheer heat).\n\n§cComplete signal strength retention§b (§fup to 32 blocks§b).§r",
+  "tooltip.help.shift.keyboard_item": "§bThis item can be bound to most analog power generators (ex: Analog Redstone Block, Target Block, etc...) and will send keyboard/MIDI inputs as a redstone signal (you can bind up to 15 signals to 15 keys). Can be put on a lectern with a right click (shift rightclick the lectern to pick it back), then clicking the lectern will allow you to use the keyboard.§r",
 
   "tooltip.help.ctrl.adder": "%5$s",
   "tooltip.help.ctrl.analog_and": "%5$s",
@@ -145,6 +171,10 @@
   "tooltip.help.ctrl.analog_note_block": "%4$s",
   "tooltip.help.ctrl.enriched_redstone": "",
   "tooltip.help.ctrl.perfected_redstone": "",
+  "tooltip.help.ctrl.keyboard_item": "§bTo bind a key and/or MIDI device, first open the GUI via shift rightclick in air, click on the bottom butons to bind keys to redstone signals. The top part of the GUI is used to bind your MIDI device. To bind to a power source, rightclick the source (will tell you if successful or invalid block), shift rightclick an invalid block to clear the binding. To use non-MIDI keys, you first need to toggle the item on via rightclick in air.§r",
+
+  "tooltip.keyboard_item.link": "Linked to %s (%s, %s, %s)",
+  "tooltip.keyboard_item.unlinked": "Not linked",
 
   "top.info.locked": "§8Locked§r",
   "top.info.unlocked": "§eUnlocked§r",
@@ -168,6 +198,12 @@
 
   "screen.title.analog_jukebox": "Analog Jukebox",
   "screen.title.instrument_swapper": "Instrument Swapper",
+
+  "screen.button.midi_keyboard_binding": "%s %s %s",
+  "screen.button.bind_midi": "Bind MIDI device",
+  "screen.button.hide": "Hide screen",
+
+  "screen.widget.bound_to": "Bound to: %s",
 
   "book.sculk_vibrations.creative_tab_help": "Crafted by combining a 'Book and Quill' with a 'Sculk Sensor' or 'Calibrated Sculk Sensor' (the sensor will not be consumed).",
   "book.sculk_vibrations.page_1": "Step\nSwim\nFlap",

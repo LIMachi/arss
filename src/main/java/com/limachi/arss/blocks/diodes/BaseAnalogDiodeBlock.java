@@ -43,8 +43,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties.HIDE_DOT;
-import static com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties.SIDES;
+import static com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties.*;
 
 /**
  * common class for comparator like blocks (get power at the back by getting analog signal/item frame) and expect potential power on the sides (the highest value)
@@ -82,7 +81,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, POWERED, POWER, SIDES);
+        builder.add(FACING, POWERED, POWER, SIDES, BOOSTED);
         if (modeProp != null)
             builder.add(modeProp);
     }
@@ -90,7 +89,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
     public Pair<String, EnumProperty<?>> instanceType() { return new Pair<>(name, modeProp); }
 
     @Override
-    protected int getDelay(@Nonnull BlockState state) { return 2 * delay; }
+    protected int getDelay(@Nonnull BlockState state) { return state.getValue(BOOSTED) ? 1 : 2 * delay; }
 
     @Override
     protected int getOutputSignal(@Nonnull BlockGetter level, @Nonnull BlockPos pos, BlockState state) { return state.getValue(POWER); }

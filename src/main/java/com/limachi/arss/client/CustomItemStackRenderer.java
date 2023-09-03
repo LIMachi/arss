@@ -3,6 +3,7 @@ package com.limachi.arss.client;
 import com.limachi.arss.Arss;
 import com.limachi.arss.items.ICustomItemRenderers;
 import com.limachi.arss.blocks.AnalogRedstoneTorchBlock;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,9 +19,11 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.*;
 
+import javax.annotation.Nonnull;
 import java.lang.Math;
 import java.util.Iterator;
 
+@SuppressWarnings({"unused", "deprecation"})
 @OnlyIn(Dist.CLIENT)
 public class CustomItemStackRenderer extends BlockEntityWithoutLevelRenderer {
     public static final ResourceLocation ARSS_OVERLAY = new ResourceLocation(Arss.MOD_ID, "textures/item/arss_decal.png");
@@ -40,7 +43,7 @@ public class CustomItemStackRenderer extends BlockEntityWithoutLevelRenderer {
     }
 
     @Override
-    public void renderByItem(ItemStack stack, ItemDisplayContext ctx, PoseStack pose, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+    public void renderByItem(ItemStack stack, @Nonnull ItemDisplayContext ctx, @Nonnull PoseStack pose, @Nonnull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         if (stack.getItem() instanceof ICustomItemRenderers bi) {
 
             Minecraft mc = Minecraft.getInstance();
@@ -61,11 +64,13 @@ public class CustomItemStackRenderer extends BlockEntityWithoutLevelRenderer {
                 ItemStack itemRender = bi.itemRenderer();
                 BlockState blockRender = bi.blockRenderer();
                 if (itemRender != null) {
+                    gg.pose().pushPose();
                     gg.pose().translate(0., 0., -200.);
                     gg.renderItem(itemRender, 0, 0);
-                    gg.pose().translate(0., 0., 200.);
+                    gg.pose().popPose();
                 } else if (blockRender != null)
                     mc.getBlockRenderer().renderSingleBlock(blockRender, pose, buffer, combinedLight, combinedOverlay);
+                RenderSystem.enableDepthTest();
                 gg.blit(ARSS_OVERLAY, 0, 0, 0, 0, 16, 16, 16, 16);
 
             } else {

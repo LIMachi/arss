@@ -33,7 +33,7 @@ import java.util.List;
 
 import static com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties.HIDE_DOT;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "deprecation"})
 @StaticInit
 @ParametersAreNonnullByDefault
 public class AnalogRedstoneLampBlock extends RedstoneLampBlock {
@@ -98,7 +98,8 @@ public class AnalogRedstoneLampBlock extends RedstoneLampBlock {
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rng) {}
 
     @Override
-    public @Nonnull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    @Nonnull
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         Item held = player.getItemInHand(hand).getItem();
         if ((held == Items.REDSTONE_TORCH || held == AnalogRedstoneTorchBlock.AnalogRedstoneTorchItem.R_ITEM.get()) && !KeyMapController.SNEAK.getState(player)) {
             level.setBlock(pos, state.setValue(HIDE_DOT, !state.getValue(HIDE_DOT)), 3);

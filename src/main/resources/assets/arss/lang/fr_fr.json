@@ -55,6 +55,22 @@
   "display.arss.diode_block.sidedness.both_side_disabled": "Côtés désactivés",
   "display.arss.diode_block.sidedness.input_disabled": "Côtés uniquement",
 
+  "display.arss.keyboard_item.linked_to": "Clavier lié à: %s",
+  "display.arss.keyboard_item.cant_link_to": "Block invalide: %s",
+
+  "display.arss.keyboard_item.semitone.0": "Do",
+  "display.arss.keyboard_item.semitone.1": "Do#",
+  "display.arss.keyboard_item.semitone.2": "Ré",
+  "display.arss.keyboard_item.semitone.3": "Ré#",
+  "display.arss.keyboard_item.semitone.4": "Mi",
+  "display.arss.keyboard_item.semitone.5": "Fa",
+  "display.arss.keyboard_item.semitone.6": "Fa#",
+  "display.arss.keyboard_item.semitone.7": "Sol",
+  "display.arss.keyboard_item.semitone.8": "Sol#",
+  "display.arss.keyboard_item.semitone.9": "La",
+  "display.arss.keyboard_item.semitone.10": "La#",
+  "display.arss.keyboard_item.semitone.11": "Si",
+
   "block.arss.adder": "Additionneur",
   "block.arss.analog_and": "Et analogue",
   "block.arss.analog_button": "Bouton analogue",
@@ -145,6 +161,9 @@
   "tooltip.help.ctrl.analog_note_block": "%4$s",
   "tooltip.help.ctrl.enriched_redstone": "",
   "tooltip.help.ctrl.perfected_redstone": "",
+
+  "tooltip.keyboard_item.link": "Lié à %s (%s, %s, %s)",
+  "tooltip.keyboard_item.unlinked": "Pas lié",
 
   "top.info.locked": "§8Verrouillé§r",
   "top.info.unlocked": "§eDéverrouillé§r",

@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "arss:analog_redstone_block",
-    "arss:analog_redstone_lamp"
+    "arss:analog_redstone_lamp",
+    "arss:analog_button",
+    "arss:analog_lever"
   ]
 }

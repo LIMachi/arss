@@ -82,7 +82,6 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
 
         @Override
         public BlockState self() {
-//            return AnalogRedstoneWallTorchBlock.R_BLOCK.get().defaultBlockState().setValue(AnalogRedstoneWallTorchBlock.FACING, Direction.SOUTH);
             return R_BLOCK.get().defaultBlockState();
         }
     }
@@ -97,14 +96,20 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
 
     public AnalogRedstoneTorchBlock() {
         super(BlockBehaviour.Properties.copy(Blocks.REDSTONE_TORCH));
-        registerDefaultState(stateDefinition.any().setValue(LIT, true).setValue(POWER, 15).setValue(ArssBlockStateProperties.CAN_SCROLL, true));
+        registerDefaultState(stateDefinition.any().setValue(LIT, true).setValue(POWER, 15).setValue(ArssBlockStateProperties.CAN_SCROLL, true).setValue(ArssBlockStateProperties.BOOSTED, false));
+    }
+
+    @Override
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos p_55703_, boolean p_55704_) {
+        if (state.getValue(LIT) == hasNeighborSignal(level, pos, state) && !level.getBlockTicks().willTickThisTick(pos, this)) {
+            level.scheduleTick(pos, this, state.getValue(ArssBlockStateProperties.BOOSTED) ? 1 : 2);
+        }
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(POWER);
-        builder.add(ArssBlockStateProperties.CAN_SCROLL);
+        builder.add(POWER, ArssBlockStateProperties.CAN_SCROLL, ArssBlockStateProperties.BOOSTED);
     }
 
     @Override
@@ -138,7 +143,14 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
 
         public AnalogRedstoneWallTorchBlock() {
             super(BlockBehaviour.Properties.copy(Blocks.REDSTONE_TORCH).dropsLike(AnalogRedstoneTorchBlock.R_BLOCK.get()));
-            registerDefaultState(stateDefinition.any().setValue(LIT, true).setValue(POWER, 15).setValue(ArssBlockStateProperties.CAN_SCROLL, true));
+            registerDefaultState(stateDefinition.any().setValue(LIT, true).setValue(POWER, 15).setValue(ArssBlockStateProperties.CAN_SCROLL, true).setValue(ArssBlockStateProperties.BOOSTED, false));
+        }
+
+        @Override
+        public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos p_55703_, boolean p_55704_) {
+            if (state.getValue(LIT) == hasNeighborSignal(level, pos, state) && !level.getBlockTicks().willTickThisTick(pos, this)) {
+                level.scheduleTick(pos, this, state.getValue(ArssBlockStateProperties.BOOSTED) ? 1 : 2);
+            }
         }
 
         @Override
@@ -153,8 +165,7 @@ public class AnalogRedstoneTorchBlock extends RedstoneTorchBlock implements IScr
         @Override
         protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
             super.createBlockStateDefinition(builder);
-            builder.add(POWER);
-            builder.add(ArssBlockStateProperties.CAN_SCROLL);
+            builder.add(POWER, ArssBlockStateProperties.CAN_SCROLL, ArssBlockStateProperties.BOOSTED);
         }
 
         @Override

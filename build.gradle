@@ -102,7 +102,7 @@ dependencies {
 
     implementation fg.deobf("com.limachi.lim_lib:lim_lib:${lim}") { changing = true }
 
-    runtimeOnly fg.deobf("curse.maven:jei-238222:${jei}")
+    implementation fg.deobf("curse.maven:jei-238222:${jei}")
     implementation fg.deobf("curse.maven:the-one-probe-245211:${top}")
 }
 

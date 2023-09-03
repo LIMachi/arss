@@ -11,5 +11,6 @@
   },
   "refmap": "arss.refmap.json",
   "client": [
+    "KeyboardHandlerMixin"
   ]
 }

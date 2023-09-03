@@ -31,7 +31,6 @@ public class AnalogJukeboxMenu extends AbstractContainerMenu {
 
     private final ContainerLevelAccess accessor;
 
-    //use 'open' server side
     protected AnalogJukeboxMenu(int id, Inventory playerInv, Container container, BlockPos pos) {
         super(MENU.get(), id);
         accessor = ContainerLevelAccess.create(playerInv.player.level(), pos);

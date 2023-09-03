@@ -52,7 +52,7 @@ public class AnalogButtonBlock extends ButtonBlock implements IScrollBlockPowerO
 
     public AnalogButtonBlock() {
         super(BlockBehaviour.Properties.of().noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY), BlockSetType.STONE, 20, false);
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(POWERED, false).setValue(FACE, AttachFace.WALL).setValue(POWER, 15).setValue(ArssBlockStateProperties.CAN_SCROLL, true));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(POWERED, false).setValue(FACE, AttachFace.WALL).setValue(POWER, 15).setValue(ArssBlockStateProperties.CAN_SCROLL, true).setValue(ArssBlockStateProperties.BOOSTED, false));
     }
 
     @Override
@@ -74,12 +74,23 @@ public class AnalogButtonBlock extends ButtonBlock implements IScrollBlockPowerO
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(POWER);
-        builder.add(ArssBlockStateProperties.CAN_SCROLL);
+        builder.add(POWER, ArssBlockStateProperties.CAN_SCROLL, ArssBlockStateProperties.BOOSTED);
     }
 
     @Override
     public @Nonnull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         return use(state, level, pos, player, hand, ()->super.use(state, level, pos, player, hand, hit));
+    }
+
+    private void updateNeighbours(BlockState state, Level level, BlockPos pos) {
+        level.updateNeighborsAt(pos, this);
+        level.updateNeighborsAt(pos.relative(getConnectedDirection(state).getOpposite()), this);
+    }
+
+    @Override
+    public void press(BlockState state, Level level, BlockPos pos) {
+        level.setBlock(pos, state.setValue(POWERED, Boolean.TRUE), 3);
+        this.updateNeighbours(state, level, pos);
+        level.scheduleTick(pos, this, state.getValue(ArssBlockStateProperties.BOOSTED) ? 1 : 20);
     }
 }

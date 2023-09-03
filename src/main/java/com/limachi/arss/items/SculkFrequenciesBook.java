@@ -1,9 +1,7 @@
-package com.limachi.arss.recipes;
+package com.limachi.arss.items;
 
 import com.limachi.arss.Arss;
 import com.limachi.lim_lib.LimLib;
-import com.limachi.lim_lib.registries.Stage;
-import com.limachi.lim_lib.registries.StaticInit;
 import net.minecraft.Util;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -22,6 +20,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
+
+import javax.annotation.Nonnull;
 
 @Mod.EventBusSubscriber(modid = Arss.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SculkFrequenciesBook extends CustomRecipe {
@@ -43,7 +43,7 @@ public class SculkFrequenciesBook extends CustomRecipe {
     }
 
     @Override
-    public boolean matches(CraftingContainer container, Level level) {
+    public boolean matches(CraftingContainer container, @Nonnull Level level) {
         if (canCraftInDimensions(container.getWidth(), container.getHeight())) {
             boolean hasBook = false;
             boolean hasSculk = false;
@@ -79,7 +79,8 @@ public class SculkFrequenciesBook extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
+    @Nonnull
+    public ItemStack assemble(CraftingContainer container, @Nonnull RegistryAccess registryAccess) {
         ItemStack out = ItemStack.EMPTY;
         if (canCraftInDimensions(container.getWidth(), container.getHeight())) {
             ItemStack book = ItemStack.EMPTY;
@@ -103,6 +104,7 @@ public class SculkFrequenciesBook extends CustomRecipe {
     }
 
     @Override
+    @Nonnull
     public NonNullList<ItemStack> getRemainingItems(CraftingContainer container) {
         NonNullList<ItemStack> nonnulllist = NonNullList.withSize(container.getContainerSize(), ItemStack.EMPTY);
         for (int i = 0; i < nonnulllist.size(); ++i) {
@@ -118,12 +120,9 @@ public class SculkFrequenciesBook extends CustomRecipe {
     }
 
     @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return Math.max(width, height) >= 2;
-    }
+    public boolean canCraftInDimensions(int width, int height) { return Math.max(width, height) >= 2; }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
-        return SERIALIZER;
-    }
+    @Nonnull
+    public RecipeSerializer<?> getSerializer() { return SERIALIZER; }
 }

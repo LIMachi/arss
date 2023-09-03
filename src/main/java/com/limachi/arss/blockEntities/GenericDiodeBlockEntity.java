@@ -14,8 +14,10 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.RegistryObject;
 
+import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unchecked")
 @StaticInit(Stage.BLOCK_ENTITY)
 public class GenericDiodeBlockEntity extends BlockEntity {
 
@@ -48,13 +50,13 @@ public class GenericDiodeBlockEntity extends BlockEntity {
     protected GenericDiodeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) { super(type, pos, state); }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    protected void saveAdditional(@Nonnull CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putInt("output", output);
     }
 
     @Override
-    public void load(CompoundTag tag) {
+    public void load(@Nonnull CompoundTag tag) {
         super.load(tag);
         output = tag.getInt("output");
     }

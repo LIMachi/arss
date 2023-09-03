@@ -122,19 +122,19 @@ public class DiodeBlockFactory {
                 tickOnceAfterUpdate = fTickOnceAfterUpdate;
                 isTicking = fIsTicking;
                 BlockState builder = stateDefinition.any();
-                builder = builder.setValue(FACING, Direction.NORTH).setValue(POWERED, false).setValue(POWER, 0);
+                builder = builder.setValue(FACING, Direction.NORTH).setValue(POWERED, false).setValue(POWER, 0).setValue(ArssBlockStateProperties.BOOSTED, false);
                 registerDefaultState(builder);
             }
 
             @Override
-            public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> components, TooltipFlag flags) {
+            public void appendHoverText(@Nonnull ItemStack stack, @Nullable BlockGetter level, @Nonnull List<Component> components, @Nonnull TooltipFlag flags) {
                 super.appendHoverText(stack, level, components, flags);
                 Arss.commonHoverText(fName, components);
             }
 
             @Override
             protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-                builder.add(FACING, POWERED, POWER, ArssBlockStateProperties.SIDES);
+                builder.add(FACING, POWERED, POWER, ArssBlockStateProperties.SIDES, ArssBlockStateProperties.BOOSTED);
                 if (fMode != null)
                     builder.add(fMode);
                 for (Property<?> prop : extraProps)
@@ -156,9 +156,6 @@ public class DiodeBlockFactory {
             gBlock = Product::new;
         else {
             class Product2 extends Product implements EntityBlock {
-
-                protected Product2() {}
-
                 public boolean triggerEvent(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, int e1, int e2) {
                     super.triggerEvent(state, level, pos, e1, e2);
                     BlockEntity blockentity = level.getBlockEntity(pos);

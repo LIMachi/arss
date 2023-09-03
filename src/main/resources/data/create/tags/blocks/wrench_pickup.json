@@ -1,0 +1,29 @@
+{
+  "replace": false,
+  "values": [
+    "arss:enriched_redstone",
+    "arss:perfected_redstone",
+    "arss:signal_generator",
+    "arss:analog_cell",
+    "arss:adder",
+    "arss:analog_and",
+    "arss:analog_nand",
+    "arss:analog_or",
+    "arss:analog_nor",
+    "arss:analog_xor",
+    "arss:analog_xnor",
+    "arss:better_comparator",
+    "arss:checker",
+    "arss:delayer",
+    "arss:demuxer",
+    "arss:edge_detector",
+    "arss:shifter",
+    "arss:analog_button",
+    "arss:analog_lever",
+    "arss:analog_note_block",
+    "arss:analog_redstone_block",
+    "arss:analog_redstone_lamp",
+    "arss:analog_redstone_torch",
+    "arss:analog_redstone_wall_torch"
+  ]
+}

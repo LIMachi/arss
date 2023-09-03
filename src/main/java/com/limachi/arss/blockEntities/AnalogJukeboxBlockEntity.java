@@ -150,7 +150,8 @@ public class AnalogJukeboxBlockEntity extends BaseOpaqueContainerBlockEntity {
                     play(0);
                 else if (ticksSinceLastEvent >= 20) {
                     ticksSinceLastEvent = 0;
-                    level.gameEvent(GameEvent.JUKEBOX_PLAY, worldPosition, GameEvent.Context.of(getBlockState()));
+                    if (level != null)
+                        level.gameEvent(GameEvent.JUKEBOX_PLAY, worldPosition, GameEvent.Context.of(getBlockState()));
                     Vec3 vec3 = Vec3.atBottomCenterOf(worldPosition).add(0.0D, 1.2F, 0.0D);
                     float f = (float)level.getRandom().nextInt(4) / 24.0F;
                     ((ServerLevel)level).sendParticles(ParticleTypes.NOTE, vec3.x(), vec3.y(), vec3.z(), 0, f, 0.0D, 0.0D, 1.0D);

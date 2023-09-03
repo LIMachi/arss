@@ -9,14 +9,19 @@
     "C": {
       "item": "minecraft:clock"
     },
-    "R": {
-      "item": "minecraft:redstone_torch"
-    },
+    "R": [
+      {
+        "item": "minecraft:redstone_torch"
+      },
+      {
+        "item": "arss:analog_redstone_torch"
+      }
+    ],
     "Q": {
       "item": "minecraft:quartz"
     },
     "S": {
-      "item": "minecraft:stone"
+      "tag": "forge:stone"
     }
   },
   "result": {
