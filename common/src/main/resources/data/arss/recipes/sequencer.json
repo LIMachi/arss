@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "C",
+    "J",
+    "G"
+  ],
+  "key": {
+    "C": {
+      "item": "arss:analog_cell"
+    },
+    "J": [
+      {
+        "item": "minecraft:jukebox"
+      },
+      {
+        "item": "arss:analog_jukebox"
+      }
+    ],
+    "G": {
+      "item": "arss:signal_generator"
+    }
+  },
+  "result": {
+    "item": "arss:sequencer"
+  }
+}

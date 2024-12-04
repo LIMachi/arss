@@ -1,0 +1,6 @@
+{
+  "parent": "arss:block/analog_redstone_torch/template_wall",
+  "textures": {
+    "torch": "minecraft:block/redstone_torch"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AAA",
+    "ABA",
+    "ACA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "B": [
+      {
+        "tag": "forge:barrels"
+      },
+      {
+        "tag": "forge:chests"
+      }
+    ],
+    "C": [
+      {
+        "item": "minecraft:comparator"
+      },
+      {
+        "item": "arss:better_comparator"
+      }
+    ]
+  },
+  "result": {
+    "item": "arss:instrument_swapper_block",
+    "count": 1
+  }
+}

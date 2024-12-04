@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "arss:analog_note_block",
+    "arss:analog_jukebox",
+    "arss:instrument_swapper_block",
+    "arss:keyboard_lectern_block"
+  ]
+}

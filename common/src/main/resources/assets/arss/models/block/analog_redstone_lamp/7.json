@@ -1,0 +1,7 @@
+{
+  "parent": "arss:block/analog_redstone_lamp/base",
+  "textures": {
+    "sides": "arss:block/analog_redstone_lamp/7",
+    "particle": "arss:block/analog_redstone_lamp/7"
+  }
+}

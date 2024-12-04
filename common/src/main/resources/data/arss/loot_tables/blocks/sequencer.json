@@ -1,0 +1,47 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_name",
+              "source": "block_entity"
+            },
+            {
+              "function": "minecraft:copy_nbt",
+              "source": "block_entity",
+              "ops": [
+                {
+                  "op": "replace",
+                  "source": "Head",
+                  "target": "BlockEntityTag.Head"
+                },
+                {
+                  "op": "replace",
+                  "source": "Limits",
+                  "target": "BlockEntityTag.Limits"
+                },
+                {
+                  "op": "replace",
+                  "source": "Length",
+                  "target": "BlockEntityTag.Length"
+                },
+                {
+                  "op": "replace",
+                  "source": "Ticks",
+                  "target": "BlockEntityTag.Ticks"
+                }
+              ]
+            }
+          ],
+          "name": "arss:sequencer"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB",
+    "OEO",
+    "SSS"
+  ],
+  "key": {
+    "B": {
+      "item": "arss:analog_button"
+    },
+    "O": {
+      "item": "arss:analog_or"
+    },
+    "E": {
+      "tag": "forge:ender_pearls"
+    },
+    "S": {
+      "tag": "minecraft:wooden_slabs"
+    }
+  },
+  "result": {
+    "item": "arss:keyboard_item"
+  }
+}

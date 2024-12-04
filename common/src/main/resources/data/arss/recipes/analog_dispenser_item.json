@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "D",
+    "G",
+    "C"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:dispenser"
+    },
+    "G": {
+      "item": "minecraft:gunpowder"
+    },
+    "C": [
+      {
+        "item": "minecraft:comparator"
+      },
+      {
+        "item": "arss:better_comparator"
+      }
+    ]
+  },
+  "result": {
+    "item": "arss:analog_dispenser_item"
+  }
+}

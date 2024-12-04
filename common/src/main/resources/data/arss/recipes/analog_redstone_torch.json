@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "TTT",
+    "TCT",
+    "TTT"
+  ],
+  "key": {
+    "T": {
+      "item": "minecraft:redstone_torch"
+    },
+    "C": [
+      {
+        "item": "minecraft:comparator"
+      },
+      {
+        "item": "arss:better_comparator"
+      }
+    ]
+  },
+  "result": {
+    "item": "arss:analog_redstone_torch",
+    "count": 8
+  }
+}

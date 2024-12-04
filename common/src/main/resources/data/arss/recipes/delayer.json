@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:repeater"
+    },
+    {
+      "item": "arss:analog_cell"
+    }
+  ],
+  "result": {
+    "item": "arss:delayer",
+    "count": 2
+  }
+}

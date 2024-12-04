@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "arss:block/pixel_block"
+    }
+  }
+}

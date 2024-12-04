@@ -1,0 +1,19 @@
+{
+	"ambientocclusion": false,
+	"textures": {
+		"mode": "arss:block/cell/auto"
+	},
+	"elements": [
+		{
+			"from": [5, 2, 5],
+			"to": [11, 3, 11],
+			"faces": {
+				"north": {"uv": [0, 6, 6, 7], "texture": "#mode"},
+				"east": {"uv": [0, 6, 6, 7], "texture": "#mode"},
+				"south": {"uv": [0, 6, 6, 7], "texture": "#mode"},
+				"west": {"uv": [0, 6, 6, 7], "texture": "#mode"},
+				"up": {"uv": [0, 0, 6, 6], "texture": "#mode"}
+			}
+		}
+	]
+}

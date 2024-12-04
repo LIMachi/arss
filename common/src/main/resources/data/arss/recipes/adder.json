@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " R ",
+    "TQT",
+    "SSS"
+  ],
+  "key": {
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "T": [
+      {
+        "item": "minecraft:redstone_torch"
+      },
+      {
+        "item": "arss:analog_redstone_torch"
+      }
+    ],
+    "Q": {
+      "item": "minecraft:quartz"
+    },
+    "S": {
+      "tag": "forge:stone"
+    }
+  },
+  "result": {
+    "item": "arss:adder"
+  }
+}

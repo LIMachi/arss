@@ -1,0 +1,17 @@
+{
+  "ambientocclusion": false,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "block/comparator",
+    "top": "arss:block/diodes/input_disabled"
+  },
+  "elements": [
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 16, 2, 16 ],
+      "faces": {
+        "up": { "uv": [ 0,  0, 16, 16 ], "texture": "#top" }
+      }
+    }
+  ]
+}

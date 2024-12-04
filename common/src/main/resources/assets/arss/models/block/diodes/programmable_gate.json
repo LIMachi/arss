@@ -1,0 +1,6 @@
+{
+  "parent": "arss:block/diode_base/top",
+  "textures": {
+    "top": "arss:block/diodes/programmable_gate"
+  }
+}

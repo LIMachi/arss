@@ -1,0 +1,12 @@
+{
+  "multipart": [
+    { "when": { "facing": "north" }, "apply": { "model": "minecraft:block/lectern" } },
+    { "when": { "facing": "north" }, "apply": { "model": "arss:block/keyboard_lectern_top" } },
+    { "when": { "facing": "east" }, "apply": { "y": 90, "model": "minecraft:block/lectern" } },
+    { "when": { "facing": "east" }, "apply": { "y": 90, "model": "arss:block/keyboard_lectern_top" } },
+    { "when": { "facing": "south" }, "apply": { "y": 180, "model": "minecraft:block/lectern" } },
+    { "when": { "facing": "south" }, "apply": { "y": 180, "model": "arss:block/keyboard_lectern_top" } },
+    { "when": { "facing": "west" }, "apply": { "y": 270, "model": "minecraft:block/lectern" } },
+    { "when": { "facing": "west" }, "apply": { "y": 270, "model": "arss:block/keyboard_lectern_top" } }
+  ]
+}

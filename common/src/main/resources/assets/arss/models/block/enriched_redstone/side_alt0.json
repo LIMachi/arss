@@ -1,0 +1,8 @@
+{
+    "parent": "block/redstone_dust_side_alt",
+    "render_type": "minecraft:cutout",
+    "textures": {
+        "line": "arss:block/enriched_redstone/line0",
+        "overlay": "arss:block/enriched_redstone/line0_overlay"
+    }
+}

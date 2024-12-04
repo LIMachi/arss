@@ -1,0 +1,17 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "minecraft:block/note_block"
+      }
+    },
+    {
+      "when": {
+        "hide_dot": false
+      },
+      "apply": {
+        "model": "arss:block/decal"
+      }
+    }
+  ]
+}
