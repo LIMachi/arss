@@ -9,8 +9,10 @@ import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -22,20 +24,28 @@ import java.util.function.Supplier;
 public abstract class ModBase {
     public static final String mod_id = "$MOD_ID";
     public static final Logger logger = LogManager.getLogger(mod_id);
+    public static final ModBase INSTANCE;
 
-    public static DeferredRegister<Block> BLOCKS = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.BLOCK);
-    public static DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.BLOCK_ENTITY_TYPE);
-    public static DeferredRegister<Item> ITEMS = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.ITEM);
+    static {
+        try {
+            Class<?> clazz = Class.forName("$ENTRY_POINT");
+            ClassExtractor.extractClasses(clazz);
+            extractAnnotations();
+            INSTANCE = (ModBase)Class.forName("$ENTRY_POINT").newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Entry point error: ", e);
+        }
+    }
+
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.BLOCK);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.BLOCK_ENTITY_TYPE);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.ITEM);
+
+    public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(mod_id, Registries.CREATIVE_MODE_TAB);
 
     public ModBase() {}
 
-    public static void extractClasses() {
-        try {
-            ClassExtractor.extractClasses(Class.forName("$ENTRY_POINT"));
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public static final DeferredRegister<CreativeModeTab> tabs() { return TABS; }
 
     public static <T extends Item> RegistrySupplier<T> item(String reg_key, Supplier<T> n, String infoKey, String[] tab) {
         RegistrySupplier<T> out = ITEMS.register(reg_key, n);
@@ -62,9 +72,7 @@ public abstract class ModBase {
         return nullable;
     }
 
-    public static void init() {
-        if (ClassExtractor.CLASSES.isEmpty())
-            extractClasses();
+    static void extractAnnotations() {
         ClassExtractor.runFieldAnnotations(RegisterBlock.class, (f, a)->{
             String name = defaultToClass(a.name(), f.clazz());
             f.setStatic(BLOCKS.register(name, ()->{
@@ -101,14 +109,14 @@ public abstract class ModBase {
                 f.setStatic(
                         item(name,
                                 ()->{
-                            try {
-                                return new BlockItem(BLOCKS.getRegistrar().get(ResourceLocation.fromNamespaceAndPath(mod_id, block)), new Item.Properties());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                System.exit(-1);
-                                return null;
-                            }
-                            },
+                                    try {
+                                        return new BlockItem(BLOCKS.getRegistrar().get(ResourceLocation.fromNamespaceAndPath(mod_id, block)), new Item.Properties());
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        System.exit(-1);
+                                        return null;
+                                    }
+                                },
                                 a.jeiInfoKey(),
                                 a.tab())
                 );
@@ -117,6 +125,9 @@ public abstract class ModBase {
                 System.exit(-1);
             }
         });
+    }
+
+    public static void init() {
         BLOCKS.register();
         BLOCK_ENTITIES.register();
         ITEMS.register();
@@ -125,8 +136,6 @@ public abstract class ModBase {
     @Environment(EnvType.CLIENT)
     public static abstract class ClientModBase {
         public static void init() {
-            if (ClassExtractor.CLASSES.isEmpty())
-                extractClasses();
             ClassExtractor.runMethodAnnotations(BlockTinter.class, (m, a)->{
                 String name = a.name();
                 if (name.isBlank())
