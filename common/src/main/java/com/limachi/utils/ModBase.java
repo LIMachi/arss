@@ -4,6 +4,7 @@ import com.limachi.utils.annotations.RegisterBlock;
 import com.limachi.utils.annotations.RegisterBlockItem;
 import com.limachi.utils.annotations.RegisterItem;
 import com.limachi.utils.clientAnnotations.BlockTinter;
+import com.limachi.utils.commands.CommandManager;
 import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
@@ -30,15 +31,6 @@ public abstract class ModBase {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.ITEM);
 
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(mod_id, Registries.CREATIVE_MODE_TAB);
-
-    static {
-        try {
-            ClassExtractor.extractClasses();
-            extractAnnotations();
-        } catch (Exception e) {
-            throw new RuntimeException("Entry point error: ", e);
-        }
-    }
 
     public ModBase() {}
 
@@ -125,9 +117,13 @@ public abstract class ModBase {
     }
 
     public static void init() {
+        ClassExtractor.extractClasses();
+        extractAnnotations();
+
         BLOCKS.register();
         BLOCK_ENTITIES.register();
         ITEMS.register();
+        CommandManager.register();
     }
 
     @Environment(EnvType.CLIENT)

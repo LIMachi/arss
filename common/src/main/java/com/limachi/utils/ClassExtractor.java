@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -102,6 +103,14 @@ public class ClassExtractor {
 
         public String name() {
             return method.getName();
+        }
+
+        public Parameter[] parameters() {
+            return method.getParameters();
+        }
+
+        public Class<?> returnType() {
+            return method.getReturnType();
         }
     }
 
