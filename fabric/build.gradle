@@ -35,9 +35,6 @@ dependencies {
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
-
-    common(project(path: ':utils', configuration: 'namedElements')) { transitive false }
-    shadowBundle project(path: ':utils', configuration: 'transformProductionFabric')
 }
 
 processResources {

@@ -9,7 +9,6 @@ pluginManagement {
 
 rootProject.name = 'arss'
 
-include 'utils'
 include 'common'
 include 'fabric'
 include 'neoforge'

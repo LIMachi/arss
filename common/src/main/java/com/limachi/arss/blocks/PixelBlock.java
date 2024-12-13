@@ -1,6 +1,5 @@
 package com.limachi.arss.blocks;
 
-import com.limachi.arss.Arss;
 import com.limachi.arss.client.ClientDef;
 import com.limachi.utils.annotations.RegisterBlock;
 import com.limachi.utils.annotations.RegisterBlockItem;

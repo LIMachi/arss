@@ -39,9 +39,6 @@ dependencies {
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
-
-    common(project(path: ':utils', configuration: 'namedElements')) { transitive false }
-    shadowBundle project(path: ':utils', configuration: 'transformProductionNeoForge')
 }
 
 processResources {

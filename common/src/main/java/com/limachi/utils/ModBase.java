@@ -22,26 +22,23 @@ import org.apache.logging.log4j.Logger;
 import java.util.function.Supplier;
 
 public abstract class ModBase {
-    public static final String mod_id = "$MOD_ID";
+    public static final String mod_id = "arss";
     public static final Logger logger = LogManager.getLogger(mod_id);
-    public static final ModBase INSTANCE;
-
-    static {
-        try {
-            Class<?> clazz = Class.forName("$ENTRY_POINT");
-            ClassExtractor.extractClasses(clazz);
-            extractAnnotations();
-            INSTANCE = (ModBase)Class.forName("$ENTRY_POINT").newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("Entry point error: ", e);
-        }
-    }
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.BLOCK);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.BLOCK_ENTITY_TYPE);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.ITEM);
 
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(mod_id, Registries.CREATIVE_MODE_TAB);
+
+    static {
+        try {
+            ClassExtractor.extractClasses();
+            extractAnnotations();
+        } catch (Exception e) {
+            throw new RuntimeException("Entry point error: ", e);
+        }
+    }
 
     public ModBase() {}
 

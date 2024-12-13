@@ -1,5 +1,3 @@
-import java.util.regex.Pattern
-
 plugins {
     id 'dev.architectury.loom' version '1.6-SNAPSHOT' apply false
     id 'architectury-plugin' version '3.4-SNAPSHOT'
@@ -51,65 +49,6 @@ subprojects {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-
-//    def missing_entry_point = false
-//    def entry_point = ""
-    def class_extractor = Pattern.compile("class\\s+([A-Za-z_]+)\\s+extends\\s+[a-z.]*ModBase")
-    def package_extractor = Pattern.compile("package\\s+([A-Za-z._]+);")
-    def root = file("src/main/java")
-
-//    task test {
-//        doLast {
-//            def tree = fileTree(dir: "$projectDir/src/main/java", includes: '**/*.java')
-//            tree.each { file ->
-//
-//            }
-//        }
-//    }
-
-    tasks.withType(JavaCompile).configureEach { task ->
-        task.options.release = 21
-
-        task.doFirst {
-            def tmp = file("$buildDir/id-replaced-sources")
-            delete tmp
-            tmp.mkdirs()
-
-            task.source.asFileTree.matching {
-                include '**/*.java'
-            }.each { file ->
-                def t = root.toPath().relativize(file.toPath())?.toString()
-                def newFile = new File(tmp, t)
-                newFile.parentFile.mkdirs()
-                newFile.text = file.text.replace("\$MOD_ID", archives_name)
-                def extract = class_extractor.matcher(newFile.text)
-                if (extract.find()) {
-                    def name = extract.group(0)
-                    extract = package_extractor.matcher(newFile.text)
-                    if (extract.find())
-                        entry_point = extract.group(0) + "." + name
-                }
-                if (!entry_point.empty)
-                    newFile.text = newFile.text.replace("\$ENTRY_POINT", entry_point)
-                else if (newFile.text.contains("\$ENTRY_POINT"))
-                    missing_entry_point = true
-            }
-
-            task.source = fileTree(tmp)
-        }
-    }
-
-//    throw new GradleException("entry point state: " + missing_entry_point + " -> " + entry_point);
-
-//    if (missing_entry_point && !entry_point.empty) {
-//        tasks.withType(JavaCompile).configureEach { task ->
-//            task.source.asFileTree.matching {
-//                include '**/*.java'
-//            }.each { f ->
-//                f.text = f.text.replace("\$ENTRY_POINT", entry_point)
-//            }
-//        }
-//    }
 
     // Configure Maven publishing.
     publishing {
