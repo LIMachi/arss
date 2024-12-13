@@ -62,10 +62,7 @@ public class KeyboardMenu extends AbstractContainerMenu implements IAcceptUpStre
     @Override
     public void upstreamNBTMessage(int power, CompoundTag binding) {
         ItemStack stack = inv.player.getItemInHand(hand);
-        if (stack.getItem() instanceof KeyboardItem) {
-            CompoundTag tag = stack.getOrCreateTag();
-            KeyboardItem.initDefaultBindings(tag);
-            tag.getIntArray("bindings")[power] = binding.getInt("binding");
-        }
+        if (stack.getItem() instanceof KeyboardItem)
+            KeyboardItem.setBinding(stack.getOrCreateTag(), power, binding.getInt("binding"));
     }
 }

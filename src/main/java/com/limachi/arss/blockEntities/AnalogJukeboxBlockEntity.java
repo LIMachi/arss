@@ -1,7 +1,7 @@
 package com.limachi.arss.blockEntities;
 
-import com.limachi.lim_lib.SoundUtils;
 import com.limachi.lim_lib.registries.annotations.RegisterBlockEntity;
+import com.limachi.lim_lib.utils.SoundUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;

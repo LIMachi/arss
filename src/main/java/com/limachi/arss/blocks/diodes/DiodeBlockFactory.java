@@ -4,12 +4,16 @@ import com.limachi.arss.Arss;
 import com.limachi.arss.blockEntities.GenericDiodeBlockEntity;
 import com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties;
 import com.limachi.lim_lib.Log;
-import com.limachi.lim_lib.RedstoneUtils;
+import com.limachi.lim_lib.blocks.IGetUseSneakWithItemEvent;
 import com.limachi.lim_lib.registries.Registries;
+import com.limachi.lim_lib.utils.RedstoneUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,11 +29,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 @SuppressWarnings({"deprecation", "unused"})
@@ -61,6 +69,11 @@ public class DiodeBlockFactory {
 
     public static RegistryObject<Item> getItemRegister(String name) { return DIODE_BLOCKS.get(name).getFirst(); }
 
+    @FunctionalInterface
+    public interface UseMethod {
+        @Nonnull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit);
+    }
+
     public static final class Builder {
         private String name = "Must be a valid registry key";
         @Nullable
@@ -78,14 +91,16 @@ public class DiodeBlockFactory {
         @Nullable
         private BlockEntityBuilder blockEntityBuilder = GenericDiodeBlockEntity::new;
         private final List<Property<?>> extraProperties = new ArrayList<>();
+        private BiFunction<Block, Item.Properties, BlockItem> itemProvider = BlockItem::new;
 
         private boolean canToggleBothSides = false;
         private boolean canToggleInput = false;
+        private UseMethod use = null;
 
         private Builder() {}
 
         public void finish() {
-            create(name, mode, generator, blockProperties, itemProperties, delay, tickOnceAfterUpdate, ticking, hasPowerTint, blockEntityBuilder, canToggleBothSides, canToggleInput, extraProperties);
+            create(name, mode, generator, blockProperties, itemProperties, delay, tickOnceAfterUpdate, ticking, hasPowerTint, blockEntityBuilder, canToggleBothSides, canToggleInput, extraProperties, use, itemProvider);
         }
 
         public Builder mode(@Nullable EnumProperty<?> mode) { this.mode = mode; return this; }
@@ -100,6 +115,8 @@ public class DiodeBlockFactory {
         public Builder addProperties(Collection<Property<?>> properties) { extraProperties.addAll(properties); return this; }
         public Builder canToggleBothSides(boolean state) { canToggleBothSides = state; return this; }
         public Builder canToggleInput(boolean state) { canToggleInput = state; return this; }
+        public Builder catchUse(UseMethod use) { this.use = use; return this; }
+        public Builder itemBuilder(BiFunction<Block, Item.Properties, BlockItem> builder) { itemProvider = builder; return this; }
     }
 
     public static Builder builder(@Nonnull String name, @Nonnull SignalGenerator generator) {
@@ -109,7 +126,7 @@ public class DiodeBlockFactory {
         return out;
     }
 
-    private static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, BlockBehaviour.Properties props, Item.Properties iProps, int fDelay, boolean fTickOnceAfterUpdate, boolean fIsTicking, boolean hasPowerTint, BlockEntityBuilder beb, boolean canToggleBothSides, boolean canToggleInput, List<Property<?>> extraProps) {
+    private static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, BlockBehaviour.Properties props, Item.Properties iProps, int fDelay, boolean fTickOnceAfterUpdate, boolean fIsTicking, boolean hasPowerTint, BlockEntityBuilder beb, boolean canToggleBothSides, boolean canToggleInput, List<Property<?>> extraProps, UseMethod use, BiFunction<Block, Item.Properties, BlockItem> itemBuilder) {
         Supplier<Block> gBlock;
 
         class Product extends BaseAnalogDiodeBlock {
@@ -124,6 +141,17 @@ public class DiodeBlockFactory {
                 BlockState builder = stateDefinition.any();
                 builder = builder.setValue(FACING, Direction.NORTH).setValue(POWERED, false).setValue(POWER, 0).setValue(ArssBlockStateProperties.BOOSTED, false);
                 registerDefaultState(builder);
+            }
+
+            @NotNull
+            @Override
+            public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+                if (use != null) {
+                    InteractionResult res = use.use(state, level, pos, player, hand, hit);
+                    if (res.consumesAction())
+                        return res;
+                }
+                return super.use(state, level, pos, player, hand, hit);
             }
 
             @Override
@@ -174,7 +202,7 @@ public class DiodeBlockFactory {
         RegistryObject<Block> R_BLOCK = Registries.block(Arss.MOD_ID, fName, gBlock);
         if (hasPowerTint)
             RedstoneUtils.hasRedstoneTint(R_BLOCK);
-        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName, ()->new BlockItem(R_BLOCK.get(), I_PROPS), null, new ArrayList<>(Collections.singleton("automatic")));
+        RegistryObject<Item> R_ITEM = Registries.item(Arss.MOD_ID, fName, ()->itemBuilder.apply(R_BLOCK.get(), iProps), null, new ArrayList<>(Collections.singleton("automatic")));
         DIODE_BLOCKS.put(fName, new Pair<>(R_ITEM, R_BLOCK));
     }
 }

@@ -1,0 +1,11 @@
+{
+  "static_10min": {
+    "subtitle": "",
+    "sounds": [
+      {
+        "name": "arss:static_10min",
+        "stream": true
+      }
+    ]
+  }
+}

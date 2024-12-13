@@ -93,6 +93,11 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+
+    maven {
+        name = 'tterrag maven'
+        url = 'https://maven.tterrag.com'
+    }
 }
 
 dependencies {
@@ -104,6 +109,12 @@ dependencies {
 
     implementation fg.deobf("curse.maven:jei-238222:${jei}")
     implementation fg.deobf("curse.maven:the-one-probe-245211:${top}")
+
+    implementation fg.deobf("com.simibubi.create:create-${create_minecraft_version}:${create_version}:slim") { transitive = false }
+    implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
+    implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
+
+    implementation fg.deobf("curse.maven:create-tweaked-controllers-898849:5206625")
 }
 
 tasks.withType(ProcessResources).configureEach {

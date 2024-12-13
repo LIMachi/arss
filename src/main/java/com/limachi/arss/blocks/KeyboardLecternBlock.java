@@ -2,13 +2,14 @@ package com.limachi.arss.blocks;
 
 import com.limachi.arss.blockEntities.KeyboardLecternBlockEntity;
 import com.limachi.arss.items.KeyboardItem;
-import com.limachi.lim_lib.PlayerUtils;
 import com.limachi.lim_lib.network.IRecordMsg;
 import com.limachi.lim_lib.network.RegisterMsg;
 import com.limachi.lim_lib.registries.ClientRegistries;
 import com.limachi.lim_lib.registries.StaticInitClient;
 import com.limachi.lim_lib.registries.annotations.RegisterBlock;
+import com.limachi.lim_lib.utils.PlayerUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -57,9 +58,7 @@ public class KeyboardLecternBlock extends LecternBlock implements EntityBlock {
     }
 
     @StaticInitClient
-    public static void registerTint() {
-        ClientRegistries.setColor(R_BLOCK, KeyboardLecternBlock::getTint);
-    }
+    public static void registerTint() { ClientRegistries.setColor(R_BLOCK, KeyboardLecternBlock::getTint); }
 
     public static void replaceLectern(Level level, BlockPos pos, BlockState lectern, ItemStack stack) {
         level.setBlockAndUpdate(pos, R_BLOCK.get().defaultBlockState().setValue(FACING, lectern.getValue(FACING)).setValue(POWERED, false));
@@ -112,7 +111,15 @@ public class KeyboardLecternBlock extends LecternBlock implements EntityBlock {
     public boolean isSignalSource(@Nonnull BlockState state) { return false; }
 
     @Override
-    public int getAnalogOutputSignal(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos) { return 0; }
+    public int getSignal(BlockState p_54515_, BlockGetter p_54516_, BlockPos p_54517_, Direction p_54518_) { return 0; }
+
+    @Override
+    public int getDirectSignal(BlockState p_54566_, BlockGetter p_54567_, BlockPos p_54568_, Direction p_54569_) { return 0; }
+
+    @Override
+    public int getAnalogOutputSignal(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos) {
+        return state.getValue(BlockStateProperties.POWER);
+    }
 
     @Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {

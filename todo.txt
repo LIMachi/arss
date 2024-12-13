@@ -1,3 +1,7 @@
+idea:
+wire box (name tbd) -> can wire any incoming signal to any signal using a screen with 16 slots (for signal 0-15)
+sequencer -> can be programmed manually or can record inputs
+
 vanilla redstone:
 redstone dust -> OK
 redstone torch -> OK

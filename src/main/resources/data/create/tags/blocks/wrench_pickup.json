@@ -24,6 +24,8 @@
     "arss:analog_redstone_block",
     "arss:analog_redstone_lamp",
     "arss:analog_redstone_torch",
-    "arss:analog_redstone_wall_torch"
+    "arss:analog_redstone_wall_torch",
+    "arss:sequencer",
+    "arss:programmable_gate"
   ]
 }

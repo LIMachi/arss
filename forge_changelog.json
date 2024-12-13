@@ -1,14 +1,15 @@
 {
   "homepage": "https://www.curseforge.com/minecraft/mc-mods/analog-redstone-suite",
   "promos": {
-    "1.20.1-latest": "1.20.1-0.5.0",
-    "1.20.1-recommended": "1.20.1-0.5.0",
+    "1.20.1-latest": "1.20.1-0.6.0",
+    "1.20.1-recommended": "1.20.1-0.6.0",
     "1.19.2-latest": "1.19.2-B1.0",
     "1.19.2-recommended": "1.19.2-B1.0",
     "1.18.2-latest": "1.18.2-B1.7",
     "1.18.2-recommended": "1.18.2-B1.7"
   },
   "1.20.1": {
+    "1.20.1-0.6.0": "Added Sequencer (make complex sequences of redstone power with this new gate), Sequencer Record (store the memory of a sequencer to copy it from Sequencer to Sequencer, or copy to/from clip board), Precise Dispenser (dispenser with aiming mechanics, using analog redstone inputs) and Pixel (Block who's color change based on redstone input).",
     "1.20.1-0.5.0": "Added 2 items: the Keyboard (remote control power sources via keyboard or MIDI inputs) and the Redstone Booster (allow some blocks and most diodes to work using 1 minecraft tick instead of 1 redstone tick, or twice as fast).",
     "1.20.1-0.4.0": "Fixed 1 tick pulse behavior on diodes, fixed unplayable 0 (lowest) note on analog noteblock, fixed noteblock playing on any block update, analog redstone lamp are now immediate (power off immediately instead of waiting 2 redstone ticks), added a way to disable some inputs on diodes by using a redstone torch, added camouflage setting (shift rightclick with torch) to lamp, note block, jukebox and redstone block. Fixed delayer having behavior not matching the texture displayed.",
     "1.20.1-0.3.0": "Fixed many bugs on the Jukebox, added back the documentation on tooltips, added Instrument Swapper block, added 'Sculk Vibrations' book, added vanilla parity for the Analog Note Block (can be played manually with left click), fixed broken tick delay on diodes (making most of them taking 2 ticks instead of 1 to update).",

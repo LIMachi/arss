@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "arss:analog_redstone_lamp"
+    },
+    [
+      {
+        "item": "minecraft:red_stained_glass"
+      },
+      {
+        "item": "minecraft:red_stained_glass_pane"
+      }
+    ],
+    [
+      {
+        "item": "minecraft:green_stained_glass"
+      },
+      {
+        "item": "minecraft:green_stained_glass_pane"
+      }
+    ],
+    [
+      {
+        "item": "minecraft:blue_stained_glass"
+      },
+      {
+        "item": "minecraft:blue_stained_glass_pane"
+      }
+    ]
+  ],
+  "result": {
+    "item": "arss:pixel_block"
+  }
+}

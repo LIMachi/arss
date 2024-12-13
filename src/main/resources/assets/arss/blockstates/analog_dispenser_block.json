@@ -1,0 +1,11 @@
+{
+  "multipart": [
+    { "when": { "facing": "down" }, "apply": { "x": 180, "model": "minecraft:block/dispenser_vertical" } },
+    { "when": { "facing": "up" }, "apply": { "model": "minecraft:block/dispenser_vertical" } },
+    { "when": { "facing": "north" }, "apply": { "model": "minecraft:block/dispenser" } },
+    { "when": { "facing": "east" }, "apply": { "y": 90, "model": "minecraft:block/dispenser" } },
+    { "when": { "facing": "south" }, "apply": { "y": 180, "model": "minecraft:block/dispenser" } },
+    { "when": { "facing": "west" }, "apply": { "y": 270, "model": "minecraft:block/dispenser" } },
+    { "when": { "hide_dot": false }, "apply": { "model": "arss:block/decal" } }
+  ]
+}

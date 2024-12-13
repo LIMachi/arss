@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "ingredient": [
+    {
+      "tag": "minecraft:music_discs"
+    }
+  ],
+  "result": "arss:sequencer_memory_item",
+  "experience": 3.0,
+  "cookingtime": 200
+}

@@ -27,6 +27,7 @@ import java.util.*;
 @Mod.EventBusSubscriber(modid = Arss.MOD_ID, value = Dist.CLIENT)
 @OnlyIn(Dist.CLIENT)
 public class KeyboardTicker {
+
     private record KeyAction(BlockPos target, int power, int origin) {}
 
     private static class Origin {
@@ -46,9 +47,9 @@ public class KeyboardTicker {
 
         void send() {
             if (playerSlot != -1)
-                NetworkManager.toServer(Arss.MOD_ID, new KeyboardItem.KeyPressVisualFeedbackSlotMsg(playerSlot, power));
+                NetworkManager.toServer(new KeyboardItem.KeyPressVisualFeedbackSlotMsg(playerSlot, power));
             else if (lectern != null)
-                NetworkManager.toServer(Arss.MOD_ID, new KeyboardLecternBlock.KeyPressVisualFeedbackLecternMsg(lectern, power));
+                NetworkManager.toServer(new KeyboardLecternBlock.KeyPressVisualFeedbackLecternMsg(lectern, power));
         }
     }
 
@@ -56,10 +57,16 @@ public class KeyboardTicker {
     private static final Multimap<Integer, KeyAction> cachedMappings = ArrayListMultimap.create();
     private static Set<Integer> prevCachedMappings = new HashSet<>();
 
-    private static void addAllBindings(BlockPos playerPos, CompoundTag tag) {
-        if (tag.contains("target", Tag.TAG_LONG) && tag.contains("bindings", Tag.TAG_INT_ARRAY)) {
-            BlockPos pos = BlockPos.of(tag.getLong("target"));
-            if (pos.distSqr(playerPos) > 25) return;
+    private static final BlockPos INVALID_POS = new BlockPos(30000001, 1023, 30000001);
+
+    private static void addAllBindings(BlockPos fromPos, CompoundTag tag) {
+        if (tag.contains("bindings", Tag.TAG_INT_ARRAY)) {
+            BlockPos pos = INVALID_POS;
+            if (tag.contains("target")) {
+                pos = BlockPos.of(tag.getLong("target"));
+                if (pos.distSqr(fromPos) > KeyboardItem.KEYBOARD_REACH * KeyboardItem.KEYBOARD_REACH)
+                    pos = INVALID_POS;
+            }
             int[] bindings = tag.getIntArray("bindings");
             for (int i = 0; i < bindings.length && i < 15; ++i) {
                 if (bindings[i] == -1)
@@ -80,7 +87,7 @@ public class KeyboardTicker {
             ItemStack stack = inv.getItem(i);
             if (stack.getItem() instanceof KeyboardItem && stack.getTag() != null) {
                 cachedOrigins.add(new Origin(i));
-                if (stack.getTag().getBoolean("catch_keyboard"))
+                if (KeyboardItem.inputActive(stack.getTag()))
                     addAllBindings(playerPos, stack.getTag());
             }
         }
@@ -88,7 +95,7 @@ public class KeyboardTicker {
             CompoundTag tag = be.getKeyboard().getTag();
             if (tag != null) {
                 cachedOrigins.add(new Origin(be.getBlockPos()));
-                addAllBindings(playerPos, tag);
+                addAllBindings(be.getBlockPos(), tag);
             }
         }
     }
@@ -117,7 +124,8 @@ public class KeyboardTicker {
         for (Origin origin : cachedOrigins)
             origin.send();
         for (Map.Entry<BlockPos, Integer> msg : messages.entrySet())
-            NetworkManager.toServer(Arss.MOD_ID, new KeyboardItem.KeyboardItemMsg(msg.getKey(), msg.getValue()));
+            if (!INVALID_POS.equals(msg.getKey()))
+                NetworkManager.toServer(new KeyboardItem.KeyboardItemMsg(msg.getKey(), msg.getValue()));
     }
 
     public static boolean consumeKeyPress(int key) {

@@ -25,11 +25,13 @@ public class EdgeDetectorBlockEntity extends GenericDiodeBlockEntity {
     protected void saveAdditional(@Nonnull CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putInt("previous", previousInput);
+        setChanged();
     }
 
     public void load(@Nonnull CompoundTag tag) {
         super.load(tag);
         previousInput = tag.getInt("previous");
+        setChanged();
     }
 
     public int getPreviousInput() { return previousInput; }

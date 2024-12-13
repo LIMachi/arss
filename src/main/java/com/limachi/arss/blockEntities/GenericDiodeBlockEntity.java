@@ -8,6 +8,9 @@ import com.limachi.lim_lib.registries.StaticInit;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -15,6 +18,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unchecked")
@@ -36,8 +41,7 @@ public class GenericDiodeBlockEntity extends BlockEntity {
             "better_comparator",
             "checker",
             "demuxer",
-            "edge_detector",
-            "shifter",
+            "shifter"
         };
         Supplier<Block>[] diodes = new Supplier[diodeNames.length];
         for (int i = 0; i < diodes.length; ++i)
@@ -64,4 +68,8 @@ public class GenericDiodeBlockEntity extends BlockEntity {
     public int getOutput() { return output; }
 
     public void setOutput(int value) { output = value; }
+
+    public List<ItemStack> getDrops(ServerLevel level, BlockPos pos, BlockState state, Player player) {
+        return Collections.emptyList();
+    }
 }

@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "arss:analog_cell"
+    }, {
+      "item": "arss:demuxer"
+    }, [
+      {
+        "item": "arss:analog_and"
+      },
+      {
+        "item": "arss:analog_or"
+      },
+      {
+        "item": "arss:analog_xor"
+      },
+      {
+        "item": "arss:analog_nand"
+      },
+      {
+        "item": "arss:analog_nor"
+      },
+      {
+        "item": "arss:analog_xnor"
+      }
+    ]
+  ],
+  "result": {
+    "item": "arss:programmable_gate",
+    "count": 2
+  }
+}

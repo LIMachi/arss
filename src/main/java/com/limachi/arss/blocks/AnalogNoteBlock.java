@@ -3,6 +3,7 @@ package com.limachi.arss.blocks;
 import com.limachi.arss.Arss;
 import com.limachi.arss.blockEntities.AnalogNoteBlockBlockEntity;
 import com.limachi.arss.items.BlockItemWithCustomRenderer;
+import com.limachi.arss.items.RedstoneBooster;
 import com.limachi.lim_lib.registries.annotations.RegisterBlock;
 import com.limachi.lim_lib.registries.annotations.RegisterItem;
 import net.minecraft.core.BlockPos;
@@ -61,12 +62,12 @@ public class AnalogNoteBlock extends NoteBlock implements EntityBlock {
 
     public AnalogNoteBlock() {
         super(BlockBehaviour.Properties.copy(Blocks.NOTE_BLOCK));
-        registerDefaultState(stateDefinition.any().setValue(INSTRUMENT, NoteBlockInstrument.HARP).setValue(NOTE, 0).setValue(POWERED, false).setValue(HIGH, false).setValue(HIDE_DOT, false));
+        registerDefaultState(stateDefinition.any().setValue(INSTRUMENT, NoteBlockInstrument.HARP).setValue(NOTE, 0).setValue(POWERED, false).setValue(HIGH, false).setValue(HIDE_DOT, false).setValue(BOOSTED, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(INSTRUMENT, POWERED, NOTE, HIGH, HIDE_DOT);
+        builder.add(INSTRUMENT, POWERED, NOTE, HIGH, HIDE_DOT, BOOSTED);
     }
 
     @Override
@@ -78,14 +79,17 @@ public class AnalogNoteBlock extends NoteBlock implements EntityBlock {
             _new = net.minecraftforge.common.ForgeHooks.onNoteChange(level, pos, state, state.getValue(NOTE), _new);
             if (_new == -1) return;
         }
+        boolean boosted = state.getValue(BOOSTED);
         if (power != prevPower) {
             if (level.getBlockEntity(pos) instanceof AnalogNoteBlockBlockEntity be)
                 be.setPreviousInput(power);
             level.setBlock(pos, state.setValue(NOTE, _new != -1 ? _new : state.getValue(NOTE)).setValue(POWERED, power > 0), 3);
-            if (power > 0)
+            if (power > 0 && !boosted)
                 playNote(state, level, pos);
         } else if (_new != state.getValue(NOTE))
             level.setBlock(pos, state.setValue(NOTE, _new != -1 ? _new : state.getValue(NOTE)), 3);
+        if (power > 0 && boosted)
+            playNote(state, level, pos);
     }
 
     private void playNote(BlockState state, Level level, BlockPos pos) {
@@ -126,5 +130,11 @@ public class AnalogNoteBlock extends NoteBlock implements EntityBlock {
     @Override
     public boolean triggerEvent(BlockState state, Level level, BlockPos pos, int p_55026_, int p_55027_) {
         return super.triggerEvent(state.setValue(NOTE, getNote(state, level, pos, true)), level, pos, p_55026_, p_55027_);
+    }
+
+    @Override
+    public void attack(BlockState state, Level level, BlockPos pos, Player player) {
+        if (!(player.getMainHandItem().getItem() instanceof RedstoneBooster))
+            super.attack(state, level, pos, player);
     }
 }

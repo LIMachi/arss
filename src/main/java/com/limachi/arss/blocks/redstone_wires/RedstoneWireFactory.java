@@ -1,8 +1,8 @@
 package com.limachi.arss.blocks.redstone_wires;
 
 import com.limachi.arss.Arss;
-import com.limachi.lim_lib.RedstoneUtils;
 import com.limachi.lim_lib.registries.Registries;
+import com.limachi.lim_lib.utils.RedstoneUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;

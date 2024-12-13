@@ -115,6 +115,20 @@ public class ArssBlockStateProperties {
         public @Nonnull String getSerializedName() { return this.name; }
     }
 
+    public enum SequencerMode implements StringRepresentable {
+        PLAY_ONCE("play_once"),
+        PLAY_LOOP("play_loop"),
+        RECORD("record");
+
+        private final String name;
+        SequencerMode(String name) { this.name = name; }
+        public String toString() { return this.getSerializedName(); }
+        public @Nonnull String getSerializedName() { return this.name; }
+
+        public boolean isPlaying() { return this == PLAY_ONCE || this == PLAY_LOOP; }
+        public boolean isRecording() { return this == RECORD; }
+    }
+
     public enum SideToggling implements StringRepresentable {
         ALL_ACTIVE("all_active"),
         RIGHT_DISABLED("right_disabled"),
@@ -146,13 +160,11 @@ public class ArssBlockStateProperties {
                 };
         }
 
-        public boolean acceptRight() {
-            return this != RIGHT_DISABLED && this != BOTH_SIDE_DISABLED;
-        }
+        public boolean acceptRight() { return this != RIGHT_DISABLED && this != BOTH_SIDE_DISABLED; }
 
-        public boolean acceptLeft() {
-            return this != LEFT_DISABLED && this != BOTH_SIDE_DISABLED;
-        }
+        public boolean acceptLeft() { return this != LEFT_DISABLED && this != BOTH_SIDE_DISABLED; }
+
+        public boolean acceptBelow() { return true; } //FIXME
     }
 
     public static final IntegerProperty ENRICHED_RS_RANGE = IntegerProperty.create("range", 0, 4);
@@ -166,6 +178,7 @@ public class ArssBlockStateProperties {
     public static final EnumProperty<ShifterMode> SHIFTER_MODE = EnumProperty.create("mode", ShifterMode.class);
     public static final BooleanProperty HIGH = BooleanProperty.create("high");
     public static final EnumProperty<SignalGeneratorMode> GENERATOR_MODE = EnumProperty.create("mode", SignalGeneratorMode.class);
+    public static final EnumProperty<SequencerMode> SEQUENCER_MODE = EnumProperty.create("mode", SequencerMode.class);
     public static final EnumProperty<SideToggling> SIDES = EnumProperty.create("sides", SideToggling.class);
     public static final BooleanProperty CAN_SCROLL = BooleanProperty.create("can_scroll");
     public static final BooleanProperty HIDE_DOT = BooleanProperty.create("hide_dot");

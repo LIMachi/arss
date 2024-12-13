@@ -2,14 +2,15 @@ package com.limachi.arss.client.screen;
 
 import com.limachi.arss.Arss;
 import com.limachi.arss.client.MidiHandler;
+import com.limachi.arss.items.KeyboardItem;
 import com.limachi.arss.menu.KeyboardMenu;
 import com.limachi.lim_lib.network.messages.ScreenNBTMsg;
 import com.limachi.lim_lib.registries.clientAnnotations.RegisterMenuScreen;
 import com.limachi.lim_lib.screens.IDontShowJEI;
+import com.limachi.lim_lib.utils.Tags;
 import com.limachi.lim_lib.widgets.StaticStringWidget;
 import com.limachi.lim_lib.widgets.TextEditWithSuggestions;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -76,7 +77,7 @@ public class KeyboardScreen extends AbstractContainerScreen<KeyboardMenu> implem
 
         public BindingButton setKeyBind(int compactBinding) {
             this.compactBinding = compactBinding;
-            CompoundTag packet = Util.make(new CompoundTag(), c->c.putInt("binding", compactBinding));
+            CompoundTag packet = Tags.singleton("binding", compactBinding);
             ScreenNBTMsg.send(power, packet);
             menu.upstreamNBTMessage(power, packet); //WARNING: hack to force the item to update client side
             if (compactBinding != -1) {
@@ -137,7 +138,7 @@ public class KeyboardScreen extends AbstractContainerScreen<KeyboardMenu> implem
         CompoundTag tag = menu.inv.player.getItemInHand(menu.hand).getTag();
 
         if (tag != null) {
-            int[] bindings = tag.getIntArray("bindings");
+            int[] bindings = KeyboardItem.getBindings(tag);
             if (bindings.length == 15)
                 for (int y = 0; y < 5; ++y)
                     for (int x = 0; x < 3; ++x)

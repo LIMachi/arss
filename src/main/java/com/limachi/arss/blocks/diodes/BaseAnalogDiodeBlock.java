@@ -4,24 +4,29 @@ import com.limachi.arss.blockEntities.GenericDiodeBlockEntity;
 import com.limachi.arss.blocks.AnalogRedstoneTorchBlock;
 import com.limachi.arss.blocks.block_state_properties.ArssBlockStateProperties;
 import com.limachi.lim_lib.Configs;
-import com.limachi.lim_lib.SoundUtils;
 import com.limachi.lim_lib.blockEntities.IOnUseBlockListener;
 import com.limachi.lim_lib.registries.StaticInit;
+import com.limachi.lim_lib.utils.SoundUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -32,6 +37,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.ticks.TickPriority;
@@ -86,6 +93,22 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
             builder.add(modeProp);
     }
 
+    @Override
+    public BlockState getStateForPlacement(@Nonnull BlockPlaceContext ctx) {
+        BlockState state = super.getStateForPlacement(ctx);
+        if (state != null) {
+            CompoundTag tag = ctx.getItemInHand().getTag();
+            if (tag != null && tag.contains("BlockEntityTag")) {
+                CompoundTag bet = tag.getCompound("BlockEntityTag");
+                if (bet.contains("Mode", Tag.TAG_INT) && modeProp != null)
+                    state = setValueByClampedIndex(state, modeProp, bet.getInt("Mode"));
+                if (bet.contains("Sides", Tag.TAG_INT))
+                    state = setValueByClampedIndex(state, SIDES, bet.getInt("Sides"));
+            }
+        }
+        return state;
+    }
+
     public Pair<String, EnumProperty<?>> instanceType() { return new Pair<>(name, modeProp); }
 
     @Override
@@ -103,9 +126,9 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
         return calculateOutputSignal(true, level, pos, state) > 0;
     }
 
-    public static int sGetInputSignal(Level level, BlockPos pos, BlockState state) {
+    public static int sGetInputSignal(Level level, BlockPos pos, BlockState state, boolean analog) {
         if (state.getBlock() instanceof BaseAnalogDiodeBlock && state.getValue(SIDES) != ArssBlockStateProperties.SideToggling.INPUT_DISABLED)
-            return ((BaseAnalogDiodeBlock)state.getBlock()).getInputSignal(level, pos, state);
+            return ((BaseAnalogDiodeBlock)state.getBlock()).commonSignalGetter(level, pos, state, state.getValue(FACING), analog);
         return 0;
     }
 
@@ -130,6 +153,14 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
         return Pair.of(0, 0);
     }
 
+    public static int sGetModeSignal(LevelReader level, BlockPos pos, BlockState state) {
+        if (state.getBlock() instanceof BaseAnalogDiodeBlock) {
+            ArssBlockStateProperties.SideToggling sides = state.getValue(SIDES);
+            return sides.acceptBelow() ? level.getSignal(pos.relative(Direction.DOWN), Direction.UP) : 0;
+        }
+        return 0;
+    }
+
     protected int getDirectionalSignal(Level level, BlockPos pos, BlockState state, Direction dir) {
         BlockPos blockpos = pos.relative(dir);
         int i = level.getSignal(blockpos, dir);
@@ -141,19 +172,21 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
         }
     }
 
-    protected int commonSignalGetter(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull Direction back) {
+    protected int commonSignalGetter(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull Direction back, boolean analog) {
         int i = getDirectionalSignal(level, pos, state, back);
         BlockPos backPos = pos.relative(back);
         BlockState t_state = level.getBlockState(backPos);
-        if (t_state.hasAnalogOutputSignal())
-            i = t_state.getAnalogOutputSignal(level, backPos);
-        else if (i < 15 && t_state.isRedstoneConductor(level, backPos)) {
-            backPos = backPos.relative(back);
-            t_state = level.getBlockState(backPos);
-            ItemFrame itemframe = getItemFrame(level, back, backPos);
-            int j = Math.max(itemframe == null ? Integer.MIN_VALUE : itemframe.getAnalogOutput(), t_state.hasAnalogOutputSignal() ? t_state.getAnalogOutputSignal(level, backPos) : Integer.MIN_VALUE);
-            if (j != Integer.MIN_VALUE) {
-                i = j;
+        if (analog) {
+            if (t_state.hasAnalogOutputSignal())
+                i = t_state.getAnalogOutputSignal(level, backPos);
+            else if (i < 15 && t_state.isRedstoneConductor(level, backPos)) {
+                backPos = backPos.relative(back);
+                t_state = level.getBlockState(backPos);
+                ItemFrame itemframe = getItemFrame(level, back, backPos);
+                int j = Math.max(itemframe == null ? Integer.MIN_VALUE : itemframe.getAnalogOutput(), t_state.hasAnalogOutputSignal() ? t_state.getAnalogOutputSignal(level, backPos) : Integer.MIN_VALUE);
+                if (j != Integer.MIN_VALUE) {
+                    i = j;
+                }
             }
         }
         return Mth.clamp(i, 0, 15);
@@ -161,7 +194,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
 
     @Override
     protected int getInputSignal(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
-        return commonSignalGetter(level, pos, state, state.getValue(FACING));
+        return commonSignalGetter(level, pos, state, state.getValue(FACING), true);
     }
 
     @Nullable
@@ -218,11 +251,24 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
         return InteractionResult.PASS;
     }
 
+    private static <T extends Enum<T> & StringRepresentable> BlockState setValueByClampedIndex(BlockState state, EnumProperty<T> prop, int index) {
+        List<String> val = prop.getPossibleValues().stream().map(StringRepresentable::getSerializedName).toList();
+        T f = prop.getValue(val.get(Mth.clamp(index, 0, val.size() - 1))).get();
+        return state.setValue(prop, f);
+    }
+
     @Override
     protected void checkTickOnNeighbor(@NotNull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
-        if (!level.getBlockTicks().willTickThisTick(pos, this)) {
+        if (!level.getBlockTicks().hasScheduledTick(pos, this)) {
+            if (modeProp != null) {
+                int modeSwitch = sGetModeSignal(level, pos, state);
+                if (modeSwitch > 0 && modeProp != null && state.getValue(modeProp).ordinal() != modeSwitch - 1) {
+                    state = setValueByClampedIndex(state, modeProp, modeSwitch - 1);
+                    level.setBlockAndUpdate(pos, state);
+                }
+            }
             int newPower = calculateOutputSignal(true, level, pos, state);
-            if (newPower != state.getValue(POWER))
+            if (newPower != state.getValue(POWER) || isTicking)
                 level.scheduleTick(pos, this, getDelay(state), shouldPrioritize(level, pos, state) ? TickPriority.HIGH : TickPriority.NORMAL);
         }
     }
@@ -238,13 +284,21 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
     protected int getAlternateSignalAt(@Nonnull LevelReader level, @Nonnull BlockPos pos, @Nonnull Direction dir) {
         if (ALL_POWERS_ON_SIDES) {
             BlockPos start = pos.relative(dir.getOpposite());
-            return commonSignalGetter((Level) level, start, level.getBlockState(start), dir);
+            return commonSignalGetter((Level) level, start, level.getBlockState(start), dir, true);
         }
         return level.getControlInputSignal(pos.relative(dir), dir, this.sideInputDiodesOnly());
     }
 
     private void refreshOutputState(Level level, BlockPos pos, BlockState state, boolean recalculate) {
         int nextPower = 0;
+        if (modeProp != null) {
+            int modeSwitch = sGetModeSignal(level, pos, state);
+            if (modeSwitch > 0 && modeProp != null && state.getValue(modeProp).ordinal() != modeSwitch - 1) {
+                state = setValueByClampedIndex(state, modeProp, modeSwitch - 1);
+                level.setBlockAndUpdate(pos, state);
+                recalculate = true;
+            }
+        }
         if (recalculate) {
             nextPower = calculateOutputSignal(false, level, pos, state);
             if (level.getBlockEntity(pos) instanceof GenericDiodeBlockEntity be)
@@ -267,6 +321,15 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
 
             updateNeighborsInFront(level, pos, state);
         }
+    }
+
+    public static void updateNeighborsInFront(Block block, Level level, BlockPos pos, BlockState state) {
+        Direction direction = state.getValue(FACING);
+        BlockPos blockpos = pos.relative(direction.getOpposite());
+        if (net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(level, pos, level.getBlockState(pos), java.util.EnumSet.of(direction.getOpposite()), false).isCanceled())
+            return;
+        level.neighborChanged(blockpos, block, pos);
+        level.updateNeighborsAtExceptFromFacing(blockpos, block, direction);
     }
 
     @Override
@@ -303,5 +366,27 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
             return strength;
         BlockState state = level.getBlockState(target);
         return Math.max(strength, state.is(Blocks.REDSTONE_WIRE) ? state.getValue(RedStoneWireBlock.POWER) : 0);
+    }
+
+    @Override
+    public void playerWillDestroy(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull Player player) {
+        if (level instanceof ServerLevel sl && player.isCreative() && level.getBlockEntity(pos) instanceof GenericDiodeBlockEntity diodeEntity)
+            for (ItemStack stack : diodeEntity.getDrops(sl, pos, state, player)) {
+                ItemEntity itementity = new ItemEntity(level, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, stack);
+                itementity.setDefaultPickUpDelay();
+                level.addFreshEntity(itementity);
+            }
+        super.playerWillDestroy(level, pos, state, player);
+    }
+
+    @Override
+    @Nonnull
+    public List<ItemStack> getDrops(@Nonnull BlockState state, @Nonnull LootParams.Builder builder) {
+        if (builder.getOptionalParameter(LootContextParams.THIS_ENTITY) instanceof Player player && builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof GenericDiodeBlockEntity diodeEntity) {
+            List<ItemStack> out = diodeEntity.getDrops(builder.getLevel(), BlockPos.containing(builder.getParameter(LootContextParams.ORIGIN)), state, player);
+            if (!out.isEmpty())
+                return out;
+        }
+        return super.getDrops(state, builder);
     }
 }

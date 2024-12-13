@@ -1,4 +1,8 @@
-OK invalid client call server side
-OK analog redstone block takes too long to break
-OK wrong break particles
-missing break progression animation -> don't know how to fix, but might be an issue with multi layered blocks / tinted blocks
+OK sequencer should not drop with nbt when empty (head/length 0, no limits and 0 power everywhere)
+OK? sequencer should sync their data in a way that prevent desync when multiple players are using the screen at the same time
+OK? add better edit tools for sequencer (selection, copy, cut, paste, shift up, shift down, quantize, etc...)
+OK? fix play/pause being hard to use in boosted mode (in normal mode, screen ticks twice as fast as the entity, so space has a very high chance of winning, but in boosted mode, screen and entity tick at the same speed)
+OK rework rendering of sequencer (sub sections dont render properly, need to add highlights)
+OK? fix dispenser velocity calculation (shoots itself too often)
+
+OK? sequencer skips first note when playing with space in play once mode

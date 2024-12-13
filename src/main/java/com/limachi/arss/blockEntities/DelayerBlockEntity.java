@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
 public class DelayerBlockEntity extends GenericDiodeBlockEntity {
 
     private final int[] memory = new int[16];
+    private int length = 1;
     private int head = 0;
 
     public static final RegistryObject<BlockEntityType<DelayerBlockEntity>> TYPE = Registries.blockEntity(Arss.MOD_ID, "delayer", DelayerBlockEntity::new, DiodeBlockFactory.getBlockRegister("delayer"));
@@ -27,22 +28,30 @@ public class DelayerBlockEntity extends GenericDiodeBlockEntity {
         super.saveAdditional(tag);
         tag.putInt("Head", this.head);
         tag.putIntArray("Memory", memory);
+        tag.putInt("Length", length);
     }
 
     public void load(@Nonnull CompoundTag tag) {
         super.load(tag);
         head = tag.getInt("Head");
+        length = tag.getInt("Length");
         int[] tmp = tag.getIntArray("Memory");
-        for (int i = 0; i < 16; ++i) {
-            memory[i] = i < tmp.length ? tmp[i] : 0;
-        }
+        for (int i = 0; i < 16; ++i)
+            memory[i] = i < tmp.length && i < length ? tmp[i] : 0;
     }
 
     public int state() { return memory[head]; }
 
     public int step(int input, int delay) {
+        if (delay < length) {
+            for (int i = delay; i < 16; ++i)
+                memory[i] = 0;
+            if (head >= delay)
+                head = 0;
+        }
+        length = delay;
         int out = memory[head];
-        memory[Math.min(head, delay)] = input;
+        memory[head] = input;
         if (++head >= delay)
             head = 0;
         setChanged();

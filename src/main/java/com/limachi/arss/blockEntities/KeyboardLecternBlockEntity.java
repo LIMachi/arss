@@ -46,7 +46,7 @@ public class KeyboardLecternBlockEntity extends BlockEntity {
                 boolean resync = false;
                 for (long l : data.getLongArray("KeyboardLecternBlock")) {
                     BlockPos pos = BlockPos.of(l);
-                    if (player.blockPosition().distSqr(pos) <= 25 && player.level().getBlockEntity(pos) instanceof KeyboardLecternBlockEntity be) {
+                    if (player.blockPosition().distSqr(pos) <= 36 && player.level().getBlockEntity(pos) instanceof KeyboardLecternBlockEntity be) {
                         out.add(be);
                         keep.add(l);
                     } else
@@ -58,7 +58,7 @@ public class KeyboardLecternBlockEntity extends BlockEntity {
                     else
                         data.putLongArray("KeyboardLecternBlock", keep);
                     if (player.level().isClientSide)
-                        NetworkManager.toServer(Arss.MOD_ID, new SyncLinkedLecterns(data.getLongArray("KeyboardLecternBlock")));
+                        NetworkManager.toServer(new SyncLinkedLecterns(data.getLongArray("KeyboardLecternBlock")));
                 }
             }
         }
@@ -138,7 +138,7 @@ public class KeyboardLecternBlockEntity extends BlockEntity {
                 data.putLongArray("KeyboardLecternBlock", Collections.singletonList(worldPosition.asLong()));
             }
             if (player instanceof ServerPlayer serverPlayer)
-                NetworkManager.toClient(Arss.MOD_ID, serverPlayer, new SyncLinkedLecterns(data.getLongArray("KeyboardLecternBlock")));
+                NetworkManager.toClient(serverPlayer, new SyncLinkedLecterns(data.getLongArray("KeyboardLecternBlock")));
         }
     }
 
