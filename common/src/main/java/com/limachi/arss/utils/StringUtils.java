@@ -1,4 +1,4 @@
-package com.limachi.utils;
+package com.limachi.arss.utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

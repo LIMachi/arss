@@ -1,6 +1,6 @@
 package com.limachi.arss.neoforge.client;
 
-import com.limachi.utils.ModBase;
+import com.limachi.arss.utils.ModBase;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.Mod;
 

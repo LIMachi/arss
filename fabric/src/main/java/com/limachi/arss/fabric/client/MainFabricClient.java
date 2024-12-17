@@ -1,6 +1,6 @@
 package com.limachi.arss.fabric.client;
 
-import com.limachi.utils.ModBase;
+import com.limachi.arss.utils.ModBase;
 import net.fabricmc.api.ClientModInitializer;
 
 public final class MainFabricClient implements ClientModInitializer {

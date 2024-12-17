@@ -1,4 +1,4 @@
-package com.limachi.utils;
+package com.limachi.arss.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +13,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.lang.reflect.Field;
@@ -69,6 +70,10 @@ public class ClassExtractor {
 
         public String name() {
             return field.getName();
+        }
+
+        public Class<?> type() {
+            return field.getType();
         }
     }
 
@@ -154,28 +159,58 @@ public class ClassExtractor {
     }
 
     public static <A extends Annotation> void runClassAnnotations(Class<A> type, BiConsumer<Class<?>, A> runner) {
+        runClassAnnotations(type, null, null, runner);
+    }
+
+    public static <A extends Annotation, R extends Annotation> void runClassAnnotations(Class<A> type, Class<R> rep_type, Function<R, A[]> rep_getter, BiConsumer<Class<?>, A> runner) {
         for (Class<?> clazz : CLASSES) {
             A annotation = clazz.getAnnotation(type);
             if (annotation != null)
                 runner.accept(clazz, annotation);
+            if (rep_type != null && rep_getter != null) {
+                R rep = clazz.getAnnotation(rep_type);
+                if (rep != null)
+                    for (A a : rep_getter.apply(rep))
+                        runner.accept(clazz, a);
+            }
         }
     }
 
     public static <A extends Annotation> void runFieldAnnotations(Class<A> type, BiConsumer<FieldAccess<?>, A> runner) {
+        runFieldAnnotations(type, null, null, runner);
+    }
+
+    public static <A extends Annotation, R extends Annotation> void runFieldAnnotations(Class<A> type, Class<R> rep_type, Function<R, A[]> rep_getter, BiConsumer<FieldAccess<?>, A> runner) {
         for (Class<?> clazz : CLASSES)
             for (Field f : clazz.getDeclaredFields()) {
                 A annotation = f.getAnnotation(type);
                 if (annotation != null)
                     runner.accept(new FieldAccess<>(clazz, f), annotation);
+                if (rep_type != null && rep_getter != null) {
+                    R rep = clazz.getAnnotation(rep_type);
+                    if (rep != null)
+                        for (A a : rep_getter.apply(rep))
+                            runner.accept(new FieldAccess<>(clazz, f), a);
+                }
             }
     }
 
     public static <A extends Annotation> void runMethodAnnotations(Class<A> type, BiConsumer<MethodAccess<?>, A> runner) {
+        runMethodAnnotations(type, null, null, runner);
+    }
+
+    public static <A extends Annotation, R extends Annotation> void runMethodAnnotations(Class<A> type, Class<R> rep_type, Function<R, A[]> rep_getter, BiConsumer<MethodAccess<?>, A> runner) {
         for (Class<?> clazz : CLASSES)
             for (Method m : clazz.getDeclaredMethods()) {
                 A annotation = m.getAnnotation(type);
                 if (annotation != null)
                     runner.accept(new MethodAccess<>(clazz, m), annotation);
+                if (rep_type != null && rep_getter != null) {
+                    R rep = clazz.getAnnotation(rep_type);
+                    if (rep != null)
+                        for (A a : rep_getter.apply(rep))
+                            runner.accept(new MethodAccess<>(clazz, m), a);
+                }
             }
     }
 }

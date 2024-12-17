@@ -1,23 +1,22 @@
 package com.limachi.arss;
 
-import com.limachi.arss.blocks.PixelBlock;
-import com.limachi.utils.ModBase;
-import dev.architectury.registry.CreativeTabRegistry;
-import dev.architectury.registry.registries.RegistrySupplier;
+import com.limachi.arss.utils.ModBase;
+import com.limachi.arss.utils.annotations.Mod;
+import com.limachi.arss.utils.annotations.RegisterTab;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+@Mod("arss")
 public final class Arss extends ModBase {
 
-    public Arss() {
-        RegistrySupplier<CreativeModeTab> tab = TABS.register("tab", ()->CreativeTabRegistry.create(Component.translatable("arss.tab.title"), ()->new ItemStack(Items.COMPARATOR)));
-        CreativeTabRegistry.append(tab, PixelBlock.R_ITEM);
-        CreativeTabRegistry.append(tab, Items.COMPARATOR);
-//        CreativeTabRegistry.modify(tab, m->{
-//
-//        });
+    @RegisterTab(defaultTab = true)
+    public static void tab(CreativeModeTab.Builder builder) {
+        builder.title(Component.translatable("arss.tab.title"));
+        builder.icon(()->new ItemStack(Items.COMPARATOR));
+    }
 
+    public Arss() {
     }
 }

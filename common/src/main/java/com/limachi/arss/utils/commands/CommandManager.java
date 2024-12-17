@@ -1,7 +1,9 @@
-package com.limachi.utils.commands;
+package com.limachi.arss.utils.commands;
 
-import com.limachi.utils.ClassExtractor;
-import com.limachi.utils.ModBase;
+import com.limachi.arss.utils.ClassExtractor;
+import com.limachi.arss.utils.ModBase;
+import com.limachi.arss.utils.annotations.CmdArg;
+import com.limachi.arss.utils.annotations.RegisterCommand;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.*;
 import com.mojang.brigadier.builder.ArgumentBuilder;
@@ -37,8 +39,8 @@ import java.lang.annotation.*;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.stream.Stream;
 
 public class CommandManager {
     public static LiteralArgumentBuilder<CommandSourceStack> cmd(String cmd, Command<CommandSourceStack> run, HashMap<String, ArgumentType<?>> mappedTypes) {
@@ -80,24 +82,8 @@ public class CommandManager {
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface Cmds {
-        Cmd[] value();
-    }
-
-    @Repeatable(Cmds.class)
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
-    public @interface Cmd {
-        String value();
-    }
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.PARAMETER)
-    public @interface Arg {
-        String value();
-        String min() default "";
-        String max() default "";
-        StringArgumentType.StringType matcher() default StringArgumentType.StringType.QUOTABLE_PHRASE;
+    public @interface RegisterCommands {
+        RegisterCommand[] value();
     }
 
     @FunctionalInterface
@@ -120,8 +106,8 @@ public class CommandManager {
         m.put(ItemStack.class, (ctx, label)->ItemArgument.getItem(ctx, label).createItemStack(1, false));
     });
 
-    private static final HashMap<Class<?>, BiFunction<CommandBuildContext, Arg, ArgumentType<?>>> ARG_TYPES = Util.make(new HashMap<>(), m -> {
-        BiFunction<CommandBuildContext, Arg, ArgumentType<?>> intArg = (b, a)->{
+    private static final HashMap<Class<?>, BiFunction<CommandBuildContext, CmdArg, ArgumentType<?>>> ARG_TYPES = Util.make(new HashMap<>(), m -> {
+        BiFunction<CommandBuildContext, CmdArg, ArgumentType<?>> intArg = (b, a)->{
             if (a.min().isBlank() && a.max().isBlank())
                 return IntegerArgumentType.integer();
             if (a.max().isBlank())
@@ -130,7 +116,7 @@ public class CommandManager {
                 return IntegerArgumentType.integer(Integer.MIN_VALUE, Integer.parseInt(a.max()));
             return IntegerArgumentType.integer(Integer.parseInt(a.min()), Integer.parseInt(a.max()));
         };
-        BiFunction<CommandBuildContext, Arg, ArgumentType<?>> longArg = (b, a)->{
+        BiFunction<CommandBuildContext, CmdArg, ArgumentType<?>> longArg = (b, a)->{
             if (a.min().isBlank() && a.max().isBlank())
                 return LongArgumentType.longArg();
             if (a.max().isBlank())
@@ -139,7 +125,7 @@ public class CommandManager {
                 return LongArgumentType.longArg(Long.MIN_VALUE, Long.parseLong(a.max()));
             return LongArgumentType.longArg(Long.parseLong(a.min()), Long.parseLong(a.max()));
         };
-        BiFunction<CommandBuildContext, Arg, ArgumentType<?>> floatArg = (b, a)->{
+        BiFunction<CommandBuildContext, CmdArg, ArgumentType<?>> floatArg = (b, a)->{
             if (a.min().isBlank() && a.max().isBlank())
                 return FloatArgumentType.floatArg();
             if (a.max().isBlank())
@@ -148,7 +134,7 @@ public class CommandManager {
                 return FloatArgumentType.floatArg(Float.MIN_VALUE, Float.parseFloat(a.max()));
             return FloatArgumentType.floatArg(Float.parseFloat(a.min()), Float.parseFloat(a.max()));
         };
-        BiFunction<CommandBuildContext, Arg, ArgumentType<?>> doubleArg = (b, a)->{
+        BiFunction<CommandBuildContext, CmdArg, ArgumentType<?>> doubleArg = (b, a)->{
             if (a.min().isBlank() && a.max().isBlank())
                 return DoubleArgumentType.doubleArg();
             if (a.max().isBlank())
@@ -187,7 +173,7 @@ public class CommandManager {
         m.put(ItemStack.class, (b, a)->ItemArgument.item(b));
     });
 
-    public static void registerArg(Class<?> forClass, BiFunction<CommandBuildContext, Arg, ArgumentType<?>> argProvider) {
+    public static void registerArg(Class<?> forClass, BiFunction<CommandBuildContext, CmdArg, ArgumentType<?>> argProvider) {
         ARG_TYPES.put(forClass, argProvider);
     }
 
@@ -195,12 +181,12 @@ public class CommandManager {
         GETTER_OVERRIDE.put(forClass, getter);
     }
 
-    private static <T> void cmdAnnotation(CommandBuildContext builder, ArrayList<LiteralArgumentBuilder<CommandSourceStack>> cmds, ClassExtractor.MethodAccess<?> m, Cmd a) {
+    private static <T> Optional<LiteralArgumentBuilder<CommandSourceStack>> cmdAnnotation(CommandBuildContext builder, ClassExtractor.MethodAccess<?> m, RegisterCommand a) {
         Parameter[] parameters = m.parameters();
         if (parameters.length == 0) {
             //error: missing ctx as first arg
             ModBase.logger.error("missing first arg (ctx): " + m.name() + " # " + a.value());
-            return;
+            return Optional.empty();
         }
         ArgumentType<?>[] at = new ArgumentType[parameters.length - 1];
         String[] labels = new String[parameters.length - 1];
@@ -208,13 +194,13 @@ public class CommandManager {
         if (!m.returnType().isAssignableFrom(int.class)) {
             //error: annotation is on a method that does not return an int
             ModBase.logger.error("should return int: " + m.name() + " # " + a.value());
-            return;
+            return Optional.empty();
         }
         String command = a.value();
         for (int p = 1; p < parameters.length; ++p) {
             boolean found = false;
             for (Annotation pa : parameters[p].getAnnotations()) {
-                if (pa instanceof Arg arg) {
+                if (pa instanceof CmdArg arg) {
                     labels[p - 1] = arg.value();
                     at[p - 1] = ARG_TYPES.get(parameters[p].getType()).apply(builder, arg);
                     mapping.put(labels[p - 1], at[p - 1]);
@@ -225,10 +211,10 @@ public class CommandManager {
             if (!found) {
                 //error, parameter without Arg annotation!
                 ModBase.logger.error("unexpected arg without annotation: " + m.name() + " # " + a.value() + " @ " + p);
-                return;
+                return Optional.empty();
             }
         }
-        cmds.add(cmd(command, ctx -> {
+        return Optional.of(cmd(command, ctx -> {
             Object[] args = new Object[parameters.length];
             args[0] = ctx;
             for (int i = 0; i < at.length; ++i)
@@ -250,18 +236,7 @@ public class CommandManager {
         }, mapping));
     }
 
-    private static Stream<LiteralArgumentBuilder<CommandSourceStack>> extractCommands(CommandBuildContext builder) {
-        ArrayList<LiteralArgumentBuilder<CommandSourceStack>> cmds = new ArrayList<>();
-        ClassExtractor.runMethodAnnotations(Cmd.class, (m, a)->cmdAnnotation(builder, cmds, m, a));
-        ClassExtractor.runMethodAnnotations(Cmds.class, (m, a)->{
-            for (Cmd c : a.value())
-                cmdAnnotation(builder, cmds, m, c); //should use the optimisation from game_start (process the same method once)
-        });
-        ModBase.logger.warn("prepared commands: " + cmds);
-        return cmds.stream();
-    }
-
     public static void register() {
-        CommandRegistrationEvent.EVENT.register(((dispatcher, builder, selection) -> extractCommands(builder).forEach(dispatcher::register)));
+        CommandRegistrationEvent.EVENT.register(((dispatcher, builder, selection) -> ClassExtractor.runMethodAnnotations(RegisterCommand.class, RegisterCommands.class, RegisterCommands::value, (m, a)->cmdAnnotation(builder, m, a).ifPresent(dispatcher::register))));
     }
 }

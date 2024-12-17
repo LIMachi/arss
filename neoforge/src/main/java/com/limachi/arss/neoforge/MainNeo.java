@@ -1,6 +1,6 @@
 package com.limachi.arss.neoforge;
 
-import com.limachi.utils.ModBase;
+import com.limachi.arss.utils.ModBase;
 
 @net.neoforged.fml.common.Mod("arss")
 public final class MainNeo {

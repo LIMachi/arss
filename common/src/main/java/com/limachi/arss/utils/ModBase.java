@@ -1,59 +1,26 @@
-package com.limachi.utils;
+package com.limachi.arss.utils;
 
-import com.limachi.utils.annotations.RegisterBlock;
-import com.limachi.utils.annotations.RegisterBlockItem;
-import com.limachi.utils.annotations.RegisterItem;
-import com.limachi.utils.clientAnnotations.BlockTinter;
-import com.limachi.utils.commands.CommandManager;
+import com.limachi.arss.utils.annotations.*;
+import com.limachi.arss.utils.clientAnnotations.BlockTinter;
+import com.limachi.arss.utils.commands.CommandManager;
+import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
-import dev.architectury.registry.registries.DeferredRegister;
-import dev.architectury.registry.registries.RegistrySupplier;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.function.Supplier;
-
 public abstract class ModBase {
-    public static final String mod_id = "arss";
-    public static final Logger logger = LogManager.getLogger(mod_id);
-
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.BLOCK);
-    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.BLOCK_ENTITY_TYPE);
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.ITEM);
-
-    public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(mod_id, Registries.CREATIVE_MODE_TAB);
+    public static Logger logger;
+    public static ModBase instance;
+    public static Registries registries;
 
     public ModBase() {}
-
-    public static final DeferredRegister<CreativeModeTab> tabs() { return TABS; }
-
-    public static <T extends Item> RegistrySupplier<T> item(String reg_key, Supplier<T> n, String infoKey, String[] tab) {
-        RegistrySupplier<T> out = ITEMS.register(reg_key, n);
-//        if (out != null && infoKey != null && !infoKey.isBlank())
-//            JEIInfo.registerInfo(out, infoKey);
-//        if (tab != null && out != null)
-//            for (String t : tab)
-//                if (t != null && !t.isBlank()) {
-//                    if (t.equals("automatic"))
-//                        t = LimLib.INSTANCES.get(modId).tab().getKey().location().toString();
-//                    CREATIVE_TABS.compute(t, (k, v) -> {
-//                        if (v == null)
-//                            v = new LinkedList<>();
-//                        v.add((RegistryObject<Item>)out);
-//                        return v;
-//                    });
-//                }
-        return out;
-    }
 
     public static String defaultToClass(String nullable, Class<?> clazz) {
         if (nullable == null || nullable.isBlank())
@@ -61,10 +28,22 @@ public abstract class ModBase {
         return nullable;
     }
 
+    public static String defaultToMethod(String nullable, ClassExtractor.MethodAccess<?> m) {
+        if (nullable == null || nullable.isBlank())
+            return StringUtils.camelToSnake(m.name());
+        return nullable;
+    }
+
+    public static String defaultToField(String nullable, ClassExtractor.FieldAccess<?> f) {
+        if (nullable == null || nullable.isBlank())
+            return StringUtils.camelToSnake(f.name());
+        return nullable;
+    }
+
     static void extractAnnotations() {
         ClassExtractor.runFieldAnnotations(RegisterBlock.class, (f, a)->{
             String name = defaultToClass(a.name(), f.clazz());
-            f.setStatic(BLOCKS.register(name, ()->{
+            f.setStatic(registries.blocks.register(name, ()->{
                 try {
                     return (Block)(f.clazz().getConstructor().newInstance());
                 } catch (Exception e) {
@@ -76,7 +55,7 @@ public abstract class ModBase {
         });
         ClassExtractor.runFieldAnnotations(RegisterItem.class, (f, a)->{
             String name = defaultToClass(a.name(), f.clazz());
-            f.setStatic(item(name, ()->{
+            f.setStatic(registries.item(name, ()->{
                 try {
                     return (Item)(f.clazz().getConstructor().newInstance());
                 } catch (Exception e) {
@@ -96,10 +75,10 @@ public abstract class ModBase {
             String block = defaultToClass(a.block(), f.clazz());
             try {
                 f.setStatic(
-                        item(name,
+                        registries.item(name,
                                 ()->{
                                     try {
-                                        return new BlockItem(BLOCKS.getRegistrar().get(ResourceLocation.fromNamespaceAndPath(mod_id, block)), new Item.Properties());
+                                        return new BlockItem(registries.blocks.getRegistrar().get(ResourceLocation.fromNamespaceAndPath(registries.mod_id, block)), new Item.Properties());
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                         System.exit(-1);
@@ -114,15 +93,36 @@ public abstract class ModBase {
                 System.exit(-1);
             }
         });
+        ClassExtractor.runMethodAnnotations(RegisterTab.class, (m, a)->{
+            var t = registries.tabs.register(defaultToMethod(a.name(), m), ()->CreativeTabRegistry.create(m::invokeStatic));
+            if (a.defaultTab())
+                registries.default_tab = t;
+        });
+    }
+
+    private static void extractMod() {
+        ClassExtractor.runClassAnnotations(Mod.class, (c, a)->{
+            if (!ModBase.class.isAssignableFrom(c)) {
+                System.err.println("@Mod should be used on a class that extends ModBase: " + c);
+                System.exit(-1);
+            }
+            if (registries == null) {
+                registries = new Registries(a.value(), (Class<ModBase>)c);
+                logger = LogManager.getLogger(a.value());
+            } else {
+                System.err.println("@Mod is used multiple times: " + registries.mod + " & " + c);
+                System.exit(-1);
+            }
+        });
     }
 
     public static void init() {
         ClassExtractor.extractClasses();
+        extractMod();
+        registries.default_tab = registries.tabs.register("tab", CreativeTabRegistry.ofBuiltin(CreativeModeTabs.getDefaultTab()));
         extractAnnotations();
-
-        BLOCKS.register();
-        BLOCK_ENTITIES.register();
-        ITEMS.register();
+        instance = registries.initMod();
+        registries.register();
         CommandManager.register();
     }
 
@@ -134,7 +134,7 @@ public abstract class ModBase {
                 if (name.isBlank())
                     name = StringUtils.camelToSnake(StringUtils.getSimplifiedClassName(m.clazz().getName()));
                 String finalName = name;
-                ColorHandlerRegistry.registerBlockColors(m::invokeStatic, ()->BLOCKS.getRegistrar().get(ResourceLocation.fromNamespaceAndPath(mod_id, finalName)));
+                ColorHandlerRegistry.registerBlockColors(m::invokeStatic, ()->registries.blocks.getRegistrar().get(ResourceLocation.fromNamespaceAndPath(registries.mod_id, finalName)));
             });
         }
     }
