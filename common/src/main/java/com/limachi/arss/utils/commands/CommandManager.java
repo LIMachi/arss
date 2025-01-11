@@ -237,6 +237,6 @@ public class CommandManager {
     }
 
     public static void register() {
-        CommandRegistrationEvent.EVENT.register(((dispatcher, builder, selection) -> ClassExtractor.runMethodAnnotations(RegisterCommand.class, RegisterCommands.class, RegisterCommands::value, (m, a)->cmdAnnotation(builder, m, a).ifPresent(dispatcher::register))));
+        CommandRegistrationEvent.EVENT.register(((dispatcher, builder, selection) -> ModBase.extractor.runOnMethods(RegisterCommand.class, (m, a)->cmdAnnotation(builder, m, a).ifPresent(dispatcher::register))));
     }
 }

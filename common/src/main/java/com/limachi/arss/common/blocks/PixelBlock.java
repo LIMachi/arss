@@ -3,7 +3,7 @@ package com.limachi.arss.common.blocks;
 import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.utils.annotations.RegisterBlock;
 import com.limachi.arss.utils.annotations.RegisterBlockItem;
-import com.limachi.arss.utils.clientAnnotations.BlockTinter;
+import com.limachi.arss.utils.client_annotations.BlockTinter;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

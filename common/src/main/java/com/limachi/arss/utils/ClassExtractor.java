@@ -2,7 +2,6 @@ package com.limachi.arss.utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -12,14 +11,13 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.lang.reflect.Field;
+import java.util.regex.Pattern;
 
 public class ClassExtractor {
-    public static final List<Class<?>> CLASSES = new ArrayList<>();
+    public final List<Class<?>> classes = new ArrayList<>();
 
     public static class FieldAccess<C> {
         private final Field field;
@@ -130,87 +128,41 @@ public class ClassExtractor {
         return null;
     }
 
-    public static void extractClasses() {
-        extractClasses(null);
-    }
+    public ClassExtractor() { extractClasses(null, null, false); }
+    public ClassExtractor(String matcher) { extractClasses(null, matcher, false); }
+    public ClassExtractor(Class<?> clazz) { extractClasses(clazz, null, false); }
+    public ClassExtractor(Class<?> clazz, String matcher) { extractClasses(clazz, matcher, false); }
 
-    public static void extractClasses(Class<?> clazz) {
+    public <T extends ClassExtractor> T extractClasses() { extractClasses(null, null, true); return (T)this; }
+    public <T extends ClassExtractor> T extractClasses(String matcher) { extractClasses(null, matcher, true); return (T)this; }
+    public <T extends ClassExtractor> T extractClasses(Class<?> clazz, String matcher, boolean clear) {
         JarFile jarFile;
+        Pattern pattern;
         if (clazz == null)
             clazz = ClassExtractor.class;
-        CLASSES.clear();
+        if (clear)
+            classes.clear();
+        if (matcher == null || matcher.isBlank())
+            pattern = Pattern.compile(".*");
+        else
+            pattern = Pattern.compile(matcher);
         try {
             jarFile = new JarFile(Objects.requireNonNull(getJarPath(clazz)));
         } catch (IOException | NullPointerException ignore) {
-            return;
+            return (T)this;
         }
         Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
             JarEntry entry = entries.nextElement();
             String entryName = entry.getName();
-            if (entryName.endsWith(".class") && !entry.isDirectory())
+            if (entryName.endsWith(".class") && !entry.isDirectory() && pattern.matcher(entryName).find())
                 try {
-                    CLASSES.add(clazz.getClassLoader().loadClass(entryName.replace("/", ".").replace(".class", "")));
+                    classes.add(clazz.getClassLoader().loadClass(entryName.replace("/", ".").replace(".class", "")));
                 } catch (Throwable ignore) {}
         }
         try {
             jarFile.close();
         } catch (IOException ignore) {}
-    }
-
-    public static <A extends Annotation> void runClassAnnotations(Class<A> type, BiConsumer<Class<?>, A> runner) {
-        runClassAnnotations(type, null, null, runner);
-    }
-
-    public static <A extends Annotation, R extends Annotation> void runClassAnnotations(Class<A> type, Class<R> rep_type, Function<R, A[]> rep_getter, BiConsumer<Class<?>, A> runner) {
-        for (Class<?> clazz : CLASSES) {
-            A annotation = clazz.getAnnotation(type);
-            if (annotation != null)
-                runner.accept(clazz, annotation);
-            if (rep_type != null && rep_getter != null) {
-                R rep = clazz.getAnnotation(rep_type);
-                if (rep != null)
-                    for (A a : rep_getter.apply(rep))
-                        runner.accept(clazz, a);
-            }
-        }
-    }
-
-    public static <A extends Annotation> void runFieldAnnotations(Class<A> type, BiConsumer<FieldAccess<?>, A> runner) {
-        runFieldAnnotations(type, null, null, runner);
-    }
-
-    public static <A extends Annotation, R extends Annotation> void runFieldAnnotations(Class<A> type, Class<R> rep_type, Function<R, A[]> rep_getter, BiConsumer<FieldAccess<?>, A> runner) {
-        for (Class<?> clazz : CLASSES)
-            for (Field f : clazz.getDeclaredFields()) {
-                A annotation = f.getAnnotation(type);
-                if (annotation != null)
-                    runner.accept(new FieldAccess<>(clazz, f), annotation);
-                if (rep_type != null && rep_getter != null) {
-                    R rep = clazz.getAnnotation(rep_type);
-                    if (rep != null)
-                        for (A a : rep_getter.apply(rep))
-                            runner.accept(new FieldAccess<>(clazz, f), a);
-                }
-            }
-    }
-
-    public static <A extends Annotation> void runMethodAnnotations(Class<A> type, BiConsumer<MethodAccess<?>, A> runner) {
-        runMethodAnnotations(type, null, null, runner);
-    }
-
-    public static <A extends Annotation, R extends Annotation> void runMethodAnnotations(Class<A> type, Class<R> rep_type, Function<R, A[]> rep_getter, BiConsumer<MethodAccess<?>, A> runner) {
-        for (Class<?> clazz : CLASSES)
-            for (Method m : clazz.getDeclaredMethods()) {
-                A annotation = m.getAnnotation(type);
-                if (annotation != null)
-                    runner.accept(new MethodAccess<>(clazz, m), annotation);
-                if (rep_type != null && rep_getter != null) {
-                    R rep = clazz.getAnnotation(rep_type);
-                    if (rep != null)
-                        for (A a : rep_getter.apply(rep))
-                            runner.accept(new MethodAccess<>(clazz, m), a);
-                }
-            }
+        return (T)this;
     }
 }

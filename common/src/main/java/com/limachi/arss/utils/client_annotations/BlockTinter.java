@@ -1,4 +1,4 @@
-package com.limachi.arss.utils.clientAnnotations;
+package com.limachi.arss.utils.client_annotations;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
