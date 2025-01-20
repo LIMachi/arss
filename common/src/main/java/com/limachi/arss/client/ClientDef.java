@@ -1,5 +1,7 @@
 package com.limachi.arss.client;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -7,6 +9,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
+@Environment(EnvType.CLIENT)
 public class ClientDef {
     public static final KeyMapping SCROLL_KEY = new KeyMapping("key.hold_to_scroll", 340, "key.categories.arss");
     public static final KeyMapping SNEAK_KEY = Minecraft.getInstance().options.keyShift;

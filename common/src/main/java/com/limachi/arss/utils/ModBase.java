@@ -2,6 +2,9 @@ package com.limachi.arss.utils;
 
 import com.limachi.arss.utils.annotations.*;
 import com.limachi.arss.utils.commands.CommandManager;
+import com.limachi.arss.utils.config.ConfigManager;
+import com.limachi.arss.utils.reflect.AnnotationExtractor;
+import dev.architectury.platform.Platform;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.apache.logging.log4j.LogManager;
@@ -11,19 +14,23 @@ public abstract class ModBase {
     public static Logger logger;
     public static ModBase instance;
     public static Registries registries;
-    public static AnnotationExtractor extractor = new AnnotationExtractor();
+    public static AnnotationExtractor extractor;
+    public static ConfigManager configs = null;
 
     public ModBase() {}
 
-    private static void extractMod() {
+    private static void extractMod(AnnotationExtractor extractor) {
         extractor.runOnClasses(Mod.class, (c, a)->{
             if (!ModBase.class.isAssignableFrom(c)) {
                 System.err.println("@Mod should be used on a class that extends ModBase: " + c);
                 System.exit(-1);
             }
             if (registries == null) {
-                registries = new Registries(a.value(), (Class<ModBase>)c);
                 logger = LogManager.getLogger(a.value());
+                configs = new ConfigManager(Platform.getConfigFolder().resolve(a.value() + ".cfg"));
+                configs.extract(extractor);
+                configs.load();
+                registries = new Registries(a.value(), (Class<ModBase>)c);
             } else {
                 System.err.println("@Mod is used multiple times: " + registries.mod + " & " + c);
                 System.exit(-1);
@@ -35,8 +42,9 @@ public abstract class ModBase {
         }
     }
 
-    public static void init() {
-        extractMod();
+    public static void init(AnnotationExtractor extractor) {
+        ModBase.extractor = extractor;
+        extractMod(extractor);
         registries.extractInStages();
         instance = registries.initMod();
         registries.register();

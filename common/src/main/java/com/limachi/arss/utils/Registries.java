@@ -1,6 +1,10 @@
 package com.limachi.arss.utils;
 
 import com.limachi.arss.utils.annotations.*;
+import com.limachi.arss.utils.reflect.AnnotationExtractor;
+import com.limachi.arss.utils.reflect.ClassExtractor;
+import com.limachi.arss.utils.reflect.FieldAccess;
+import com.limachi.arss.utils.reflect.MethodAccess;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
@@ -55,13 +59,13 @@ public class Registries {
         return nullable;
     }
 
-    public static String defaultToMethod(String nullable, ClassExtractor.MethodAccess<?> m) {
+    public static String defaultToMethod(String nullable, MethodAccess<?, ?> m) {
         if (nullable == null || nullable.isBlank())
             return StringUtils.camelToSnake(m.name());
         return nullable;
     }
 
-    public static String defaultToField(String nullable, ClassExtractor.FieldAccess<?> f) {
+    public static String defaultToField(String nullable, FieldAccess<?, ?> f) {
         if (nullable == null || nullable.isBlank())
             return StringUtils.camelToSnake(f.name());
         return nullable;
@@ -140,14 +144,14 @@ public class Registries {
     protected void extractBlocks() {
         ModBase.extractor.runOnFields(RegisterBlock.class, (f, a)->{
             String name = defaultToClass(a.name(), f.clazz());
-            f.setStatic(block(name, defaultInstanceSupplier(f.clazz(), Block.class)));
+            ((FieldAccess<?, RegistrySupplier<Block>>) f).set(null, false, block(name, defaultInstanceSupplier(f.clazz(), Block.class)));
         });
     }
 
     protected void extractItems() {
         ModBase.extractor.runOnFields(RegisterItem.class, (f, a)->{
             String name = defaultToClass(a.name(), f.clazz());
-            f.setStatic(item(name, defaultInstanceSupplier(f.clazz(), Item.class), a.jeiInfoKey(), a.tab()));
+            ((FieldAccess<?, RegistrySupplier<Item>>) f).set(null, false, item(name, defaultInstanceSupplier(f.clazz(), Item.class), a.jeiInfoKey(), a.tab()));
         });
     }
 
@@ -160,7 +164,7 @@ public class Registries {
                     name = name.substring(0, name.length() - 6) + "_item";
             }
             String block = defaultToClass(a.block(), f.clazz());
-            f.setStatic(item(name,
+            ((FieldAccess<?, RegistrySupplier<BlockItem>>) f).set(null, false, item(name,
                     ()-> new BlockItem(blocks.getRegistrar().get(ResourceLocation.fromNamespaceAndPath(mod_id, block)), new Item.Properties()),
                     a.jeiInfoKey(), a.tab()));
         });
@@ -174,7 +178,7 @@ public class Registries {
 
     protected void extractTabs() {
         ModBase.extractor.runOnMethods(RegisterTab.class, (m, a)->{
-            var t = tabs.register(defaultToMethod(a.name(), m), ()->CreativeTabRegistry.create(m::invokeStatic));
+            var t = tabs.register(defaultToMethod(a.name(), m), ()->CreativeTabRegistry.create(c->m.get(null, false, c)));
             if (a.defaultTab())
                 default_tab = t;
         });

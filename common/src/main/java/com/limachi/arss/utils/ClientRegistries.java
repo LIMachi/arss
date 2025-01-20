@@ -15,7 +15,7 @@ public class ClientRegistries {
             if (name.isBlank())
                 name = StringUtils.camelToSnake(StringUtils.getSimplifiedClassName(m.clazz().getName()));
             String finalName = name;
-            ColorHandlerRegistry.registerBlockColors(m::invokeStatic, ()->ModBase.registries.blocks.getRegistrar().get(ResourceLocation.fromNamespaceAndPath(ModBase.registries.mod_id, finalName)));
+            ColorHandlerRegistry.registerBlockColors((s, g, p, i)->(int)m.get(null, false, s, g, p, i), ()->ModBase.registries.blocks.getRegistrar().get(ResourceLocation.fromNamespaceAndPath(ModBase.registries.mod_id, finalName)));
         });
     }
 

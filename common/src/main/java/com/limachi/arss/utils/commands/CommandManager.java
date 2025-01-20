@@ -1,9 +1,9 @@
 package com.limachi.arss.utils.commands;
 
-import com.limachi.arss.utils.ClassExtractor;
 import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.annotations.CmdArg;
 import com.limachi.arss.utils.annotations.RegisterCommand;
+import com.limachi.arss.utils.reflect.MethodAccess;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.*;
 import com.mojang.brigadier.builder.ArgumentBuilder;
@@ -181,7 +181,7 @@ public class CommandManager {
         GETTER_OVERRIDE.put(forClass, getter);
     }
 
-    private static <T> Optional<LiteralArgumentBuilder<CommandSourceStack>> cmdAnnotation(CommandBuildContext builder, ClassExtractor.MethodAccess<?> m, RegisterCommand a) {
+    private static <T> Optional<LiteralArgumentBuilder<CommandSourceStack>> cmdAnnotation(CommandBuildContext builder, MethodAccess<?, ?> m, RegisterCommand a) {
         Parameter[] parameters = m.parameters();
         if (parameters.length == 0) {
             //error: missing ctx as first arg
@@ -228,7 +228,7 @@ public class CommandManager {
                     ModBase.logger.warn("command arg exception: " + ignored);
                 } //probably an optional arg
             try {
-                return (int) m.invokeStatic(args);
+                return (int) m.get(null, false, args);
             } catch (Exception e) {
                 ModBase.logger.warn("command exception: " + e);
                 return 0;
