@@ -3,7 +3,7 @@ package com.limachi.arss.common.blocks;
 import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.utils.annotations.RegisterBlock;
 import com.limachi.arss.utils.annotations.RegisterBlockItem;
-import com.limachi.arss.utils.client_annotations.BlockTinter;
+import com.limachi.arss.utils.client.annotations.BlockTinter;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -55,7 +55,6 @@ public class PixelBlock extends RedstoneLampBlock {
         };
     }
 
-    @Environment(EnvType.CLIENT)
     @BlockTinter
     public static int getTint(BlockState state, BlockAndTintGetter getter, BlockPos pos, int index) {
         return getTint(state);

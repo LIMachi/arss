@@ -178,7 +178,6 @@ public class ArssBlockStateProperties {
     public static final EnumProperty<SignalGeneratorMode> GENERATOR_MODE = EnumProperty.create("mode", SignalGeneratorMode.class);
     public static final EnumProperty<SequencerMode> SEQUENCER_MODE = EnumProperty.create("mode", SequencerMode.class);
     public static final EnumProperty<SideToggling> SIDES = EnumProperty.create("sides", SideToggling.class);
-    public static final BooleanProperty CAN_SCROLL = BooleanProperty.create("can_scroll");
     public static final BooleanProperty HIDE_DOT = BooleanProperty.create("hide_dot");
     public static final BooleanProperty BOOSTED = BooleanProperty.create("boosted");
 }

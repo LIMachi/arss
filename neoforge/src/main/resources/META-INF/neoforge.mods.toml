@@ -1,33 +1,31 @@
 modLoader = "javafml"
 loaderVersion = "[4,)"
 #issueTrackerURL = ""
-license = "Insert License Here"
+license = "${license}"
 
 [[mods]]
-modId = "arss"
+modId = "${archives_name}"
 version = "${version}"
-displayName = "Analog Redstone Suite"
-authors = "Me!"
-description = '''
-This is an example description! Tell everyone what your mod is about!
-'''
-#logoFile = ""
+displayName = "${readable_name}"
+authors = "${author}"
+description = "${description}"
+logoFile = "assets/${archives_name}/icon.png"
 
-[[dependencies.arss]]
+[[dependencies.${archives_name}]]
 modId = "neoforge"
 type = "required"
 versionRange = "[21.0,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.arss]]
+[[dependencies.${archives_name}]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21,)"
+versionRange = "[${minecraft_version},)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.arss]]
+[[dependencies.${archives_name}]]
 modId = "architectury"
 type = "required"
 versionRange = "[13.0.2,)"

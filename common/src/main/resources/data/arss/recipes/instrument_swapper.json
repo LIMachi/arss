@@ -11,10 +11,19 @@
     },
     "B": [
       {
-        "tag": "forge:barrels"
+        "item": "minecraft:chest"
       },
       {
-        "tag": "forge:chests"
+        "item": "minecraft:ender_chest"
+      },
+      {
+        "item": "minecraft:trapped_chest"
+      },
+      {
+        "item": "minecraft:barrel"
+      },
+      {
+        "tag": "minecraft:shulker_boxes"
       }
     ],
     "C": [

@@ -41,7 +41,7 @@ public final class MainNeo {
             @Override
             public void visitEnum(String name, String descriptor, String value) {
                 if (descriptor.equals(dist) && name.equals("value") && FMLEnvironment.dist != Dist.valueOf(value))
-                        skip = true;
+                    skip = true;
                 super.visitEnum(name, descriptor, value);
             }
         }

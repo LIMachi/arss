@@ -1,7 +1,9 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {"item": "minecraft:comparator"}
+    {
+      "item": "minecraft:comparator"
+    }
   ],
   "result": {
     "item": "arss:better_comparator",

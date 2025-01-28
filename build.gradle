@@ -11,6 +11,11 @@ architectury {
 allprojects {
     group = rootProject.maven_group
     version = rootProject.mod_version
+    archives_name = rootProject.archives_name
+    readable_name = rootProject.readable_name
+    description = rootProject.description
+    author = rootProject.author
+    license = rootProject.license
 }
 
 subprojects {

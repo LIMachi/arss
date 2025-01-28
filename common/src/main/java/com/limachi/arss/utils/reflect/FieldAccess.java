@@ -1,5 +1,8 @@
 package com.limachi.arss.utils.reflect;
 
+import com.limachi.arss.utils.ModBase;
+import com.limachi.arss.utils.StackTrace;
+
 import java.lang.reflect.Field;
 import java.util.logging.Logger;
 
@@ -58,9 +61,8 @@ public class FieldAccess<C, T> implements InstancedAccess<C, T>, Named {
         try {
             return (T) field.get(object);
         } catch (Exception e) {
-//            if (log)
-//                Log.error(e);
-            //FIXME
+            if (log)
+                ModBase.logger.error(new StackTrace(e));
             return null;
         }
     }
@@ -72,9 +74,8 @@ public class FieldAccess<C, T> implements InstancedAccess<C, T>, Named {
             field.set(object, val);
             return true;
         } catch (Exception e) {
-//            if (log)
-//                Log.error(e);
-            //FIXME
+            if (log)
+                ModBase.logger.error(new StackTrace(e));
             return false;
         }
     }

@@ -7,12 +7,6 @@ import net.fabricmc.api.ModInitializer;
 public final class MainFabric implements ModInitializer {
     @Override
     public void onInitialize() {
-        ModBase.init(new AnnotationExtractor(ModBase.class/*, MainFabric::skipInvalidEnv*/));
+        ModBase.init(new AnnotationExtractor(ModBase.class));
     }
-
-    /*
-    public static boolean skipInvalidEnv(ClassReader cr) {
-        return false;
-    }
-     */
 }

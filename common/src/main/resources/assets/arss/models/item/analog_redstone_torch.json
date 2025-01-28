@@ -1,3 +1,6 @@
 {
-  "parent": "arss:item/base_block_with_redstone_dot"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "arss:item/analog_redstone_torch"
+  }
 }

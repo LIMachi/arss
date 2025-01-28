@@ -3,6 +3,7 @@ package com.limachi.arss.common.blocks;
 import com.limachi.arss.Arss;
 import com.limachi.arss.common.block_entities.BaseAnalogDiodeBlockEntity;
 import com.limachi.arss.common.block_entities.IOnUseBlockListener;
+import com.limachi.arss.utils.annotations.Config;
 import com.mojang.datafixers.util.Pair;
 import dev.architectury.event.Event;
 import net.minecraft.core.BlockPos;
@@ -53,7 +54,7 @@ import static com.limachi.arss.common.ArssBlockStateProperties.*;
 
 @SuppressWarnings({"deprecation", "unused"})
 public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
-//    @Configs.Config(reload = true, cmt="Read sides like the back (ex: will use the content of a chest on the side as a valid redstone signal)")
+    @Config(path = "diodes", name = "sides_as_readers", reload = true, cmt="Read sides like the back (ex: will use the content of a chest or the orientation of an item frame on the side as a valid redstone signal)")
     static public boolean ALL_POWERS_ON_SIDES = true;
 
     protected BaseAnalogDiodeBlock(Properties props) { super(props); }
@@ -215,6 +216,14 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         if (player.getAbilities().mayBuild) {
+            if (itemStack.getItem() == Items.REDSTONE_TORCH /*|| itemStack == AnalogRedstoneTorchBlock.AnalogRedstoneTorchItem.R_ITEM.get()*/) {
+                SideToggling newSidedness = cycleSideStates(blockState.getValue(SIDES), player.isShiftKeyDown());
+                blockState = blockState.setValue(SIDES, newSidedness);
+                level.setBlock(blockPos, blockState, 3);
+                player.displayClientMessage(Component.translatable("display.arss.diode_block.sidedness." + newSidedness), true);
+                refreshOutputState(level, blockPos, blockState, true);
+                return ItemInteractionResult.SUCCESS;
+            }
             if (itemStack.is(Arss.WRENCH)) {
                 SideToggling newSidedness = cycleSideStates(blockState.getValue(SIDES), player.isShiftKeyDown());
                 blockState = blockState.setValue(SIDES, newSidedness);
@@ -224,7 +233,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
                 return ItemInteractionResult.SUCCESS;
             }
             if (modeProp == null && this instanceof EntityBlock && level.getBlockEntity(blockPos) instanceof IOnUseBlockListener useListener) {
-                ItemInteractionResult out = useListener.use(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
+                ItemInteractionResult out = useListener.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
                 refreshOutputState(level, blockPos, blockState, tickingMode.ticking());
                 return out;
             }
@@ -234,15 +243,6 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
 
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        /*Item held = player.getItemInHand(hand).getItem();
-        if (held == Items.REDSTONE_TORCH || held == AnalogRedstoneTorchBlock.AnalogRedstoneTorchItem.R_ITEM.get()) {
-            SideToggling newSidedness = cycleSideStates(state.getValue(SIDES), player.isShiftKeyDown());
-            state = state.setValue(SIDES, newSidedness);
-            level.setBlock(pos, state, 3);
-            player.displayClientMessage(Component.translatable("display.arss.diode_block.sidedness." + newSidedness), true);
-            refreshOutputState(level, pos, state, true);
-            return InteractionResult.SUCCESS;
-        }*/
         if (player.getAbilities().mayBuild) {
             if (modeProp != null) {
                 state = player.isShiftKeyDown() ? cycleBack(state, modeProp) : state.cycle(modeProp);
@@ -252,11 +252,11 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
                 level.setBlockAndUpdate(pos, state);
                 refreshOutputState(level, pos, state, true);
                 return InteractionResult.sidedSuccess(level.isClientSide);
-            } /*else if (this instanceof EntityBlock && level.getBlockEntity(pos) instanceof IOnUseBlockListener useListener) {
-                InteractionResult out = useListener.use(state, level, pos, player, hand, hit);
-                refreshOutputState(level, pos, state, isTicking);
+            } else if (this instanceof EntityBlock && level.getBlockEntity(pos) instanceof IOnUseBlockListener useListener) {
+                InteractionResult out = useListener.useWithoutItem(state, level, pos, player, hit);
+                refreshOutputState(level, pos, state, tickingMode.ticking());
                 return out;
-            }*/
+            }
 
         }
         return InteractionResult.PASS;
@@ -269,7 +269,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
     }
 
     @Override
-    protected void checkTickOnNeighbor(@NotNull Level level, BlockPos pos, BlockState state) {
+    protected void checkTickOnNeighbor(Level level, BlockPos pos, BlockState state) {
         if (!level.getBlockTicks().hasScheduledTick(pos, this)) {
             if (modeProp != null) {
                 int modeSwitch = sGetModeSignal(level, pos, state);
@@ -285,10 +285,10 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
     }
 
     static int setPower(Level level, BlockPos pos, BlockState state, int power) {
-//        if (level.getBlockEntity(pos) instanceof BaseAnalogDiodeBlockEntity be) {
-//            be.setOutput(Mth.clamp(power, 0, 15));
-//            return be.getOutput();
-//        }
+        if (level.getBlockEntity(pos) instanceof BaseAnalogDiodeBlockEntity be) {
+            be.setOutput(Mth.clamp(power, 0, 15));
+            return be.getOutput();
+        }
         return 0;
     }
 
@@ -312,11 +312,10 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
         }
         if (recalculate) {
             nextPower = calculateOutputSignal(false, level, pos, state);
-//            if (level.getBlockEntity(pos) instanceof BaseAnalogDiodeBlockEntity be)
-//                be.setOutput(nextPower);
-//        } else if (level.getBlockEntity(pos) instanceof BaseAnalogDiodeBlockEntity be)
-//            nextPower = be.getOutput();
-        } //FIXME
+            if (level.getBlockEntity(pos) instanceof BaseAnalogDiodeBlockEntity be)
+                be.setOutput(nextPower);
+        } else if (level.getBlockEntity(pos) instanceof BaseAnalogDiodeBlockEntity be)
+            nextPower = be.getOutput();
         if (state.getValue(POWER) != nextPower) {
             boolean flag1 = nextPower > 0;
             boolean flag = state.getValue(POWERED);
@@ -358,11 +357,11 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
 //        return state.getBlock() instanceof BaseAnalogDiodeBlock;
 //    }
 
-    @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos neighbor, boolean b) {
-        if (pos.getY() == neighbor.getY() && level instanceof Level && !level.isClientSide())
-            state.handleNeighborChanged(level, pos, level.getBlockState(neighbor).getBlock(), neighbor, false);
-    }
+//    @Override
+//    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos neighbor, boolean b) {
+//        if (pos.getY() == neighbor.getY() && level instanceof Level && !level.isClientSide())
+//            state.handleNeighborChanged(level, pos, level.getBlockState(neighbor).getBlock(), neighbor, false); //FIXME!!! stack overflow (something must have changed in 1.21 or forge changed some behavior in 1.20)
+//    }
 
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity player, ItemStack stack) {
@@ -381,22 +380,22 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock {
 
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-//        if (level instanceof ServerLevel sl && player.isCreative() && level.getBlockEntity(pos) instanceof BaseAnalogDiodeBlockEntity diodeEntity)
-//            for (ItemStack stack : diodeEntity.getDrops(sl, pos, state, player)) {
-//                ItemEntity itementity = new ItemEntity(level, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, stack);
-//                itementity.setDefaultPickUpDelay();
-//                level.addFreshEntity(itementity);
-//            }
+        if (level instanceof ServerLevel sl && player.isCreative() && level.getBlockEntity(pos) instanceof BaseAnalogDiodeBlockEntity diodeEntity)
+            for (ItemStack stack : diodeEntity.getDrops(sl, pos, state, player)) {
+                ItemEntity itementity = new ItemEntity(level, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, stack);
+                itementity.setDefaultPickUpDelay();
+                level.addFreshEntity(itementity);
+            }
         return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-//        if (builder.getOptionalParameter(LootContextParams.THIS_ENTITY) instanceof Player player && builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof BaseAnalogDiodeBlockEntity diodeEntity) {
-//            List<ItemStack> out = diodeEntity.getDrops(builder.getLevel(), BlockPos.containing(builder.getParameter(LootContextParams.ORIGIN)), state, player);
-//            if (!out.isEmpty())
-//                return out;
-//        }
+        if (builder.getOptionalParameter(LootContextParams.THIS_ENTITY) instanceof Player player && builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof BaseAnalogDiodeBlockEntity diodeEntity) {
+            List<ItemStack> out = diodeEntity.getDrops(builder.getLevel(), BlockPos.containing(builder.getParameter(LootContextParams.ORIGIN)), state, player);
+            if (!out.isEmpty())
+                return out;
+        }
         return super.getDrops(state, builder);
     }
 }

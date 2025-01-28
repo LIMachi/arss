@@ -1,6 +1,5 @@
 {
   "ambientocclusion": false,
-  "render_type": "minecraft:cutout",
   "textures": {
     "particle": "block/comparator",
     "top": "arss:block/diodes/right_disabled"

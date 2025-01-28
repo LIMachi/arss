@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -80,7 +79,9 @@ public class ClassExtractor {
                         if (skip != null && skip.test(new ClassReader(jarFile.getInputStream(entry))))
                             continue;
                         classes.add(clazz.getClassLoader().loadClass(entryName.replace("/", ".").replace(".class", "")));
-                    } catch (Throwable ignore) {}
+                    } catch (Throwable ignore) {
+                        System.err.println(ignore);
+                    }
             }
             try {
                 jarFile.close();
@@ -108,6 +109,7 @@ public class ClassExtractor {
                     try {
                         classes.add(clazz.getClassLoader().loadClass(name.replace("/", ".").replace(".class", "")));
                     } catch (Throwable ignore) {
+                        System.err.println(ignore);
                     }
                 }
             }

@@ -15,8 +15,10 @@ public class StringUtils {
 
     public static String getSimplifiedClassName(String fullyQualifiedClassName) {
         Matcher m = CLASS_NAME_REGEX.matcher(fullyQualifiedClassName);
-        if (m.find())
-            return m.group(0);
+        if (m.find()) {
+            var s = m.group(0).split("\\$");
+            return s[s.length - 1];
+        }
         return fullyQualifiedClassName;
     }
 

@@ -1,6 +1,7 @@
 package com.limachi.arss.common.block_entities;
 
 import com.limachi.arss.Arss;
+import com.limachi.arss.common.blocks.DiodeBlockFactory;
 import com.limachi.arss.utils.Stage;
 import com.limachi.arss.utils.annotations.StaticInit;
 import dev.architectury.registry.registries.RegistrySupplier;
@@ -19,8 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class BaseAnalogDiodeBlockEntity /*extends BlockEntity*/ {
-/*
+public class BaseAnalogDiodeBlockEntity extends BlockEntity {
     private int output;
 
     public static RegistrySupplier<BlockEntityType<BaseAnalogDiodeBlockEntity>> TYPE;
@@ -42,8 +42,8 @@ public class BaseAnalogDiodeBlockEntity /*extends BlockEntity*/ {
                 "shifter"
         };
         Supplier<Block>[] diodes = new Supplier[diodeNames.length];
-//        for (int i = 0; i < diodes.length; ++i)
-//            diodes[i] = DiodeBlockFactory.getBlockRegister(diodeNames[i]);
+        for (int i = 0; i < diodes.length; ++i)
+            diodes[i] = DiodeBlockFactory.getBlockRegister(diodeNames[i]);
         TYPE = Arss.registries.blockEntity("generic_diode", BaseAnalogDiodeBlockEntity::new, diodes);
     }
 
@@ -69,5 +69,5 @@ public class BaseAnalogDiodeBlockEntity /*extends BlockEntity*/ {
 
     public List<ItemStack> getDrops(ServerLevel level, BlockPos pos, BlockState state, Player player) {
         return Collections.emptyList();
-    }*/
+    }
 }

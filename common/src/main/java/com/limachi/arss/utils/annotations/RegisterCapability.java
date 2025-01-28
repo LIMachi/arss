@@ -66,7 +66,7 @@ public @interface RegisterCapability {
     /**
      * serialized name of the capability, if unset, use the name of the parent class in snake case
      */
-    String name() default "";
+    String value() default "";
 
     /**
      * use this method path to make this registry optional (method should be static, of the format `boolean method(Class<?> annotation, String name)`, returning true if the object should be skipped, aka not registered)

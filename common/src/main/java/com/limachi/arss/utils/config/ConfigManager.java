@@ -1,5 +1,7 @@
 package com.limachi.arss.utils.config;
 
+import com.limachi.arss.utils.ModBase;
+import com.limachi.arss.utils.annotations.Config;
 import com.limachi.arss.utils.reflect.AnnotationExtractor;
 import com.limachi.arss.utils.reflect.FieldAccess;
 
@@ -83,8 +85,10 @@ public class ConfigManager {
 
     public <T> void register(String path, String comment, Class<?> type, FieldAccess<?, T> access, Function<Object, Object> validator, boolean reload) {
         Class<?> innerType = type.isArray() ? type.getComponentType() : type;
-        if (!DEFAULTS.containsKey(innerType))
-            return; //FIXME: should put an error there to signal that @Config was put on an invalid type
+        if (!DEFAULTS.containsKey(innerType)) {
+            ModBase.logger.error("@Config on invalid/unsupported type: " + innerType);
+            return;
+        }
         file.registerValue(path, comment, access, validator, reload);
     }
 

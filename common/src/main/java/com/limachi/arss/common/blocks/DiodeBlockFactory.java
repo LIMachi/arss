@@ -2,42 +2,52 @@ package com.limachi.arss.common.blocks;
 
 import com.limachi.arss.Arss;
 import com.limachi.arss.client.ClientDef;
+import com.limachi.arss.common.ArssBlockStateProperties;
+
 import com.limachi.arss.common.block_entities.BaseAnalogDiodeBlockEntity;
+import com.limachi.arss.utils.ModBase;
+import com.limachi.arss.utils.client.annotations.FabricLayer;
 import com.mojang.datafixers.util.Pair;
+
+import com.mojang.serialization.MapCodec;
 import dev.architectury.registry.registries.RegistrySupplier;
+
+import dev.architectury.utils.Env;
+import dev.architectury.utils.EnvExecutor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static com.limachi.arss.common.ArssBlockStateProperties.*;
 
-@SuppressWarnings({"deprecation", "unused"})
+@SuppressWarnings("unused")
 public class DiodeBlockFactory {
-    /*
+
     @FunctionalInterface
     public interface SignalGenerator {
         int calculateOutputSignal(boolean test, Level level, BlockPos pos, BlockState state);
@@ -67,21 +77,20 @@ public class DiodeBlockFactory {
 
     @FunctionalInterface
     public interface UseMethod {
-        InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit);
+        ItemInteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit);
     }
 
     public static final class Builder {
         private String name = "Must be a valid registry key";
         private EnumProperty<?> mode = null;
         private SignalGenerator generator = (b, l, p, s)->{
-//            Log.error("Invalid gate generator for: " + name);
+            Arss.logger.error("Invalid gate generator for: " + name);
             return 0;
         };
         private BlockBehaviour.Properties blockProperties = PROPS;
         private Item.Properties itemProperties = I_PROPS;
         private int delay = 1;
-        private boolean tickOnceAfterUpdate = false;
-        private boolean ticking = false;
+        private BaseAnalogDiodeBlock.TickingMode tickingMode = BaseAnalogDiodeBlock.TickingMode.ON_CHANGE;
         private boolean hasPowerTint = false;
         private BlockEntityBuilder blockEntityBuilder = BaseAnalogDiodeBlockEntity::new;
         private final List<Property<?>> extraProperties = new ArrayList<>();
@@ -94,15 +103,14 @@ public class DiodeBlockFactory {
         private Builder() {}
 
         public void finish() {
-            create(name, mode, generator, blockProperties, itemProperties, delay, tickOnceAfterUpdate, ticking, hasPowerTint, blockEntityBuilder, canToggleBothSides, canToggleInput, extraProperties, use, itemProvider);
+            create(name, mode, generator, blockProperties, itemProperties, delay, tickingMode, hasPowerTint, blockEntityBuilder, canToggleBothSides, canToggleInput, extraProperties, use, itemProvider);
         }
 
         public Builder mode(EnumProperty<?> mode) { this.mode = mode; return this; }
         public Builder blockProperties(BlockBehaviour.Properties blockProperties) { this.blockProperties = blockProperties; return this; }
         public Builder itemProperties(Item.Properties itemProperties) { this.itemProperties = itemProperties; return this; }
         public Builder delay(int delay) { this.delay = delay; return this; }
-        public Builder tickOnceAfterUpdate(boolean state) { tickOnceAfterUpdate = state; return this; }
-        public Builder ticking(boolean state) { ticking = state; return this; }
+        public Builder tickingMode(BaseAnalogDiodeBlock.TickingMode mode) { tickingMode = mode; return this; }
         public Builder hasPowerTint(boolean state) { hasPowerTint = state; return this; }
         public Builder blockEntityBuilder(BlockEntityBuilder builder) { this.blockEntityBuilder = builder; return this; }
         public Builder addProperties(Property<?> ... properties) { extraProperties.addAll(List.of(properties)); return this; }
@@ -120,37 +128,44 @@ public class DiodeBlockFactory {
         return out;
     }
 
-    private static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, BlockBehaviour.Properties props, Item.Properties iProps, int fDelay, boolean fTickOnceAfterUpdate, boolean fIsTicking, boolean hasPowerTint, BlockEntityBuilder beb, boolean canToggleBothSides, boolean canToggleInput, List<Property<?>> extraProps, UseMethod use, BiFunction<Block, Item.Properties, BlockItem> itemBuilder) {
+    private static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, BlockBehaviour.Properties props, Item.Properties iProps, int fDelay, BaseAnalogDiodeBlock.TickingMode fTickingMode, boolean hasPowerTint, BlockEntityBuilder beb, boolean canToggleBothSides, boolean canToggleInput, List<Property<?>> extraProps, UseMethod use, BiFunction<Block, Item.Properties, BlockItem> itemBuilder) {
         Supplier<Block> gBlock;
 
         class Product extends BaseAnalogDiodeBlock {
+
+            final MapCodec<Product> CODEC = simpleCodec(Product::new);
+
+            @Override
+            public MapCodec<Product> codec() {
+                return CODEC;
+            }
 
             protected Product() {
                 super(props);
                 delay = fDelay;
                 name = fName;
                 modeProp = fMode;
-                tickOnceAfterUpdate = fTickOnceAfterUpdate;
-                isTicking = fIsTicking;
+                tickingMode = fTickingMode;
                 BlockState builder = stateDefinition.any();
                 builder = builder.setValue(FACING, Direction.NORTH).setValue(POWERED, false).setValue(POWER, 0).setValue(ArssBlockStateProperties.BOOSTED, false);
                 registerDefaultState(builder);
             }
 
-            @NotNull
+            protected Product(BlockBehaviour.Properties discarded) { this(); }
+
             @Override
-            public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+            protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
                 if (use != null) {
-                    InteractionResult res = use.use(state, level, pos, player, hand, hit);
+                    ItemInteractionResult res = use.use(state, level, pos, player, hand, hit);
                     if (res.consumesAction())
                         return res;
                 }
-                return super.use(state, level, pos, player, hand, hit);
+                return super.useItemOn(itemStack, state, level, pos, player, hand, hit);
             }
 
             @Override
-            public void appendHoverText(ItemStack stack, BlockGetter level, List<Component> components, TooltipFlag flags) {
-                super.appendHoverText(stack, level, components, flags);
+            public void appendHoverText(ItemStack stack, Item.TooltipContext ctx, List<Component> components, TooltipFlag flags) {
+                super.appendHoverText(stack, ctx, components, flags);
                 ClientDef.commonHoverText(fName, components);
             }
 
@@ -178,6 +193,9 @@ public class DiodeBlockFactory {
             gBlock = Product::new;
         else {
             class Product2 extends Product implements EntityBlock {
+                protected Product2() { super(); }
+                protected Product2(Properties discarded) { this(); }
+
                 public boolean triggerEvent(BlockState state, Level level, BlockPos pos, int e1, int e2) {
                     super.triggerEvent(state, level, pos, e1, e2);
                     BlockEntity blockentity = level.getBlockEntity(pos);
@@ -193,9 +211,17 @@ public class DiodeBlockFactory {
             gBlock = Product2::new;
         }
         RegistrySupplier<Block> R_BLOCK = Arss.registries.block(fName, gBlock);
-//        if (hasPowerTint)
-//            RedstoneUtils.hasRedstoneTint(R_BLOCK); //FIXME
         RegistrySupplier<Item> R_ITEM = Arss.registries.item(fName, ()->itemBuilder.apply(R_BLOCK.get(), iProps));
         DIODE_BLOCKS.put(fName, new Pair<>(R_ITEM, R_BLOCK));
-    }*/
+        if (hasPowerTint)
+//            EnvExecutor.runInEnv(Env.CLIENT, ()->()->ColorHandlerRegistry.registerBlockColors((s, g, p, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getValue(BlockStateProperties.POWER)), R_BLOCK));
+            EnvExecutor.runInEnv(Env.CLIENT, ()->()->{
+                ModBase.ClientModBase.registries.registerBlockTint((s, g, p, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getValue(BlockStateProperties.POWER)), R_BLOCK.getId());
+            });
+    }
+
+    @FabricLayer("cutout")
+    public static Collection<Block> registerCutoutRender() {
+        return DIODE_BLOCKS.values().stream().map(e->e.getSecond().get()).collect(Collectors.toSet());
+    }
 }

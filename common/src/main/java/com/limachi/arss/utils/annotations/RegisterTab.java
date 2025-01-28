@@ -8,6 +8,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface RegisterTab {
-    String name() default "";
+    String value() default "";
     boolean defaultTab() default false;
 }

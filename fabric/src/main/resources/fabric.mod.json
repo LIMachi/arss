@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "id": "arss",
+  "id": "${archives_name}",
   "version": "${version}",
-  "name": "Analog Redstone Suite",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "${readable_name}",
+  "description": "${description}",
   "authors": [
-    "Me!"
+    "${author}"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "",
+    "sources": ""
   },
-  "license": "CC0-1.0",
-  "icon": "assets/arss/icon.png",
+  "license": "${license}",
+  "icon": "assets/${archives_name}/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -27,7 +27,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.16.0",
-    "minecraft": "~1.21",
+    "minecraft": "~${minecraft_version}",
     "java": ">=21",
     "architectury": ">=13.0.2",
     "fabric-api": "*"
