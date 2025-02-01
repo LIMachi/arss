@@ -4,12 +4,11 @@ import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.StackTrace;
 
 import java.lang.reflect.Field;
-import java.util.logging.Logger;
 
 @SuppressWarnings({"unchecked", "unused"})
 //the unchecked are expected to throw an error on invalid cast
 public class FieldAccess<C, T> implements InstancedAccess<C, T>, Named {
-    Logger LOGGER = Logger.getLogger(FieldAccess.class.getName());
+    public static boolean LOG = true;
 
     private final Field field;
     private final C object;
@@ -56,7 +55,7 @@ public class FieldAccess<C, T> implements InstancedAccess<C, T>, Named {
     }
 
     @Override
-    public T get() { return get(object, false); }
+    public T get() { return get(object, LOG); }
     public T get(C object, boolean log) {
         try {
             return (T) field.get(object);
@@ -68,7 +67,7 @@ public class FieldAccess<C, T> implements InstancedAccess<C, T>, Named {
     }
 
     @Override
-    public boolean set(T val) { return set(object, false, val); }
+    public boolean set(T val) { return set(object, LOG, val); }
     public boolean set(C object, boolean log, T val) {
         try {
             field.set(object, val);
@@ -82,12 +81,12 @@ public class FieldAccess<C, T> implements InstancedAccess<C, T>, Named {
 
     @Override
     public void accept(C c, T t) {
-        set(c, false, t);
+        set(c, LOG, t);
     }
 
     @Override
     public T apply(C c) {
-        return get(c, false);
+        return get(c, LOG);
     }
 
     @Override

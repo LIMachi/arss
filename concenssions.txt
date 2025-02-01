@@ -1,0 +1,4 @@
+0: change gui models of most blocks (no longer add a 2d redstone dot in the bottom right of 3d items from arss)
+1: no longer generate a random redstone output while the burnt record is used
+2: changed recipe of redstone booster (no longer use the brewing stand)
+3: will change how the sculk book is generated (probably by detecting a right click of a vanilla [writable/written]book on a [calibrated] sculk sensor)

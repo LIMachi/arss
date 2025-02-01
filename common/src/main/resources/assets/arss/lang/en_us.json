@@ -1,5 +1,5 @@
 {
-  "creative_tab.arss": "Analog Redstone Suite",
+  "arss.tab.title": "Analog Redstone Suite",
 
   "display.arss.analog_cell.mode.set": "Set",
   "display.arss.analog_cell.mode.reset": "Reset",
@@ -80,8 +80,8 @@
   "item.arss.enriched_redstone_": "Oxidized Redstone Compound",
   "item.arss.enriched_redstone": "Enriched Redstone",
   "item.arss.perfected_redstone": "Perfected Redstone",
-  "item.arss.sequencer_memory_item": "Sequencer Record",
-  "item.arss.keyboard_item": "Remote keyboard",
+  "item.arss.sequencer_memory_disc": "Sequencer Record",
+  "item.arss.keyboard": "Remote keyboard",
   "item.arss.redstone_booster": "Redstone booster",
 
   "item.arss.sequencer_memory_item.desc": "§kBurnt Disk§r",
@@ -110,9 +110,9 @@
   "block.arss.shifter": "Shifter",
   "block.arss.signal_generator": "Signal Generator",
   "block.arss.analog_jukebox": "Analog Jukebox",
-  "block.arss.instrument_swapper_block": "Instrument Swapper",
+  "block.arss.instrument_swapper": "Instrument Swapper",
   "block.arss.sequencer": "Sequencer",
-  "block.arss.analog_dispenser_block": "Precise Dispenser",
+  "block.arss.analog_dispenser": "Precise Dispenser",
   "block.arss.pixel_block": "Pixel",
   "block.arss.programmable_gate": "Programmable Gate",
 
@@ -266,7 +266,7 @@
   "screen.arss.sequencer_help.chapter_button.6": "Play",
   "screen.arss.sequencer_help.chapter.6": "You can test a sequence by pressing Space to toggle play mode (as if it was powered).\nIf you have defined limits (see 'Length' chapter), and set the inputs (bottom buttons named 'start' and 'finish'), then the sequence played will be between the start limit and finish limit. Example: 'start' is 1 and 'finish' is 2, we set a limit on tick 10, the sequence played will be between tick 0 and tick 10. If we power 'start' with a signal of 2 and end with 15 or 0, then every ticks from 10 to length will be played.",
 
-  "book.sculk_vibrations.creative_tab_help": "Crafted by combining a 'Book and Quill' with a 'Sculk Sensor' or 'Calibrated Sculk Sensor' (the sensor will not be consumed).",
+  "book.sculk_vibrations.creative_tab_help": "Created by using a book on a sculk sensor",
   "book.sculk_vibrations.page_1": "Step\nSwim\nFlap",
   "book.sculk_vibrations.page_2": "Projectile land\nHit ground\nSplash",
   "book.sculk_vibrations.page_3": "Item interact finish\nProjectile shoot\nInstrument play",

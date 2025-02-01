@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "arss:item/analog_redstone_torch"
+    "layer0": "minecraft:block/redstone_torch",
+    "layer1": "arss:item/arss_decal"
   }
 }

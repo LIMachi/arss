@@ -4,11 +4,12 @@ import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.utils.annotations.RegisterBlock;
 import com.limachi.arss.utils.annotations.RegisterBlockItem;
 import com.limachi.arss.utils.client.annotations.BlockTinter;
+
 import dev.architectury.registry.registries.RegistrySupplier;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -31,7 +32,7 @@ public class PixelBlock extends RedstoneLampBlock {
     public static RegistrySupplier<Block> R_BLOCK;
 
     @RegisterBlockItem
-    public static RegistrySupplier<Item> R_ITEM;
+    public static RegistrySupplier<BlockItem> R_ITEM;
 
     public static int getTint(BlockState state) {
         return switch (state.getValue(POWER)) {
@@ -60,9 +61,9 @@ public class PixelBlock extends RedstoneLampBlock {
         return getTint(state);
     }
 
-    @Environment(EnvType.CLIENT)
     @Override
     public void appendHoverText(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Component> list, TooltipFlag tooltipFlag) {
+        super.appendHoverText(itemStack, tooltipContext, list, tooltipFlag);
         ClientDef.commonHoverText("pixel_block", list);
     }
 

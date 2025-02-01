@@ -1,0 +1,88 @@
+package com.limachi.arss.common.blocks;
+
+import com.limachi.arss.client.ClientDef;
+import com.limachi.arss.common.ArssBlockBehaviors;
+import com.limachi.arss.common.ArssBlockStateProperties;
+import com.limachi.arss.utils.annotations.RegisterBlock;
+import com.limachi.arss.utils.annotations.RegisterBlockItem;
+import com.limachi.arss.utils.client.annotations.FabricLayer;
+import com.limachi.arss.utils.client.annotations.HasRedstoneTint;
+
+import dev.architectury.registry.registries.RegistrySupplier;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.BlockHitResult;
+
+import java.util.List;
+
+@SuppressWarnings("unused")
+public class AnalogButton extends ButtonBlock implements IScrollBlockPowerOutput {
+
+    @HasRedstoneTint
+    @FabricLayer("cutout")
+    @RegisterBlock
+    public static RegistrySupplier<Block> R_BLOCK;
+
+    @HasRedstoneTint
+    @RegisterBlockItem
+    public static RegistrySupplier<BlockItem> R_ITEM;
+
+    public AnalogButton() {
+        super(BlockSetType.STONE, 20, Properties.of().noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(POWERED, false).setValue(FACE, AttachFace.WALL).setValue(POWER, 15).setValue(CAN_SCROLL, true).setValue(ArssBlockStateProperties.BOOSTED, false));
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext ctx, List<Component> components, TooltipFlag flags) {
+        super.appendHoverText(stack, ctx, components, flags);
+        ClientDef.commonHoverText("analog_button", components);
+    }
+
+    @Override
+    public int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction dir) {
+        return state.getValue(POWERED) ? state.getValue(POWER) : 0;
+    }
+
+    @Override
+    public int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction dir) {
+        return state.getValue(POWERED) && getConnectedDirection(state) == dir ? state.getValue(POWER) : 0;
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(POWER, CAN_SCROLL, ArssBlockStateProperties.BOOSTED);
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        return ArssBlockBehaviors.useItemOn(stack, state, level, pos, player, hand, hit, ArssBlockBehaviors::useItemOnScrollableBlockPowerToLock, super::useItemOn);
+    }
+
+    private void updateNeighbours(BlockState state, Level level, BlockPos pos) {
+        level.updateNeighborsAt(pos, this);
+        level.updateNeighborsAt(pos.relative(getConnectedDirection(state).getOpposite()), this);
+    }
+
+    @Override
+    public void press(BlockState state, Level level, BlockPos pos, Player player) {
+        level.setBlock(pos, state.setValue(POWERED, Boolean.TRUE), 3);
+        this.updateNeighbours(state, level, pos);
+        level.scheduleTick(pos, this, state.getValue(ArssBlockStateProperties.BOOSTED) ? 1 : 20);
+    }
+}

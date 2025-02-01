@@ -1,0 +1,4 @@
+accessWidener v2 named
+#accessible field net/miecraft/world/level/block/RedStoneWireBlock crossState Lnet/minecraft/world/level/block/state/BlockState;
+#accessible field net/miecraft/world/level/block/RedStoneWireBlock SHAPES_CACHE Ljava/util/map;
+#accessible field net/miecraft/world/level/block/RedStoneWireBlock shouldSignal LBoolean;

@@ -1,3 +1,7 @@
 {
-  "parent": "arss:item/base_block_with_redstone_dot"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:block/lever",
+    "layer1": "arss:item/arss_decal"
+  }
 }

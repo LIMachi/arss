@@ -1,5 +1,5 @@
 {
-  "creative_tab.arss": "Analog Redstone Suite",
+  "arss.tab.title": "Analog Redstone Suite",
 
   "display.arss.analog_cell.mode.set": "Enregistrer",
   "display.arss.analog_cell.mode.reset": "Réinitialiser",
@@ -75,8 +75,8 @@
   "item.arss.enriched_redstone_": "Oxidized Redstone Compound",
   "item.arss.enriched_redstone": "Redstone Enrichie",
   "item.arss.perfected_redstone": "Redstone Parfaite",
-  "item.arss.sequencer_memory_item": "Enregistrement de Séquenceur",
-  "item.arss.keyboard_item": "Clavier a distance",
+  "item.arss.sequencer_memory_disc": "Enregistrement de Séquenceur",
+  "item.arss.keyboard": "Clavier a distance",
   "item.arss.redstone_booster": "Booster de Redstone",
 
   "item.arss.sequencer_memory_item.desc": "§kDisque Gravé§r",
@@ -105,9 +105,9 @@
   "block.arss.shifter": "Décaleur",
   "block.arss.signal_generator": "Générateur de signaux",
   "block.arss.analog_jukebox": "Jukebox analogue",
-  "block.arss.instrument_swapper_block": "Changeur d'instruments",
+  "block.arss.instrument_swapper": "Changeur d'instruments",
   "block.arss.sequencer": "Séquenceur",
-  "block.arss.analog_dispenser_block": "Distributeur Précis",
+  "block.arss.analog_dispenser": "Distributeur Précis",
   "block.arss.pixel_block": "Pixel",
   "block.arss.programmable_gate": "Porte Programmable",
 

@@ -2,6 +2,7 @@ package com.limachi.arss.utils;
 
 import com.limachi.arss.utils.annotations.*;
 import com.limachi.arss.utils.client.ClientRegistries;
+import com.limachi.arss.utils.client.ClientStage;
 import com.limachi.arss.utils.commands.CommandManager;
 import com.limachi.arss.utils.config.ConfigManager;
 import com.limachi.arss.utils.reflect.AnnotationExtractor;
@@ -12,15 +13,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
-import net.minecraft.util.profiling.ProfilerFiller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
 public abstract class ModBase {
     public static Logger logger;
@@ -57,13 +51,15 @@ public abstract class ModBase {
     public static void init(AnnotationExtractor extractor) {
         ModBase.extractor = extractor;
         extractMod(extractor);
-        StaticInitializer.initialize(Stage.FIRST);
+        StaticInitializer.initialize(Stage.FIRST, true);
+        StaticInitializer.initialize(Stage.FIRST, false);
         registries.extractInStages();
         instance = registries.initMod();
         registries.register();
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new SingleRunnableReloadListener(()->configs.load()), ResourceLocation.fromNamespaceAndPath(registries.mod_id, "config"));
         CommandManager.register();
-        StaticInitializer.initialize(Stage.LAST);
+        StaticInitializer.initialize(Stage.LAST, true);
+        StaticInitializer.initialize(Stage.LAST, false);
     }
 
     @Environment(EnvType.CLIENT)
@@ -71,9 +67,14 @@ public abstract class ModBase {
         public static ClientRegistries registries = new ClientRegistries();
 
         public static void init() {
+            StaticInitializer.initialize(ClientStage.FIRST, true);
+            StaticInitializer.initialize(ClientStage.FIRST, false);
             registries.extractInStages();
             registries.register();
             ScrollHandler.register();
+            StaticInitializer.initialize(ClientStage.LAST, true);
+            configs.registerScreen();
+            StaticInitializer.initialize(ClientStage.LAST, false);
         }
     }
 

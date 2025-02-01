@@ -3,13 +3,14 @@ package com.limachi.arss.utils.reflect;
 import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.StackTrace;
 
-import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Collections;
 
 @SuppressWarnings({"unchecked", "unused"})
 public class MethodAccess<C, T> implements InstancedAccess<C, T>, Named {
+    public static boolean LOG = true;
+
     private final Method method;
     private final C object;
     private final Class<C> clazz;
@@ -60,7 +61,7 @@ public class MethodAccess<C, T> implements InstancedAccess<C, T>, Named {
 
     @Override
     public T get() {
-        return get(object, false);
+        return get(object, LOG);
     }
 
     @Override
@@ -70,7 +71,7 @@ public class MethodAccess<C, T> implements InstancedAccess<C, T>, Named {
 
     @Override
     public T apply(C c) {
-        return get(c, false);
+        return get(c, LOG);
     }
 
     @Override

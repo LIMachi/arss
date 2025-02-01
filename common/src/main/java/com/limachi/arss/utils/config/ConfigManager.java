@@ -4,10 +4,16 @@ import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.annotations.Config;
 import com.limachi.arss.utils.reflect.AnnotationExtractor;
 import com.limachi.arss.utils.reflect.FieldAccess;
+import dev.architectury.platform.Mod;
+import dev.architectury.platform.Platform;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.screens.Screen;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -127,11 +133,25 @@ public class ConfigManager {
         });
     }
 
+    private final HashSet<Runnable> reloadListeners = new HashSet<>();
+
+    public void addReloadListener(Runnable runnable) {
+        reloadListeners.add(runnable);
+    }
+
     public boolean load() {
         boolean ok = file.load(loaded);
+        if (loaded)
+            for (Runnable listener: reloadListeners)
+                listener.run();
         loaded = true;
         return ok;
     }
 
     public boolean save() { return file.save(); }
+
+    @Environment(EnvType.CLIENT)
+    public void registerScreen() {
+        Platform.getMod(ModBase.registries.mod_id).registerConfigurationScreen(parent->new ConfigScreen(parent, this));
+    }
 }

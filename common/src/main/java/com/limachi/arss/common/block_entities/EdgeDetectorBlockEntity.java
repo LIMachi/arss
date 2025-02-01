@@ -2,7 +2,7 @@ package com.limachi.arss.common.block_entities;
 
 import com.limachi.arss.Arss;
 
-import com.limachi.arss.common.blocks.DiodeBlockFactory;
+import com.limachi.arss.common.blocks.diodes.DiodeBlockFactory;
 import com.limachi.arss.utils.Stage;
 import com.limachi.arss.utils.annotations.StaticInit;
 import dev.architectury.registry.registries.RegistrySupplier;

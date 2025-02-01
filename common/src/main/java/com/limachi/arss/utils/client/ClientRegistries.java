@@ -3,18 +3,30 @@ package com.limachi.arss.utils.client;
 import com.limachi.arss.common.ArssItemStackComponents;
 import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.Registries;
-import com.limachi.arss.utils.client.annotations.BlockTinter;
-import com.limachi.arss.utils.client.annotations.HasRedstoneTint;
-import com.limachi.arss.utils.client.annotations.ItemTinter;
-import com.limachi.arss.utils.client.annotations.RegisterKeyBinding;
+import com.limachi.arss.utils.Stage;
+import com.limachi.arss.utils.StaticInitializer;
+import com.limachi.arss.utils.client.annotations.*;
+import com.limachi.arss.utils.reflect.Utils;
+
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
+import dev.architectury.registry.menu.MenuRegistry;
+import dev.architectury.registry.registries.RegistrySupplier;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.item.ItemColor;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RedStoneWireBlock;
@@ -43,12 +55,16 @@ public class ClientRegistries {
             var id = ResourceLocation.fromNamespaceAndPath(ModBase.registries.mod_id, Registries.defaultToClass(a.value(), m.clazz()));
             ColorHandlerRegistry.registerBlockColors((s, g, p, i)->(int)m.get(null, false, s, g, p, i), ()->ModBase.registries.blocks.getRegistrar().get(id));
         });
-        ModBase.extractor.runOnClasses(HasRedstoneTint.class, (c, a)->{
+        ModBase.extractor.runAnnotations(HasRedstoneTint.class, (c, a)->{
             if (Block.class.isAssignableFrom(c)) {
                 var id = ResourceLocation.fromNamespaceAndPath(ModBase.registries.mod_id, Registries.defaultToClass(a.value(), c));
-                ColorHandlerRegistry.registerBlockColors((s, g, p, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getValue(BlockStateProperties.POWER)), () -> ModBase.registries.blocks.getRegistrar().get(id));
+                Supplier<Block> t = ()->ModBase.registries.blocks.getRegistrar().get(id);
+                ColorHandlerRegistry.registerBlockColors((s, g, p, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getValue(BlockStateProperties.POWER)), t);
             }
-        });
+        }, (f, a)->{
+            if (f.get() instanceof RegistrySupplier<?> rs && rs.getRegistrar().key().location().getPath().equals("block"))
+                ColorHandlerRegistry.registerBlockColors((s, g, p, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getValue(BlockStateProperties.POWER)), (RegistrySupplier<Block>)rs);
+        }, null);
     }
 
     protected void extractItemTinters() {
@@ -57,13 +73,16 @@ public class ClientRegistries {
             Supplier<Item> t = ()->ModBase.registries.items.getRegistrar().get(id);
             ColorHandlerRegistry.registerItemColors((s, i)->(int)m.get(null, false, s, i), t);
         });
-        ModBase.extractor.runOnClasses(HasRedstoneTint.class, (c, a)->{
+        ModBase.extractor.runAnnotations(HasRedstoneTint.class, (c, a)->{
             if (Item.class.isAssignableFrom(c)) {
                 var id = ResourceLocation.fromNamespaceAndPath(ModBase.registries.mod_id, Registries.defaultToClass(a.value(), c));
                 Supplier<Item> t = ()->ModBase.registries.items.getRegistrar().get(id);
-                ColorHandlerRegistry.registerItemColors((s, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getOrDefault(ArssItemStackComponents.OUTPUT.get(), 0)), t);
+                ColorHandlerRegistry.registerItemColors((s, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getOrDefault(ArssItemStackComponents.OUTPUT.get(), 9)), t);
             }
-        });
+        }, (f, a)->{
+            if (f.get() instanceof RegistrySupplier<?> rs && rs.getRegistrar().key().location().getPath().equals("item"))
+                ColorHandlerRegistry.registerItemColors((s, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getOrDefault(ArssItemStackComponents.OUTPUT.get(), 9)), (RegistrySupplier<Item>)rs);
+        }, null);
     }
 
     protected void extractKeyBindings() {
@@ -75,10 +94,37 @@ public class ClientRegistries {
         });
     }
 
+    protected record ErasedMenuScreen<M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>>(RegistrySupplier<MenuType<M>> menu, Class<S> screen) {
+        void register() {
+            MenuRegistry.registerScreenFactory(menu.get(), new MenuRegistry.ScreenFactory<M, S>() {
+                @Override
+                public S create(M containerMenu, Inventory inventory, Component component) {
+                    return Utils.nullableInstance(screen, containerMenu, inventory, component);
+                }
+            });
+        }
+    }
+
+    protected <M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>> void extractMenuScreens() {
+        ModBase.extractor.runOnClasses(RegisterMenuScreen.class, (c, a)->{
+            String name = Registries.defaultToClass(a.value(), c);
+            new ErasedMenuScreen<>(Registries.searchRegistry(ModBase.registries.menus, ModBase.registries.mod_id + ":" + name), (Class<S>)c).register();
+        });
+    }
+
+    protected static void stage(ClientStage stage, Runnable run) {
+        StaticInitializer.initialize(stage, true);
+        run.run();
+        StaticInitializer.initialize(stage, false);
+    }
+
     public void extractInStages() {
-        extractKeyBindings();
-        extractBlockTinters();
-        extractItemTinters();
+        synchronized (this) {
+            stage(ClientStage.SCREEN, this::extractMenuScreens);
+            stage(ClientStage.KEY_BINDING, this::extractKeyBindings);
+            stage(ClientStage.BLOCK_TINTER, this::extractBlockTinters);
+            stage(ClientStage.ITEM_TINTER, this::extractItemTinters);
+        }
     }
 
     public void register() {

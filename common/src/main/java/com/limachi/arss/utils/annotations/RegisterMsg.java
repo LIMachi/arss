@@ -9,6 +9,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RegisterMsg {
     String value() default "";
-    boolean s2c() default true;
-    boolean c2s() default false;
 }

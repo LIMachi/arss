@@ -1,21 +1,34 @@
 package com.limachi.arss.utils;
 
 import com.limachi.arss.utils.annotations.*;
+import com.limachi.arss.utils.codec.CodecUtils;
+import com.limachi.arss.utils.network.ClassMsg;
+import com.limachi.arss.utils.network.IC2SMsg;
+import com.limachi.arss.utils.network.IMsg;
+import com.limachi.arss.utils.network.IS2CMsg;
 import com.limachi.arss.utils.reflect.FieldAccess;
 import com.limachi.arss.utils.reflect.MethodAccess;
+import com.limachi.arss.utils.reflect.Utils;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.CreativeTabRegistry;
+import dev.architectury.registry.menu.MenuRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -25,10 +38,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 public class Registries {
     public final Class<? extends ModBase> mod;
@@ -37,23 +51,55 @@ public class Registries {
     public final DeferredRegister<Block> blocks;
     public final DeferredRegister<BlockEntityType<?>> block_entities;
     public final DeferredRegister<Item> items;
+    public final DeferredRegister<MenuType<?>> menus;
     public final DeferredRegister<CreativeModeTab> tabs;
     public RegistrySupplier<CreativeModeTab> default_tab = null;
-    public final HashMap<Class<?>, CustomPacketPayload.Type<?>> messages = new HashMap<>();
+    public final HashMap<Class<?>, Pair<CustomPacketPayload.Type<?>, CustomPacketPayload.Type<?>>> messages = new HashMap<>();
 
-    public <T extends IMsg<T>> void message(Class<T> clazz, Supplier<T> builder, ResourceLocation id, boolean s2c, boolean c2s) {
-        if (!s2c && !c2s) {
-            ModBase.logger.error("message registration without receiver declared: " + id);
+    public <T extends IMsg<T>> CustomPacketPayload.Type<T> getMessageType(IMsg<T> msg) {
+        return (CustomPacketPayload.Type<T>) Optional.ofNullable(messages.get(msg.getClass())).map(p->msg.upstream() ? p.getFirst() : p.getSecond()).orElse(null);
+    }
+
+    protected <T extends IMsg<T>> boolean messageHasReceiver(Class<T> msg) {
+        return IS2CMsg.class.isAssignableFrom(msg) || IC2SMsg.class.isAssignableFrom(msg);
+    }
+
+    protected <T extends IMsg<T>> void registerMessageReceivers(Class<T> msg, ResourceLocation id, StreamCodec<RegistryFriendlyByteBuf, T> codec) {
+        boolean s2c = IS2CMsg.class.isAssignableFrom(msg);
+        boolean c2s = IC2SMsg.class.isAssignableFrom(msg);
+        CustomPacketPayload.Type<T> s2cType = s2c ? new CustomPacketPayload.Type<>(c2s ? ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath() + "_s2c") : id) : null;
+        CustomPacketPayload.Type<T> c2sType = c2s ? new CustomPacketPayload.Type<>(s2c ? ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath() + "_c2s") : id) : null;
+        if (s2c)
+            NetworkManager.registerReceiver(NetworkManager.Side.S2C, s2cType, codec, T::run);
+        if (c2s)
+            NetworkManager.registerReceiver(NetworkManager.Side.C2S, c2sType, codec, T::run);
+        messages.put(msg, new Pair<>(c2sType, s2cType));
+    }
+
+    public <T extends IMsg<T>> void recordMessage(Class<T> clazz, ResourceLocation id) {
+        if (!messageHasReceiver(clazz)) {
+            ModBase.logger.error("message registration without receiver declared (should extend one or more of IS2CMsg/IC2SMsg): " + id);
             return;
         }
-        var type = new CustomPacketPayload.Type<T>(id);
-        messages.put(clazz, type);
-        StreamCodec<RegistryFriendlyByteBuf, T> codec = CustomPacketPayload.codec(T::write, i->builder.get().read(i));
-        if (s2c)
-            NetworkManager.registerReceiver(NetworkManager.Side.S2C, type, codec, T::clientWork);
-        if (c2s)
-            NetworkManager.registerReceiver(NetworkManager.Side.C2S, type, codec, T::serverWork);
+        if (!Record.class.isAssignableFrom(clazz)) {
+            ModBase.logger.error("recordMessage registration called for non record object: " + clazz);
+            return;
+        }
+        registerMessageReceivers(clazz, id, CodecUtils.autoStreamCodec(clazz));
         logRegistration("message", id);
+    }
+
+    public <T extends ClassMsg<T>> void dynamicMessage(Class<T> clazz, ResourceLocation id) {
+        if (!messageHasReceiver(clazz)) {
+            ModBase.logger.error("message registration without receiver declared (should extend one or more of IS2CMsg/IC2SMsg): " + id);
+            return;
+        }
+        registerMessageReceivers(clazz, id, CustomPacketPayload.codec(ClassMsg::write, i -> Utils.unsafeInstance(clazz).read(i)));
+        logRegistration("message", id);
+    }
+
+    protected void error(String error) {
+        ModBase.logger.error(error);
     }
 
     protected String logRegistration(String kind, String id) {
@@ -82,6 +128,7 @@ public class Registries {
         blocks = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.BLOCK);
         block_entities = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.BLOCK_ENTITY_TYPE);
         items = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.ITEM);
+        menus = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.MENU);
         tabs = DeferredRegister.create(mod_id, net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB);
     }
 
@@ -98,13 +145,51 @@ public class Registries {
         blocks.register();
         block_entities.register();
         items.register();
+        menus.register();
         tabs.register();
         ModBase.logger.info("finished common registration");
     }
 
+    public static Comparator<String> longestString = Comparator.comparing(String::length).reversed().thenComparing(Comparator.naturalOrder());
+    public static HashMap<Class<?>, TreeSet<String>> DISCARD_SUFFIXES = new HashMap<>();
+
+    public static void addDiscardSuffixes(Class<?> clazz, String ... suffixes) {
+        DISCARD_SUFFIXES.compute(clazz, (k, v)->{
+            if (v == null)
+                v = new TreeSet<>(longestString);
+            v.addAll(List.of(suffixes));
+            return v;
+        });
+    }
+
+    static {
+//        addDiscardSuffixes(Item.class, "_item", "_block_item", "_block", "_block_entity", "_be", "_b_e", "_i", "_b");
+//        addDiscardSuffixes(Block.class, "_item", "_block_item", "_block", "_block_entity", "_be", "_b_e", "_i", "_b");
+        addDiscardSuffixes(BlockEntity.class, "_block_entity", "_be", "_b_e");
+        addDiscardSuffixes(IMsg.class, "_msg", "_message");
+        addDiscardSuffixes(AbstractContainerMenu.class, "_menu", "_screen", "_menu_screen");
+        addDiscardSuffixes(Screen.class, "_menu", "_screen", "_menu_screen");
+    }
+
+    public static String discardSuffixes(Class<?> clazz, String input) {
+        for (var e : DISCARD_SUFFIXES.entrySet())
+            if (e.getKey().isAssignableFrom(clazz)) {
+                boolean discard = true;
+                while (discard) {
+                    discard = false;
+                    for (String suffix : e.getValue())
+                        if (input.endsWith(suffix)) {
+                            discard = true;
+                            input = input.substring(0, input.length() - suffix.length());
+                        }
+                }
+            }
+        return input;
+    }
+
     public static String defaultToClass(String nullable, Class<?> clazz) {
         if (nullable == null || nullable.isBlank())
-            return StringUtils.camelToSnake(StringUtils.getSimplifiedClassName(clazz.getName()));
+            nullable = discardSuffixes(clazz, StringUtils.camelToSnake(StringUtils.getSimplifiedClassName(clazz.getName())));
         return nullable;
     }
 
@@ -263,17 +348,21 @@ public class Registries {
 
     protected void extractBlockItems() {
         ModBase.extractor.runOnFields(RegisterBlockItem.class, (f, a)-> {
-            String name = a.value();
-            if (name.isBlank()) {
-                name = defaultToClass(a.value(), f.clazz());
-                if (name.endsWith("_block"))
-                    name = name.substring(0, name.length() - 6) + "_item";
-            }
+            String name = defaultToClass(a.value(), f.clazz());
             String block = defaultToClass(a.block(), f.clazz());
             ((FieldAccess<?, RegistrySupplier<BlockItem>>) f).set(null, false, item(name,
                     ()-> new BlockItem(blocks.getRegistrar().get(ResourceLocation.fromNamespaceAndPath(mod_id, block)), new Item.Properties()),
                     a.jeiInfoKey(), a.tab()));
+            f.type();
         });
+    }
+
+    public static <R, T extends R> RegistrySupplier<T> searchRegistry(DeferredRegister<R> register, String regex) {
+        var pattern = Pattern.compile(regex);
+        for (var r : register)
+            if (pattern.matcher(r.getId().toString()).matches())
+                return (RegistrySupplier<T>) r;
+        return null;
     }
 
     protected void extractBlockEntities() {
@@ -281,15 +370,8 @@ public class Registries {
             String name = defaultToClass(a.value(), f.clazz());
             Supplier<Block>[] sba;
             if (a.blocks().length == 0) {
-                var t1 = ResourceLocation.fromNamespaceAndPath(mod_id, name.replace("_block_entity", "_block"));
-                var t2 = ResourceLocation.fromNamespaceAndPath(mod_id, name.replace("_block_entity", ""));
-                var t3 = ResourceLocation.fromNamespaceAndPath(mod_id, name);
                 sba = new Supplier[1];
-                for (var r : blocks)
-                    if (r.is(t1) || r.is(t2) || r.is(t3)) {
-                        sba[0] = r;
-                        break;
-                    }
+                sba[0] = searchRegistry(blocks, mod_id + ":" + name);
                 if (sba[0] == null) {
                     ModBase.logger.error("could not find block for block entity: " + name);
                     return;
@@ -326,33 +408,47 @@ public class Registries {
 
     protected void extractMsgs() {
         ModBase.extractor.runOnClasses(RegisterMsg.class, (c, a)->{
-            Supplier<IMsg> builder = defaultInstanceSupplier(c, IMsg.class);
-            String name = a.value();
-            if (name.isBlank()) {
-                name = defaultToClass(a.value(), c);
-                if (name.endsWith("_msg"))
-                    name = name.substring(0, name.length() - 4);
-                else if (name.endsWith("_message"))
-                    name = name.substring(0, name.length() - 8);
+            if (!IMsg.class.isAssignableFrom(c)) {
+                error("@RegisterMsg not on a class/record that extend/implement ClassMsg/IMsg" + c);
+                return;
             }
-            message((Class<IMsg>)c, builder, ResourceLocation.fromNamespaceAndPath(mod_id, name), a.s2c(), a.c2s());
+            String name = defaultToClass(a.value(), c);
+            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(mod_id, name);
+            if (Record.class.isAssignableFrom(c))
+                recordMessage((Class<IMsg>)c, id);
+            else if (ClassMsg.class.isAssignableFrom(c))
+                dynamicMessage((Class<ClassMsg>)c, id);
+            else
+                error("@RegisterMsg not on a class/record that extend/implement ClassMsg/IMsg" + c);
         });
+    }
+
+    public <T extends AbstractContainerMenu> RegistrySupplier<MenuType<T>> menu(String reg_key, MenuRegistry.ExtendedMenuTypeFactory<T> builder) {
+        return logRegistration("menu", menus.register(reg_key, ()->MenuRegistry.ofExtended(builder)));
+    }
+
+    protected void extractMenus() {
+        ModBase.extractor.runOnFields(RegisterMenu.class, (f, a)->{
+            final Constructor<AbstractContainerMenu> ctr = (Constructor<AbstractContainerMenu>) Utils.getMatchingConstructor(f.clazz(), int.class, Inventory.class, RegistryFriendlyByteBuf.class);
+            ((FieldAccess<?, RegistrySupplier<MenuType<AbstractContainerMenu>>>)f).set(null, false, menu(defaultToClass(a.value(), f.clazz()), (id, inventory, buf) -> Utils.nullableInstance(ctr, id, inventory, buf)));
+        });
+    }
+
+    protected static void stage(Stage stage, Runnable run) {
+        StaticInitializer.initialize(stage, true);
+        run.run();
+        StaticInitializer.initialize(stage, false);
     }
 
     public void extractInStages() {
         synchronized (this) {
-            StaticInitializer.initialize(Stage.MSG);
-            extractMsgs();
-            StaticInitializer.initialize(Stage.TAB);
-            extractTabs();
-            StaticInitializer.initialize(Stage.BLOCK);
-            extractBlocks();
-            StaticInitializer.initialize(Stage.ITEM);
-            extractItems();
-            StaticInitializer.initialize(Stage.BLOCK_ITEM);
-            extractBlockItems();
-            StaticInitializer.initialize(Stage.BLOCK_ENTITY);
-            extractBlockEntities();
+            stage(Stage.MSG, this::extractMsgs);
+            stage(Stage.TAB, this::extractTabs);
+            stage(Stage.BLOCK, this::extractBlocks);
+            stage(Stage.ITEM, this::extractItems);
+            stage(Stage.BLOCK_ITEM, this::extractBlockItems);
+            stage(Stage.BLOCK_ENTITY, this::extractBlockEntities);
+            stage(Stage.MENU, this::extractMenus);
         }
     }
 }

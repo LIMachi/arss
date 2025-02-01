@@ -1,0 +1,33 @@
+{
+  "parent": "block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "all": "arss:block/analog_redstone_lamp/9",
+    "decal": "arss:item/arss_decal",
+    "particle": "arss:block/analog_redstone_lamp/9"
+  },
+  "elements": [
+    { "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "down": { "texture": "#all", "cullface": "down", "tintindex": 0 },
+        "up": { "texture": "#all", "cullface": "up", "tintindex": 0 },
+        "north": { "texture": "#all", "cullface": "north", "tintindex": 0 },
+        "south": { "texture": "#all", "cullface": "south", "tintindex": 0 },
+        "west": { "texture": "#all", "cullface": "west", "tintindex": 0 },
+        "east": { "texture": "#all", "cullface": "east", "tintindex": 0 }
+      }
+    },
+    { "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "down": { "texture": "#decal", "cullface": "down" },
+        "up": { "texture": "#decal", "cullface": "up" },
+        "north": { "texture": "#decal", "cullface": "north" },
+        "south": { "texture": "#decal", "cullface": "south" },
+        "west": { "texture": "#decal", "cullface": "west" },
+        "east": { "texture": "#decal", "cullface": "east" }
+      }
+    }
+  ]
+}

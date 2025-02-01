@@ -2,10 +2,13 @@ package com.limachi.arss.common.block_entities;
 
 import com.limachi.arss.Arss;
 
-import com.limachi.arss.common.blocks.DiodeBlockFactory;
+import com.limachi.arss.client.screen.ProgrammableGateScreen;
+import com.limachi.arss.common.blocks.diodes.DiodeBlockFactory;
 import com.limachi.arss.utils.Stage;
 import com.limachi.arss.utils.annotations.StaticInit;
 import dev.architectury.registry.registries.RegistrySupplier;
+import dev.architectury.utils.Env;
+import dev.architectury.utils.EnvExecutor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -49,10 +52,9 @@ public class ProgrammableGateBlockEntity extends BaseAnalogDiodeBlockEntity {
 
     public void startEditing(Player player) {
         editing.add(player);
-//        DistExecutor.unsafeCallWhenOn(Dist.CLIENT, ()->()->{
-//            ProgrammableGateScreen.client_open(this);
-//            return null;
-//        });
+        EnvExecutor.runInEnv(Env.CLIENT, ()->()->{
+            ProgrammableGateScreen.client_open(this);
+        });
     }
 
     @Override

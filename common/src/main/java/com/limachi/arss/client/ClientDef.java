@@ -2,6 +2,9 @@ package com.limachi.arss.client;
 
 import com.limachi.arss.utils.client.annotations.RegisterKeyBinding;
 
+import dev.architectury.platform.Mod;
+import dev.architectury.platform.Platform;
+import dev.architectury.utils.GameInstance;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -125,6 +128,8 @@ public class ClientDef {
     public static List<Component> split(Component line) {
         String raw = line.getString();
         Style[] style = {line.getStyle()};
+        if (!Platform.isFabric()) //forge/neoforge both wrap lines automatically on tooltips
+            lineWidth = 500;
         if (raw.contains("\n") || raw.length() > lineWidth) {
             return Arrays.stream(raw.split("\n")).flatMap(l->{
                 if (l.length() > lineWidth) {

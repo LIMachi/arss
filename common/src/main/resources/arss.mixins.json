@@ -4,8 +4,13 @@
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "client": [
+    "client.ItemInHandRendererMixin",
+    "client.KeyboardHandlerMixin"
   ],
   "mixins": [
+    "LevelMixin",
+    "NoteBlockMixin",
+    "RedStoneWireBlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1
