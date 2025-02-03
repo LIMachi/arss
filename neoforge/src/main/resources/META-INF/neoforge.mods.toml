@@ -34,3 +34,6 @@ side = "BOTH"
 
 [[mixins]]
 config = "arss.mixins.json"
+
+[[mixins]]
+config = "arss-neo.mixins.json"

@@ -2,8 +2,8 @@ package com.limachi.arss.client.screen;
 
 import com.limachi.arss.common.menus.AnalogJukeboxMenu;
 import com.limachi.arss.utils.ModBase;
-
 import com.limachi.arss.utils.client.annotations.RegisterMenuScreen;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.fabricmc.api.EnvType;

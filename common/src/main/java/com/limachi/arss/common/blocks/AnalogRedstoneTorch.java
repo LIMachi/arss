@@ -4,6 +4,7 @@ import com.limachi.arss.client.ClientDef;
 
 import com.limachi.arss.common.ArssBlockBehaviors;
 import com.limachi.arss.common.ArssBlockStateProperties;
+import com.limachi.arss.utils.IAcceptCrouchInteractWithItem;
 import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.Stage;
 import com.limachi.arss.utils.annotations.RegisterBlockItem;
@@ -36,7 +37,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import java.util.List;
 
 @SuppressWarnings({"unused", "deprecation"})
-public class AnalogRedstoneTorch extends RedstoneTorchBlock implements IScrollBlockPowerOutput {
+public class AnalogRedstoneTorch extends RedstoneTorchBlock implements IScrollBlockPowerOutput, IAcceptCrouchInteractWithItem {
 
     @HasRedstoneTint
     @FabricLayer("cutout")
@@ -97,7 +98,12 @@ public class AnalogRedstoneTorch extends RedstoneTorchBlock implements IScrollBl
         return ArssBlockBehaviors.useItemOn(stack, state, level, pos, player, hand, hit, ArssBlockBehaviors::useItemOnScrollableBlockPowerToLock, super::useItemOn);
     }
 
-    public static class AnalogRedstoneWallTorch extends RedstoneWallTorchBlock implements IScrollBlockPowerOutput {
+    @Override
+    public boolean overrideCrouchInteraction(ItemStack stack, Player player, BlockState state, BlockPos pos) {
+        return ArssBlockBehaviors.isWrench(stack);
+    }
+
+    public static class AnalogRedstoneWallTorch extends RedstoneWallTorchBlock implements IScrollBlockPowerOutput, IAcceptCrouchInteractWithItem {
 
         @HasRedstoneTint
         @FabricLayer("cutout")
@@ -150,6 +156,11 @@ public class AnalogRedstoneTorch extends RedstoneTorchBlock implements IScrollBl
         @Override
         protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
             return ArssBlockBehaviors.useItemOn(stack, state, level, pos, player, hand, hit, ArssBlockBehaviors::useItemOnScrollableBlockPowerToLock, super::useItemOn);
+        }
+
+        @Override
+        public boolean overrideCrouchInteraction(ItemStack stack, Player player, BlockState state, BlockPos pos) {
+            return ArssBlockBehaviors.isWrench(stack);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.limachi.arss.common.blocks.diodes;
 
 import com.limachi.arss.common.block_entities.*;
+import com.limachi.arss.common.items.SequencerMemoryDisc;
 import com.limachi.arss.utils.Stage;
 import com.limachi.arss.utils.annotations.StaticInit;
 import com.mojang.datafixers.util.Pair;
@@ -47,28 +48,15 @@ public class AllDiodeBlocks {
 
         DiodeBlockFactory.builder("sequencer", AllDiodeBlocks::sequencer).mode(SEQUENCER_MODE).tickingMode(BaseAnalogDiodeBlock.TickingMode.ALWAYS).catchUse(AllDiodeBlocks::sequencerUse).blockEntityBuilder(SequencerBlockEntity::new).canToggleInput(true).itemBuilder((b, p)->new BlockItem(b, p){
             @Override
-            public boolean isFoil(ItemStack stack) {
-//                if (stack.getTag() != null) {
-//                    CompoundTag tag = stack.getTag();
-//                    if (tag.contains("BlockEntityTag", Tag.TAG_COMPOUND))
-//                        return SequencerMemoryItem.validTagData(tag.getCompound("BlockEntityTag"));
-//                }
-                return stack.has(DataComponents.BLOCK_ENTITY_DATA);
-            }
+            public boolean isFoil(ItemStack stack) { return stack.has(DataComponents.BLOCK_ENTITY_DATA); }
         })
                 .finish();
 
         DiodeBlockFactory.builder("programmable_gate", AllDiodeBlocks::programmable).tickingMode(BaseAnalogDiodeBlock.TickingMode.ALWAYS).catchUse(AllDiodeBlocks::programmableUse).blockEntityBuilder(ProgrammableGateBlockEntity::new).itemBuilder((b, p)->new BlockItem(b, p){
                     @Override
-                    public boolean isFoil(ItemStack stack) {
-//                        if (stack.getTag() != null) {
-//                            CompoundTag tag = stack.getTag();
-//                            if (tag.contains("BlockEntityTag", Tag.TAG_COMPOUND))
-//                                return true; //could test if the tags are valid (256 bytes in the range 0-16 inclusive)
-//                        }
-                        return stack.has(DataComponents.BLOCK_ENTITY_DATA);
-                    }
+                    public boolean isFoil(ItemStack stack) { return stack.has(DataComponents.BLOCK_ENTITY_DATA); }
                 })
+                .overrideItemCrouch((s, e, b, p)->b.getBlock() instanceof BaseAnalogDiodeBlock)
                 .finish();
     }
 
@@ -212,6 +200,8 @@ public class AllDiodeBlocks {
     }
 
     static protected ItemInteractionResult sequencerUse(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (stack.getItem() instanceof SequencerMemoryDisc)
+            return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         if (!player.isShiftKeyDown() && level.getBlockEntity(pos) instanceof SequencerBlockEntity be) {
             be.startEditing(player);
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
@@ -266,12 +256,4 @@ public class AllDiodeBlocks {
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
-
-//    @SubscribeEvent
-//    public static void acceptSneakUseOfBlockWithItem(PlayerInteractEvent.RightClickBlock event) {
-//        if (event.getLevel().getBlockEntity(event.getHitVec().getBlockPos()) instanceof ProgrammableGateBlockEntity && event.getItemStack().getItem() instanceof BlockItem bi && bi.getBlock() instanceof BaseAnalogDiodeBlock diode) {
-//            event.setUseBlock(Event.Result.ALLOW);
-//            event.setUseItem(Event.Result.DENY);
-//        }
-//    }
 }

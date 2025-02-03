@@ -7,6 +7,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
+/*
 @SuppressWarnings("unused")
 public class AllRedstoneWires {
     public static final BlockBehaviour.Properties B_PROPS = BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_WIRE);
@@ -18,3 +19,4 @@ public class AllRedstoneWires {
         RedstoneWireFactory.create("perfected_redstone", B_PROPS, I_PROPS, ArssBlockStateProperties.PERFECTED_RS_RANGE, 32, 15);
     }
 }
+*/

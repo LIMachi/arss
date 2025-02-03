@@ -11,6 +11,7 @@ import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
@@ -19,6 +20,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -96,9 +98,9 @@ public class ProgrammableGateBlockEntity extends BaseAnalogDiodeBlockEntity {
             return Collections.emptyList();
         ItemStack stack = state.getBlock().getCloneItemStack(level, pos, state);
         if (!def) {
-            CompoundTag t = new CompoundTag();
-//            saveAdditional(t);
-//            stack.getOrCreateTag().put("BlockEntityTag", t);
+            CompoundTag t = level != null ? saveWithId(level.registryAccess()) : new CompoundTag();
+            saveAdditional(t, level.registryAccess());
+            stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(t));
         }
         return Collections.singletonList(stack);
     }

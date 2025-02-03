@@ -5,6 +5,7 @@ import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.common.ArssBlockStateProperties;
 
 import com.limachi.arss.common.block_entities.BaseAnalogDiodeBlockEntity;
+import com.limachi.arss.utils.IAcceptCrouchInteractWithItem;
 import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.client.annotations.FabricLayer;
 import com.mojang.datafixers.util.Pair;
@@ -99,11 +100,12 @@ public class DiodeBlockFactory {
         private boolean canToggleBothSides = false;
         private boolean canToggleInput = false;
         private UseMethod use = null;
+        private IAcceptCrouchInteractWithItem override = null;
 
         private Builder() {}
 
         public void finish() {
-            create(name, mode, generator, blockProperties, itemProperties, delay, tickingMode, hasPowerTint, blockEntityBuilder, canToggleBothSides, canToggleInput, extraProperties, use, itemProvider);
+            create(name, mode, generator, blockProperties, itemProperties, delay, tickingMode, hasPowerTint, blockEntityBuilder, canToggleBothSides, canToggleInput, extraProperties, use, itemProvider, override);
         }
 
         public Builder mode(EnumProperty<?> mode) { this.mode = mode; return this; }
@@ -119,6 +121,8 @@ public class DiodeBlockFactory {
         public Builder canToggleInput(boolean state) { canToggleInput = state; return this; }
         public Builder catchUse(UseMethod use) { this.use = use; return this; }
         public Builder itemBuilder(BiFunction<Block, Item.Properties, BlockItem> builder) { itemProvider = builder; return this; }
+
+        public Builder overrideItemCrouch(IAcceptCrouchInteractWithItem override) { this.override = override; return this; }
     }
 
     public static Builder builder(String name, SignalGenerator generator) {
@@ -128,7 +132,7 @@ public class DiodeBlockFactory {
         return out;
     }
 
-    private static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, BlockBehaviour.Properties props, Item.Properties iProps, int fDelay, BaseAnalogDiodeBlock.TickingMode fTickingMode, boolean hasPowerTint, BlockEntityBuilder beb, boolean canToggleBothSides, boolean canToggleInput, List<Property<?>> extraProps, UseMethod use, BiFunction<Block, Item.Properties, BlockItem> itemBuilder) {
+    private static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, BlockBehaviour.Properties props, Item.Properties iProps, int fDelay, BaseAnalogDiodeBlock.TickingMode fTickingMode, boolean hasPowerTint, BlockEntityBuilder beb, boolean canToggleBothSides, boolean canToggleInput, List<Property<?>> extraProps, UseMethod use, BiFunction<Block, Item.Properties, BlockItem> itemBuilder, IAcceptCrouchInteractWithItem override) {
         Supplier<Block> gBlock;
 
         class Product extends BaseAnalogDiodeBlock {
@@ -157,7 +161,7 @@ public class DiodeBlockFactory {
             protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
                 if (use != null) {
                     ItemInteractionResult res = use.use(stack, state, level, pos, player, hand, hit);
-                    if (res.consumesAction())
+                    if (res.consumesAction() || res == ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION)
                         return res;
                 }
                 return super.useItemOn(stack, state, level, pos, player, hand, hit);
@@ -186,6 +190,11 @@ public class DiodeBlockFactory {
             @Override
             protected SideToggling cycleSideStates(SideToggling current, boolean shifting) {
                 return current.cycle(!shifting, canToggleBothSides, canToggleInput);
+            }
+
+            @Override
+            public boolean overrideCrouchInteraction(ItemStack stack, Player player, BlockState state, BlockPos pos) {
+                return override != null && override.overrideCrouchInteraction(stack, player, state, pos);
             }
         }
 

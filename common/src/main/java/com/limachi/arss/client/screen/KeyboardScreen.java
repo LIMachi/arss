@@ -7,6 +7,7 @@ import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.client.MidiHandler;
 import com.limachi.arss.utils.client.annotations.RegisterMenuScreen;
 import com.limachi.arss.utils.network.ScreenNBTMsg;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.fabricmc.api.EnvType;
@@ -20,7 +21,6 @@ import net.minecraft.client.gui.components.FittingMultiLineTextWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.IntTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -128,26 +128,17 @@ public class KeyboardScreen extends AbstractContainerScreen<KeyboardMenu> implem
 
         var devices = MidiHandler.getDevices();
         devices.addFirst("");
-        var midiSelector = new CycleButton.Builder<>(Component::literal).withInitialValue(MidiHandler.currentDevice()).withValues(devices).displayOnlyValue().create(leftPos + 99, topPos + 9, 100, 16, Component.empty(), (c, b)->{
-
-        });
-
+        var midiSelector = new CycleButton.Builder<>(Component::literal).withInitialValue(MidiHandler.currentDevice()).withValues(devices).displayOnlyValue().create(leftPos + 99, topPos + 9, 100, 16, Component.empty());
         addRenderableWidget(midiSelector);
-
-//        final TextEditWithSuggestions midiSelector = new TextEditWithSuggestions(font, leftPos + 99, topPos + 9, 100, 16, MidiHandler.currentDevice(), null, MidiHandler.getDevices()).forceSuggestion(true);
-//        addRenderableWidget(midiSelector);
 
         addRenderableWidget(Button.builder(Component.translatable("screen.button.bind_midi"), b->{
             MidiHandler.bindDevice(midiSelector.getValue());
-//            MidiHandler.bindDevice(midiSelector.getValue());
             b.setFocused(false);
             SCREEN.setFocused(null);
             SCREEN.rebuildWidgets();
         }).bounds(leftPos + 8, topPos + 9, 88, 16).build());
 
         addRenderableOnly(new FittingMultiLineTextWidget(leftPos + 11, topPos + 39, 250, 16, Component.translatable("screen.widget.bound_to", MidiHandler.currentDevice()), font));
-
-//        addRenderableOnly(new StaticStringWidget.Builder().at(leftPos + 11, topPos + 39).text(Component.translatable("screen.widget.bound_to", MidiHandler.currentDevice())).build());
 
         ArssItemStackComponents.Bindings bindings = Keyboard.getBindings(menu.inv.player.getItemInHand(menu.hand));
         for (int y = 0; y < 5; ++y)
@@ -180,7 +171,5 @@ public class KeyboardScreen extends AbstractContainerScreen<KeyboardMenu> implem
     }
 
     @Override
-    public boolean shouldCloseOnEsc() {
-        return !((getFocused() instanceof BindingButton));
-    }
+    public boolean shouldCloseOnEsc() { return !((getFocused() instanceof BindingButton)); }
 }

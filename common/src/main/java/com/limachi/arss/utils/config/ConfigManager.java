@@ -107,7 +107,7 @@ public class ConfigManager {
             List<?> list = getList(type, a, cmt);
             Object min = getMin(type, a, cmt);
             Object max = getMax(type, a, cmt);
-            String path = a.path().isBlank() ? f.clazz().getName() : a.path();
+            String path = a.path().equals("<auto>") ? f.clazz().getName() : a.path();
             String name = a.name().isBlank() ? f.name() : a.name();
             Predicate<Object> listPred = list == null || list.isEmpty() ? v->!a.whiteList() : type.equals(String.class) ? v->{
                 for (String reg : (List<String>)list)
@@ -129,7 +129,7 @@ public class ConfigManager {
                 }
                 return v;
             };
-            register(path + "." + name, cmt.toString(), ft, f, pred, a.reload());
+            register((path.isBlank() ? "" : path + ".") + name, cmt.toString(), ft, f, pred, a.reload());
         });
     }
 

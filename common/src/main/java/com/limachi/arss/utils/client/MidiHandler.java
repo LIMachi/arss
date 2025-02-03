@@ -27,7 +27,7 @@ public class MidiHandler {
 
     private static MidiDevice inputDevice = null;
 
-    @Config(cmt = "name of the bound MIDI device")
+    @Config(cmt = "name of the bound MIDI device", path = "MIDI", name = "Device")
     public static String deviceName = "";
 
     private static final TestReceiver RECEIVER_INSTANCE = new TestReceiver();
@@ -108,6 +108,7 @@ public class MidiHandler {
                 inputDevice.close();
             inputDevice = null;
         }
+        deviceName = inputDevice == null ? "" : inputDevice.getDeviceInfo().getName();
         ModBase.configs.save();
     }
 

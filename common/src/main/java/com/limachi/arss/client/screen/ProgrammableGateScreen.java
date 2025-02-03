@@ -1,11 +1,14 @@
 package com.limachi.arss.client.screen;
 
 import com.limachi.arss.common.block_entities.ProgrammableGateBlockEntity;
+import com.limachi.arss.utils.client.GUI;
+import com.limachi.arss.utils.math.Rect2d;
 import com.limachi.arss.utils.network.IC2SMsg;
 import com.limachi.arss.utils.annotations.RegisterMsg;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import dev.architectury.networking.NetworkManager;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -54,12 +57,17 @@ public class ProgrammableGateScreen extends Screen {
     }
 
     @Override
+    public void renderBackground(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+        super.renderBackground(gui, mouseX, mouseY, partialTick);
+        GUI.blitBackground(gui, new Rect2d(left, top, GUI_WIDTH, GUI_HEIGHT));
+    }
+
+    @Override
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
         if (Minecraft.getInstance().screen == this)
             renderBackground(gui, mouseX, mouseY, partialTick);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-//        gui.blitNineSliced(GuiUtils.BACKGROUND_TEXTURE, left, top, GUI_WIDTH, GUI_HEIGHT, 8, 256, 256, 0, 0);
         super.render(gui, mouseX, mouseY, partialTick);
         gui.drawString(font, Component.translatable("screen.arss.programmable_gate.title"), left + 8, top + 8, 4210752, false);
         for (int y = 0; y < 16; ++y) {
@@ -136,9 +144,7 @@ public class ProgrammableGateScreen extends Screen {
     }
 
     @Override
-    public boolean isPauseScreen() {
-        return false;
-    }
+    public boolean isPauseScreen() { return false; }
 
     @RegisterMsg
     public record NewLayoutMsg(BlockPos pos, byte[] layout) implements IC2SMsg<NewLayoutMsg> {

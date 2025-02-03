@@ -1,5 +1,5 @@
 0: booster is consumed when removed
 1: gate might be destroyed if the applied booster is destroyed when removed (caused by bug 0)
 5: note block trigger when signal is set to 0 (both in high or low mode) (check vanilla code for changes)
-8: sculk book lore too large
 9: redstone variants don't work as intended (wrong model, loose power like a standard wire)
+10: a bug can occur when a sequencer (diode) item has data on it and is saved in a player inventory (Missing id error)

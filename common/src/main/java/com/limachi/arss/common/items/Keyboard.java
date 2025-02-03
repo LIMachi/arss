@@ -41,12 +41,12 @@ public class Keyboard extends Item implements IItemMixin {
     @StaticInit
     public static void registerComponent() {
         InteractionEvent.CLIENT_LEFT_CLICK_AIR.register((p, h)->{
-            if (p.isCrouching() && p.getItemInHand(h).getItem() instanceof Keyboard)
+            if (p.isShiftKeyDown() && p.getItemInHand(h).getItem() instanceof Keyboard)
                 new ClearKeyboardTargetMsg().sendToServer();
         });
     }
 
-    @Config(min = "2", max = "32", cmt = "how far a keyboard item can transmit redstone signal", reload = true)
+    @Config(min = "2", max = "32", cmt = "how far a keyboard item can transmit redstone signal", reload = true, path = "RemoteKeyboard", name = "MaximumReach")
     public static int KEYBOARD_REACH = 6;
 
     @RegisterItem
@@ -118,7 +118,7 @@ public class Keyboard extends Item implements IItemMixin {
 
     @Override
     public boolean canAttackBlock(BlockState state, Level level, BlockPos pos, Player player) {
-        if (player.isCrouching()) {
+        if (player.isShiftKeyDown()) {
             if (!level.isClientSide) {
                 ItemStack stack = player.getMainHandItem();
                 removeTarget(stack);
@@ -130,7 +130,7 @@ public class Keyboard extends Item implements IItemMixin {
 
     @Override
     public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
-        if (entity instanceof Player player && player.isCrouching()) {
+        if (entity instanceof Player player && player.isShiftKeyDown()) {
             if (!level.isClientSide) {
                 removeTarget(stack);
                 player.displayClientMessage(Component.translatable("display.arss.keyboard_item.clear_link"), true);
@@ -151,7 +151,7 @@ public class Keyboard extends Item implements IItemMixin {
                 KeyboardLectern.replaceLectern(ctx.getLevel(), pos, state, stack.copy());
                 if (!player.isCreative())
                     stack.setCount(0);
-            } else if (player.isCrouching()) {
+            } else if (player.isShiftKeyDown()) {
                 if (validBlock(state) && !matchTargetPos(stack, pos)) {
                     setTarget(stack, pos, state, ctx.getLevel().registryAccess());
                     player.displayClientMessage(Component.translatable("display.arss.keyboard_item.linked_to", state.getBlock().getName()), true);

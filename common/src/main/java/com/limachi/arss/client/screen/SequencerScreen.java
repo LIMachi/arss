@@ -5,10 +5,15 @@ import com.google.common.collect.ImmutableList;
 import com.limachi.arss.common.ArssBlockStateProperties;
 import com.limachi.arss.common.block_entities.SequencerBlockEntity;
 import com.limachi.arss.utils.ModBase;
-
+import com.limachi.arss.utils.annotations.RegisterMsg;
+import com.limachi.arss.utils.client.GUI;
 import com.limachi.arss.utils.data.History;
+import com.limachi.arss.utils.network.IC2SMsg;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
+
+import dev.architectury.networking.NetworkManager;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -22,7 +27,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.RedStoneWireBlock;
 
 import org.joml.Vector4f;
@@ -130,30 +134,30 @@ public class SequencerScreen extends Screen {
         return 0;
     }
 
-//    @RegisterMsg
-//    public record SetLengthMsg(BlockPos pos, int len) implements IRecordMsg {
-//        @Override
-//        public void serverWork(Player player) {
-//            if (player.level().getBlockEntity(pos) instanceof SequencerBlockEntity be)
-//                be.setLength(len);
-//        }
-//    }
+    @RegisterMsg
+    public record SetLengthMsg(BlockPos pos, int len) implements IC2SMsg<SetLengthMsg> {
+        @Override
+        public void run(NetworkManager.PacketContext ctx) {
+            if (ctx.getPlayer().level().getBlockEntity(pos) instanceof SequencerBlockEntity be)
+                be.setLength(len);
+        }
+    }
 
     protected void setLength(int len) {
         if (stillValid()) {
-//            NetworkManager.toServer(new SetLengthMsg(be.getBlockPos(), len));
+            new SetLengthMsg(be.getBlockPos(), len).sendToServer();
             be.setLength(len);
         }
     }
 
-//    @RegisterMsg
-//    public record SetSectionMsg(BlockPos pos, int section, int power) implements IRecordMsg {
-//        @Override
-//        public void serverWork(Player player) {
-//            if (player.level().getBlockEntity(pos) instanceof SequencerBlockEntity be)
-//                be.setTick(section, power);
-//        }
-//    }
+    @RegisterMsg
+    public record SetSectionMsg(BlockPos pos, int section, int power) implements IC2SMsg<SetSectionMsg> {
+        @Override
+        public void run(NetworkManager.PacketContext ctx) {
+            if (ctx.getPlayer().level().getBlockEntity(pos) instanceof SequencerBlockEntity be)
+                be.setTick(section, power);
+        }
+    }
 
     protected void setSection(int section, int power) {
         if (stillValid()) {
@@ -161,7 +165,7 @@ public class SequencerScreen extends Screen {
             if (power != prevPower) {
                 history.write(new Pair<>(section, be.getTicks().get(section)));
                 history.write(new Pair<>(section, power));
-//                NetworkManager.toServer(new SetSectionMsg(be.getBlockPos(), section, power));
+                new SetSectionMsg(be.getBlockPos(), section, power).sendToServer();
                 be.setTick(section, power);
             }
         }
@@ -174,27 +178,25 @@ public class SequencerScreen extends Screen {
                 int section = page.getFirst();
                 int power = page.getSecond();
                 if (section >= 0 && section < be.getTicks().size() && power >= 0 && power <= 15 && be.getTicks().get(section) != power) {
-//                    NetworkManager.toServer(new SetSectionMsg(be.getBlockPos(), section, power));
+                    new SetSectionMsg(be.getBlockPos(), section, power).sendToServer();
                     be.setTick(section, power);
                 }
             }
         }
     }
 
-//    @RegisterMsg
-//    public record SetHeadMsg(BlockPos pos, int at) implements IRecordMsg {
-//        @Override
-//        public void serverWork(Player player) {
-//            if (player.level().getBlockEntity(pos) instanceof SequencerBlockEntity be)
-//                be.setHead(at);
-//        }
-//    }
+    @RegisterMsg
+    public record SetHeadMsg(BlockPos pos, int at) implements IC2SMsg<SetHeadMsg> {
+        @Override
+        public void run(NetworkManager.PacketContext ctx) {
+            if (ctx.getPlayer().level().getBlockEntity(pos) instanceof SequencerBlockEntity be)
+                be.setHead(at);
+        }
+    }
 
     protected void setHead(int at) {
-        if (stillValid()
-        //&& !be.isPlaying() && !be.isRecording()
-        ) {
-//            NetworkManager.toServer(new SetHeadMsg(be.getBlockPos(), at));
+        if (stillValid() && !be.isPlaying() && !be.isRecording()) {
+            new SetHeadMsg(be.getBlockPos(), at).sendToServer();
             be.setHead(at);
         }
     }
@@ -202,7 +204,7 @@ public class SequencerScreen extends Screen {
     private final boolean boosted;
 
     public static void client_open(SequencerBlockEntity be) {
-//        if (EffectiveSide.get().isClient())
+        if (Minecraft.getInstance().isSameThread())
             Minecraft.getInstance().setScreen(new SequencerScreen(be));
     }
 
@@ -416,21 +418,19 @@ public class SequencerScreen extends Screen {
     }
 
     @Override
-    public boolean charTyped(char letter, int modifiers) {
-        return super.charTyped(letter, modifiers);
-    }
+    public boolean charTyped(char letter, int modifiers) { return super.charTyped(letter, modifiers); }
 
-//    @RegisterMsg
-//    public record ChangeMappingMsg(BlockPos pos, String key, String value) implements IRecordMsg {
-//        @Override
-//        public void serverWork(Player player) {
-//            if (player.level().getBlockEntity(pos) instanceof SequencerBlockEntity be && (key.equals("record") || key.equals("start") || key.equals("finish"))) {
-//                HashMap<String, String> map = be.getMappings();
-//                map.put(key, value);
-//                be.setChanged();
-//            }
-//        }
-//    }
+    @RegisterMsg
+    public record ChangeMappingMsg(BlockPos pos, String key, String value) implements IC2SMsg<ChangeMappingMsg> {
+        @Override
+        public void run(NetworkManager.PacketContext ctx) {
+            if (ctx.getPlayer().level().getBlockEntity(pos) instanceof SequencerBlockEntity be && (key.equals("record") || key.equals("start") || key.equals("finish"))) {
+                HashMap<String, String> map = be.getMappings();
+                map.put(key, value);
+                be.setChanged();
+            }
+        }
+    }
 
     @Override
     protected void init() {
@@ -442,7 +442,7 @@ public class SequencerScreen extends Screen {
             addRenderableWidget(CycleButton.builder(t -> Component.translatable("screen.arss.sequencer.input_side." + t)).withValues(ImmutableList.of("back", "right", "left", "disabled")).withInitialValue(be.getMappings().get("record")).create(left + 10, top + IMAGE_HEIGHT - 45, SCREEN_WIDTH - 20, 16, Component.translatable("screen.arss.sequencer.input_mapping.record_pass_through"), (b, v) -> {
                 if (stillValid()) {
                     be.getMappings().put("record", (String)v);
-//                    NetworkManager.toServer(new ChangeMappingMsg(be.getBlockPos(), "record", (String)v));
+                    new ChangeMappingMsg(be.getBlockPos(), "record", (String)v);
                 }
                 b.setFocused(false);
                 setFocused(null);
@@ -450,7 +450,7 @@ public class SequencerScreen extends Screen {
             addRenderableWidget(CycleButton.builder(t -> Component.translatable("screen.arss.sequencer.input_side." + t)).withValues(ImmutableList.of("back", "right", "left", "disabled")).withInitialValue(be.getMappings().get("start")).create(left + 10, top + IMAGE_HEIGHT - 25, (SCREEN_WIDTH - 24) / 2, 16, Component.translatable("screen.arss.sequencer.input_mapping.start"), (b, v) -> {
                 if (stillValid()) {
                     be.getMappings().put("start", (String)v);
-//                    NetworkManager.toServer(new ChangeMappingMsg(be.getBlockPos(), "start", (String)v));
+                    new ChangeMappingMsg(be.getBlockPos(), "start", (String)v);
                 }
                 b.setFocused(false);
                 setFocused(null);
@@ -458,7 +458,7 @@ public class SequencerScreen extends Screen {
             addRenderableWidget(CycleButton.builder(t -> Component.translatable("screen.arss.sequencer.input_side." + t)).withValues(ImmutableList.of("back", "right", "left", "disabled")).withInitialValue(be.getMappings().get("finish")).create(left + SCREEN_WIDTH - (SCREEN_WIDTH - 24) / 2 - 12, top + IMAGE_HEIGHT - 25, (SCREEN_WIDTH - 20) / 2, 16, Component.translatable("screen.arss.sequencer.input_mapping.finish"), (b, v) -> {
                 if (stillValid()) {
                     be.getMappings().put("finish", (String)v);
-//                    NetworkManager.toServer(new ChangeMappingMsg(be.getBlockPos(), "finish", (String)v));
+                    new ChangeMappingMsg(be.getBlockPos(), "finish", (String)v);
                 }
                 b.setFocused(false);
                 setFocused(null);
@@ -473,13 +473,14 @@ public class SequencerScreen extends Screen {
         int sx = (int)Math.round(x - SEQUENCER_WIDGET_X_OFFSET - left);
         int sy = (int)Math.round(y - SEQUENCER_WIDGET_Y_OFFSET - top);
         if (sx >= 0 && sx < SEQUENCER_WIDGET_SIZE_X && sy >= 0 && sy < SEQUENCER_WIDGET_SIZE_Y) {
-//            clickTick = ClientEvents.tick;
+            clickTick = tick;
             return true;
         }
         int mouseX = (int)Math.round(x - left);
         int mouseY = (int)Math.round(y - top);
         if (mouseX >= 172 && mouseX < 189 && mouseY >= 4 && mouseY < 20) {
-//            Minecraft.getInstance().pushGuiLayer(new SequencerHelpScreen(this));
+            if (minecraft != null)
+                minecraft.setScreen(new SequencerHelpScreen(this));
             return true;
         }
         return super.mouseClicked(x, y, button);
@@ -494,16 +495,16 @@ public class SequencerScreen extends Screen {
             int row = 15 - (sy / 3);
             switch (button) {
                 case GLFW.GLFW_MOUSE_BUTTON_1 -> {
-//                    if (ClientEvents.tick - clickTick < 3) {
-//                        int power = power();
-//                        if (Screen.hasShiftDown())
-//                            selection = head();
-//                        else
-//                            selection = -1;
-//                        setHead(column);
-//                        if (Screen.hasControlDown())
-//                            setSection(head(), power);
-//                    }
+                    if (tick - clickTick < 3) {
+                        int power = power();
+                        if (Screen.hasShiftDown())
+                            selection = head();
+                        else
+                            selection = -1;
+                        setHead(column);
+                        if (Screen.hasControlDown())
+                            setSection(head(), power);
+                    }
                 }
                 case GLFW.GLFW_MOUSE_BUTTON_2 -> {
                     setSection(column, row);
@@ -605,8 +606,8 @@ public class SequencerScreen extends Screen {
             if (j < sections.size()) {
                 int lp = sections.get(j);
                 int offset = j == 0 || j == sections.size() - 1 || sections.get(j - 1) != lp || sections.get(j + 1) != lp ? NODE_Y_OFFSET : LINE_Y_OFFSET;
-//                Vector4f color = RenderUtils.expandColor(RedStoneWireBlock.getColorForPower(lp), false);
-//                RenderSystem.setShaderColor(color.x, color.y, color.z, 1);
+                Vector4f color = GUI.expandColor(RedStoneWireBlock.getColorForPower(lp), false);
+                RenderSystem.setShaderColor(color.x, color.y, color.z, 1);
                 gui.blit(BACKGROUND, left + SEQUENCER_WIDGET_X_OFFSET + i * 3, top + SEQUENCER_WIDGET_Y_OFFSET + 48 - lp * 3 - 3, SCREEN_WIDTH, offset, 3, 3, IMAGE_WIDTH, IMAGE_HEIGHT);
                 RenderSystem.setShaderColor(1, 1, 1, 1);
                 if (head == i + section_offset)
@@ -645,23 +646,36 @@ public class SequencerScreen extends Screen {
             gui.drawString(font, Component.translatable("screen.arss.sequencer.cursor_power", row), (left + 25 + SEQUENCER_WIDGET_SIZE_X / 2), (top + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y + 32), 0xFFFF00);
         }
         if (mouseX >= 172 && mouseX < 189 && mouseY >= 4 && mouseY < 20) {
-//            gui.renderTooltip(font, Collections.singletonList(Component.translatable("screen.arss.sequencer.show_help")), Optional.empty(), ItemStack.EMPTY, mouseX + left, mouseY + top);
+            gui.renderTooltip(font, Collections.singletonList(Component.translatable("screen.arss.sequencer.show_help")), Optional.empty(), mouseX + left, mouseY + top);
         }
+    }
+
+    protected float apt = 0f;
+    protected int tick = 0;
+
+    @Override
+    public void renderBackground(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+        if (Minecraft.getInstance().screen == this)
+            super.renderBackground(gui, mouseX, mouseY, partialTick);
+        gui.blit(BACKGROUND, left, top, 0, 0, SCREEN_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_HEIGHT);
     }
 
     @Override
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        if (Minecraft.getInstance().screen == this)
-            renderBackground(gui, mouseX, mouseY, partialTick);
+        apt += partialTick;
+        while (apt > 1f) {
+            apt -= 1f;
+            ++tick;
+        }
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        gui.blit(BACKGROUND, left, top, 0, 0, SCREEN_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_HEIGHT);
         super.render(gui, mouseX, mouseY, partialTick);
         renderSections(gui, mouseX, mouseY);
     }
 
     public void resyncServer() {
 //        if (be != null)
+//            new SequencerBlockEntity.SyncManually(be.getBlockPos(), be.saveSyncData(new CompoundTag()))
 //            NetworkManager.toServer(new SequencerBlockEntity.SyncManually(be.getBlockPos(), be.saveSyncData(new CompoundTag())));
     }
 

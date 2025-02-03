@@ -44,7 +44,7 @@ public @interface Config {
     /**
      * set to override the default path (the path is the package + class name that contains the field by default)
      */
-    String path() default "";
+    String path() default "<auto>";
 
     /**
      * set to override the default name (by default uses the name of the field)

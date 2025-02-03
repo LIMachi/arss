@@ -2,16 +2,25 @@ package com.limachi.arss.common.block_entities;
 
 import com.limachi.arss.Arss;
 
+import com.limachi.arss.client.screen.SequencerScreen;
 import com.limachi.arss.common.ArssBlockStateProperties;
 import com.limachi.arss.common.blocks.diodes.DiodeBlockFactory;
 import com.limachi.arss.utils.Stage;
 import com.limachi.arss.utils.annotations.Config;
+import com.limachi.arss.utils.annotations.RegisterMsg;
 import com.limachi.arss.utils.annotations.StaticInit;
+import com.limachi.arss.utils.network.IC2SMsg;
+import com.limachi.arss.utils.network.IS2CMsg;
 import com.mojang.datafixers.util.Pair;
 
+import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.registries.RegistrySupplier;
+import dev.architectury.utils.Env;
+import dev.architectury.utils.EnvExecutor;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
@@ -21,6 +30,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -41,7 +51,7 @@ public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
         TYPE = Arss.registries.blockEntity("sequencer", SequencerBlockEntity::new, DiodeBlockFactory.getBlockRegister("sequencer"));
     }
 
-    @Config(min = "60", max = "30000", cmt = "Number of redstone ticks that can be stored in sequencer memory (the default is 600, aka 1 minute).")
+    @Config(min = "60", max = "30000", cmt = "Number of redstone ticks that can be stored in sequencer memory (the default is 600, aka 1 minute).", path = "Sequencer", name = "MaximumSequenceLength")
     public static int MAXIMUM_TICK_COUNT = 600;
     public static final int MAXIMUM_SUB_SECTION_COUNT = 14; //1-15
     private final ArrayList<Integer> ticks = Util.make(new ArrayList<>(MAXIMUM_TICK_COUNT), l->{for (int i = 0; i < MAXIMUM_TICK_COUNT; ++i) l.add(0); });
@@ -76,39 +86,39 @@ public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
 
     public ArrayList<Integer> getLimits() { return limits; }
 
-//    @RegisterMsg
-//    public record TogglePlay(BlockPos pos) implements IRecordMsg {
-//        @Override
-//        public void serverWork(Player player) {
-//            if (player.level().getBlockEntity(pos) instanceof SequencerBlockEntity be) {
-//                be.preview = !be.preview;
-//                if (!be.preview && be.playing)
-//                    be.playing = false;
-//                Pair<Integer, Integer> range = be.getRangeLimit(be.prevStart, be.prevFinish);
-//                if (be.preview && be.getBlockState().getValue(ArssBlockStateProperties.SEQUENCER_MODE) != ArssBlockStateProperties.SequencerMode.PLAY_LOOP && be.head + 1 >= range.getSecond()) {
-//                    be.head = range.getFirst();
-//                }
-//                be.setChanged();
-//            }
-//        }
-//    }
-
-    public void toggleTestPlay() {
-//        NetworkManager.toServer(new TogglePlay(worldPosition));
+    @RegisterMsg
+    public record TogglePlay(BlockPos pos) implements IC2SMsg<TogglePlay> {
+        @Override
+        public void run(NetworkManager.PacketContext ctx) {
+            if (ctx.getPlayer().level().getBlockEntity(pos) instanceof SequencerBlockEntity be) {
+                be.preview = !be.preview;
+                if (!be.preview && be.playing)
+                    be.playing = false;
+                Pair<Integer, Integer> range = be.getRangeLimit(be.prevStart, be.prevFinish);
+                if (be.preview && be.getBlockState().getValue(ArssBlockStateProperties.SEQUENCER_MODE) != ArssBlockStateProperties.SequencerMode.PLAY_LOOP && be.head + 1 >= range.getSecond()) {
+                    be.head = range.getFirst();
+                }
+                be.setChanged();
+            }
+        }
     }
 
-//    @RegisterMsg
-//    public record ToggleLimit(BlockPos pos, int tick, int approximation) implements IRecordMsg {
-//        @Override
-//        public void serverWork(Player player) {
-//            if (player.level().getBlockEntity(pos) instanceof SequencerBlockEntity be)
-//                be.toggleLimit(tick, approximation);
-//        }
-//    }
+    public void toggleTestPlay() {
+        new TogglePlay(worldPosition).sendToServer();
+    }
+
+    @RegisterMsg
+    public record ToggleLimit(BlockPos pos, int tick, int approximation) implements IC2SMsg<ToggleLimit> {
+        @Override
+        public void run(NetworkManager.PacketContext ctx) {
+            if (ctx.getPlayer().level().getBlockEntity(pos) instanceof SequencerBlockEntity be)
+                be.toggleLimit(tick, approximation);
+        }
+    }
 
     public void toggleLimit(int tick, int approximation) {
-//        if (level != null && level.isClientSide())
-//            NetworkManager.toServer(new ToggleLimit(worldPosition, tick, approximation));
+        if (level != null && level.isClientSide())
+            new ToggleLimit(worldPosition, tick, approximation).sendToServer();
         int f = limits.indexOf(tick);
         if (f == -1 && approximation > 0)
             for (int a = 1; a <= approximation; ++a) {
@@ -181,10 +191,7 @@ public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
 
     public void startEditing(Player player) {
         editing.add(player);
-//        DistExecutor.unsafeCallWhenOn(Dist.CLIENT, ()->()->{
-//            SequencerScreen.client_open(this);
-//            return null;
-//        });
+        EnvExecutor.runInEnv(Env.CLIENT, ()->()->SequencerScreen.client_open(this));
     }
 
     public int readPower() { return head >= 0 && head < length ? ticks.get(head) : 0; }
@@ -227,7 +234,8 @@ public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
             playing = false;
             if (startLimit != prevStart || finishLimit != prevFinish)
                 preview = false;
-            isChanged = true;
+            if (prevPlaying)
+                isChanged = true;
         }
         playing |= preview || edge;
         boolean startedPlaying = !preview && ((!prevPlaying && playing) || edge);
@@ -292,7 +300,7 @@ public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
             if (level instanceof ServerLevel serverLevel) {
                 if (getBlockState().getValue(BlockStateProperties.POWER) != output)
                     serverLevel.setBlockAndUpdate(worldPosition, getBlockState().setValue(BlockStateProperties.POWER, output));
-//                NetworkManager.toClients(Arss.MOD_ID, new SyncManually(worldPosition, saveSyncData(new CompoundTag()))); //should sync only to interested clients
+                new SyncManually(worldPosition, saveSyncData(new CompoundTag())).sendToClients(); //should sync only to interested clients
             }
             isChanged = false;
         }
@@ -340,14 +348,14 @@ public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
 
     public SequencerBlockEntity(BlockPos pos, BlockState state) { super(TYPE.get(), pos, state); }
 
-//    @RegisterMsg
-//    public record SyncManually(BlockPos pos, CompoundTag serialized) implements IRecordMsg {
-//        @Override
-//        public void clientWork(Player player) {
-//            if (player.level().getBlockEntity(pos) instanceof SequencerBlockEntity be)
-//                be.loadSyncData(serialized);
-//        }
-//    }
+    @RegisterMsg
+    public record SyncManually(BlockPos pos, CompoundTag serialized) implements IS2CMsg<SyncManually> {
+        @Override
+        public void run(NetworkManager.PacketContext ctx) {
+            if (ctx.getPlayer().level().getBlockEntity(pos) instanceof SequencerBlockEntity be)
+                be.loadSyncData(serialized);
+        }
+    }
 
     public CompoundTag memoryItemData(CompoundTag tag) {
         tag.putInt("Head", head);
@@ -412,27 +420,27 @@ public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
+    public Packet<ClientGamePacketListener> getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        return saveWithoutMetadata(provider);
     }
 
-//    @Override
-//    public CompoundTag getUpdateTag() { return saveWithoutMetadata(); }
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
+        saveSyncData(tag);
+    }
 
-//    @Override
-//    protected void saveAdditional(CompoundTag tag) {
-//        super.saveAdditional(tag);
-//        saveSyncData(tag);
-//    }
-//
-//    @Override
-//    public void load(CompoundTag tag) {
-//        super.load(tag);
-//        loadSyncData(tag);
-//    }
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.loadAdditional(tag, provider);
+        loadSyncData(tag);
+    }
 
     protected CompoundTag dropWithMode() {
-        CompoundTag out = saveSyncData(new CompoundTag());
+        CompoundTag out = saveSyncData(level != null ? saveWithId(level.registryAccess()) : new CompoundTag());
         out.putInt("Mode", getBlockState().getValue(ArssBlockStateProperties.SEQUENCER_MODE).ordinal());
         return out;
     }
@@ -443,8 +451,8 @@ public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
         if (empty && player.isCreative())
             return Collections.emptyList();
         ItemStack stack = state.getBlock().getCloneItemStack(level, pos, state);
-//        if (!isDefault())
-//            stack.getOrCreateTag().put("BlockEntityTag", dropWithMode());
+        if (!isDefault())
+            stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(dropWithMode()));
         return Collections.singletonList(stack);
     }
 }

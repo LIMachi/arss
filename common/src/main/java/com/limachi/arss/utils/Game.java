@@ -15,22 +15,15 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public class Game {
-    public static MinecraftServer getServer() {
-        return GameInstance.getServer();
-    }
+
+    public static MinecraftServer getServer() { return GameInstance.getServer(); }
 
     @Environment(EnvType.CLIENT)
-    public static Minecraft getClient() {
-        return GameInstance.getClient();
-    }
+    public static Minecraft getClient() { return GameInstance.getClient(); }
 
-    public static boolean isPhysicalServer() {
-        return Platform.getEnvironment() == Env.SERVER;
-    }
+    public static boolean isPhysicalServer() { return Platform.getEnvironment() == Env.SERVER; }
 
-    public static boolean isPhysicalClient() {
-        return Platform.getEnvironment() == Env.CLIENT;
-    }
+    public static boolean isPhysicalClient() { return Platform.getEnvironment() == Env.CLIENT; }
 
     public static boolean isLogicalServer() {
         MinecraftServer server = getServer();
@@ -42,6 +35,21 @@ public class Game {
             Minecraft client = getClient();
             return client != null && client.isSameThread();
         }).orElse(false);
+    }
+
+    public static boolean isForgeLike() { return Platform.isForgeLike(); }
+
+    public static boolean isFabricLike() { return Platform.isFabric(); }
+
+    public static void safeRunner(Supplier<Boolean> condition, Supplier<Runnable> run) {
+        if (condition.get())
+            run.get().run();
+    }
+
+    public static <T> T safeGetter(Supplier<Boolean> condition, Supplier<Supplier<T>> run, Supplier<T> def) {
+        if (condition.get())
+            return run.get().get();
+        return def.get();
     }
 
     public static void runPhysical(Env side, Supplier<Runnable> run) {
@@ -70,12 +78,13 @@ public class Game {
     }
 
     public static void runLogical(Supplier<Runnable> client, Supplier<Runnable> server) {
-        if (isLogicalServer())
+        if (server != null && isLogicalServer())
             server.get().run();
-        EnvExecutor.runInEnv(Env.CLIENT, ()->()->{
-            if (getClient() instanceof Minecraft mc && mc.isSameThread())
-                client.get().run();
-        });
+        if (client != null)
+            EnvExecutor.runInEnv(Env.CLIENT, ()->()->{
+                if (getClient() instanceof Minecraft mc && mc.isSameThread())
+                    client.get().run();
+            });
     }
 
     public static <T> T getLogical(Supplier<Supplier<T>> client, Supplier<Supplier<T>> server, Supplier<T> def) {
@@ -86,5 +95,20 @@ public class Game {
                 return client.get().get();
             return null;
         }).orElseGet(def);
+    }
+
+    public static void runModLoader(Supplier<Runnable> forgeLike, Supplier<Runnable> fabricLike) {
+        if (isForgeLike())
+            forgeLike.get().run();
+        if (isFabricLike())
+            fabricLike.get().run();
+    }
+
+    public static <T> T getModLoader(Supplier<Supplier<T>> forgeLike, Supplier<Supplier<T>> fabricLike, Supplier<T> def) {
+        if (isForgeLike())
+            return forgeLike.get().get();
+        if (isFabricLike())
+            return fabricLike.get().get();
+        return def.get();
     }
 }

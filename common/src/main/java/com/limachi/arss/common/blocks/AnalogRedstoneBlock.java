@@ -2,6 +2,7 @@ package com.limachi.arss.common.blocks;
 
 import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.common.ArssBlockBehaviors;
+import com.limachi.arss.utils.IAcceptCrouchInteractWithItem;
 import com.limachi.arss.utils.client.annotations.FabricLayer;
 import com.limachi.arss.utils.client.annotations.HasRedstoneTint;
 import com.limachi.arss.utils.annotations.RegisterBlock;
@@ -30,7 +31,7 @@ import java.util.List;
 import static com.limachi.arss.common.ArssBlockStateProperties.HIDE_DOT;
 
 @SuppressWarnings({"unused", "deprecation"})
-public class AnalogRedstoneBlock extends PoweredBlock implements IScrollBlockPowerOutput {
+public class AnalogRedstoneBlock extends PoweredBlock implements IScrollBlockPowerOutput, IAcceptCrouchInteractWithItem {
 
     @HasRedstoneTint
     @FabricLayer("cutout")
@@ -66,5 +67,10 @@ public class AnalogRedstoneBlock extends PoweredBlock implements IScrollBlockPow
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         return ArssBlockBehaviors.useItemOn(stack, state, level, pos, player, hand, hit, ArssBlockBehaviors::useItemOnScrollableBlockPowerToLock, ArssBlockBehaviors::useItemOnRedstoneDotBlock, super::useItemOn);
+    }
+
+    @Override
+    public boolean overrideCrouchInteraction(ItemStack stack, Player player, BlockState state, BlockPos pos) {
+        return ArssBlockBehaviors.isWrench(stack);
     }
 }

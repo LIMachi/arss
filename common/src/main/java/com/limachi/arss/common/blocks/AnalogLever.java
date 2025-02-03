@@ -2,6 +2,7 @@ package com.limachi.arss.common.blocks;
 
 import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.common.ArssBlockBehaviors;
+import com.limachi.arss.utils.IAcceptCrouchInteractWithItem;
 import com.limachi.arss.utils.annotations.RegisterBlock;
 import com.limachi.arss.utils.annotations.RegisterBlockItem;
 import com.limachi.arss.utils.client.annotations.FabricLayer;
@@ -29,7 +30,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class AnalogLever extends LeverBlock implements IScrollBlockPowerOutput {
+public class AnalogLever extends LeverBlock implements IScrollBlockPowerOutput, IAcceptCrouchInteractWithItem {
 
     @HasRedstoneTint
     @FabricLayer("cutout")
@@ -70,5 +71,10 @@ public class AnalogLever extends LeverBlock implements IScrollBlockPowerOutput {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         return ArssBlockBehaviors.useItemOn(stack, state, level, pos, player, hand, hit, ArssBlockBehaviors::useItemOnScrollableBlockPowerToLock, super::useItemOn);
+    }
+
+    @Override
+    public boolean overrideCrouchInteraction(ItemStack stack, Player player, BlockState state, BlockPos pos) {
+        return ArssBlockBehaviors.isWrench(stack);
     }
 }

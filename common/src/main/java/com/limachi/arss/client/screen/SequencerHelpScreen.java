@@ -1,15 +1,14 @@
 package com.limachi.arss.client.screen;
 
 import com.limachi.arss.utils.ModBase;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.limachi.arss.utils.client.BlockingPopupScreen;
 
+import com.limachi.arss.utils.math.Size2d;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -19,7 +18,7 @@ import java.util.List;
 
 
 @Environment(EnvType.CLIENT)
-public class SequencerHelpScreen extends Screen {
+public class SequencerHelpScreen extends BlockingPopupScreen {
     public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(ModBase.registries.mod_id, "textures/screen/sequencer_help_screen.png");
     public static final int WIDTH  = 350;
     public static final int HEIGHT = 200;
@@ -32,15 +31,11 @@ public class SequencerHelpScreen extends Screen {
     public static final int TEXT_WIDTH = 197;
     public static final int TEXT_HEIGHT = 188;
     public static final int TEXT_BORDER = 2;
-
-    protected final SequencerScreen parent;
+    public SequencerScreen parent;
     public SequencerHelpScreen(SequencerScreen parent) {
-        super(Component.empty());
+        super(Component.empty(), parent, new Size2d(WIDTH, HEIGHT));
         this.parent = parent;
     }
-
-    protected int top = 0;
-    protected int left = 0;
     final Button[] buttons = new Button[7];
 
     public static int parseIntOrDefault(String toParse, int onFail) {
@@ -54,9 +49,6 @@ public class SequencerHelpScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        left = (width - WIDTH) / 2;
-        top = (height - HEIGHT) / 2;
-        clearWidgets();
         if (parent.stillValid()) {
             int bq = Mth.clamp(parseIntOrDefault(Component.translatable("screen.arss.sequencer_help.chapter_count_between_2_and_7").getString(), 2), 2, 7);
             int h = (TEXT_HEIGHT - (bq - 1) * BUTTON_SPACING) / bq;
@@ -75,22 +67,21 @@ public class SequencerHelpScreen extends Screen {
         }
     }
 
-    public int lines() {
-        return (TEXT_HEIGHT - TEXT_BORDER * 2) / font.lineHeight;
+    public int lines() { return (TEXT_HEIGHT - TEXT_BORDER * 2) / font.lineHeight; }
+
+    @Override
+    public void background(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+        gui.blit(BACKGROUND, left, top, 0, 0, WIDTH, HEIGHT, WIDTH, HEIGHT);
     }
 
     @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        renderBackground(gui, mouseX, mouseY, partialTick);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        gui.blit(BACKGROUND, left, top, 0, 0, WIDTH, HEIGHT, WIDTH, HEIGHT);
+    public void foreground(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+        super.foreground(gui, mouseX, mouseY, partialTick);
         List<FormattedCharSequence> lines = font.split(Component.translatable("screen.arss.sequencer_help.chapter." + parent.helpChapter), TEXT_WIDTH - TEXT_BORDER * 2);
         int scroll = parent.helpScroll[parent.helpChapter];
         int l = lines();
         for (int i = 0; i + scroll < lines.size() && i < l; ++i)
             gui.drawString(font, lines.get(i + scroll), left + TEXT_X + TEXT_BORDER, top + TEXT_Y + TEXT_BORDER + font.lineHeight * i, -1, false);
-        super.render(gui, mouseX, mouseY, partialTick);
     }
 
     @Override
@@ -117,10 +108,8 @@ public class SequencerHelpScreen extends Screen {
 
     @Override
     public void tick() {
+        super.tick();
         if (!parent.stillValid())
             onClose();
     }
-
-    @Override
-    public boolean isPauseScreen() { return false; }
 }

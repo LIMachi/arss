@@ -1,21 +1,36 @@
 package com.limachi.arss.common.items;
 
 import com.limachi.arss.client.ClientDef;
+import com.limachi.arss.common.ArssItemStackComponents;
+import com.limachi.arss.common.block_entities.SequencerBlockEntity;
+import com.limachi.arss.common.blocks.AnalogJukebox;
+import com.limachi.arss.utils.Game;
 import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.annotations.RegisterItem;
+
 import dev.architectury.registry.registries.RegistrySupplier;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.JukeboxBlock;
 
 import java.util.List;
 
-public class SequencerMemoryDisc extends /*RecordItem*/Item {
+public class SequencerMemoryDisc extends Item {
 
     public static final ResourceLocation SOUND_LOCATION = ResourceLocation.fromNamespaceAndPath(ModBase.registries.mod_id, "static_10min");
     public static final SoundEvent SOUND = SoundEvent.createVariableRangeEvent(SOUND_LOCATION);
@@ -31,103 +46,56 @@ public class SequencerMemoryDisc extends /*RecordItem*/Item {
         ClientDef.commonHoverText("sequencer_record", components);
     }
 
-//    @Override
-//    public int getAnalogOutput() {
-//        if (World.overworld() instanceof ServerLevel level)
-//            return level.getRandom().nextInt(15);
-//        return 0;
-//    }
-
-//    @Override
-//    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
-//        if (context.getLevel().getBlockEntity(context.getClickedPos()) instanceof SequencerBlockEntity be) {
-//            if (context.getPlayer() instanceof ServerPlayer player) {
-//                if (!player.isShiftKeyDown())
-//                    be.memoryItemData(stack.getOrCreateTag());
-//                else {
-//                    be.loadMemoryItem(stack.getOrCreateTag());
-//                    be.setChanged();
-//                }
-//            }
-//            return InteractionResult.SUCCESS;
-//        }
-//        Block block = context.getLevel().getBlockState(context.getClickedPos()).getBlock();
-//        if (block instanceof JukeboxBlock || block instanceof AnalogJukeboxBlock)
-//            return InteractionResult.PASS;
-//        if (context.getPlayer() != null)
-//            return use(context.getLevel(), context.getPlayer(), context.getHand()).getResult();
-//        return InteractionResult.PASS;
-//    }
-
-    public static boolean validTagData(CompoundTag tag) {
-        return tag.contains("Ticks", Tag.TAG_BYTE_ARRAY) && tag.contains("Length", Tag.TAG_INT) && tag.contains("Head", Tag.TAG_INT) && tag.contains("Limits", Tag.TAG_INT_ARRAY);
+    @Override
+    public boolean isFoil(ItemStack stack) {
+        return stack.getItem() instanceof SequencerMemoryDisc && stack.has(ArssItemStackComponents.SEQUENCER_DATA.get());
     }
 
-//    @Override
-//    public boolean isFoil(ItemStack stack) {
-//        if (stack.getItem() instanceof SequencerMemoryItem && stack.getTag() != null)
-//            return validTagData(stack.getTag());
-//        return super.isFoil(stack);
-//    }
+    public static void loadFromString(ItemStack stack, String base64) {
+        var data = ArssItemStackComponents.SequencerData.fromBase64(base64);
+        if (data != null)
+            stack.set(ArssItemStackComponents.SEQUENCER_DATA.get(), data);
+    }
 
-//    public static void loadFromString(ItemStack stack, String ser) {
-//        CompoundTag tag = new CompoundTag();
-//        ByteBuffer bb;
-//        try {
-//            bb = ByteBuffer.wrap(Base64.getDecoder().decode(ser));
-//        } catch (IllegalArgumentException ignore) {
-//            return;
-//        }
-//        try {
-//            int al = bb.array().length - 5;
-//            if (al <= 0) return;
-//            tag.putInt("Length", bb.getShort());
-//            tag.putInt("Head", bb.getShort());
-//            int ll = bb.get();
-//            al -= ll * 2;
-//            if (al <= 0) return;
-//            int[] limits = new int[ll];
-//            for (int i = 0; i < ll; ++i)
-//                limits[i] = bb.getShort();
-//            tag.putIntArray("Limits", limits);
-//            byte[] ticks = new byte[al];
-//            bb.get(ticks);
-//            tag.putByteArray("Ticks", ticks);
-//            stack.setTag(tag);
-//        } catch (BufferUnderflowException ignore) {
-//            return;
-//        }
-//    }
-//
-//    public static String saveToString(ItemStack stack) {
-//        if (stack.getTag() != null && validTagData(stack.getTag())) {
-//            CompoundTag tag = stack.getTag();
-//            byte[] ticksRLE = tag.getByteArray("Ticks");
-//            int[] limits = tag.getIntArray("Limits");
-//            ByteBuffer tmp = ByteBuffer.allocate(5 + ticksRLE.length + limits.length * 2);
-//            tmp.putShort((short)tag.getInt("Length"));
-//            tmp.putShort((short)tag.getInt("Head"));
-//            tmp.put((byte)limits.length);
-//            for (int l : limits)
-//                tmp.putShort((short)l);
-//            tmp.put(ticksRLE);
-//            return Base64.getEncoder().encodeToString(tmp.array());
-//        }
-//        return "";
-//    }
-//
-//    @Override
-//    @Nonnull
-//    public InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player, @Nonnull InteractionHand hand) {
-//        ItemStack stack = player.getItemInHand(hand);
-//        if (stack.getItem() instanceof SequencerMemoryItem)
-//            Sides.logicalSideRun(()->()->{
-//                if (player.isShiftKeyDown())
-//                    loadFromString(stack, Minecraft.getInstance().keyboardHandler.getClipboard());
-//                else if (stack.getTag() != null)
-//                    Minecraft.getInstance().keyboardHandler.setClipboard(saveToString(stack));
-//                return null;
-//            }, null);
-//        return InteractionResultHolder.success(stack);
-//    }
+    public static String saveToString(ItemStack stack) {
+        var data = stack.get(ArssItemStackComponents.SEQUENCER_DATA.get());
+        if (data == null)
+            return "";
+        return data.toBase64();
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (stack.getItem() instanceof SequencerMemoryDisc)
+            Game.runLogical(()->()->{
+                if (player.isShiftKeyDown())
+                    loadFromString(stack, Minecraft.getInstance().keyboardHandler.getClipboard());
+                else if (stack.has(ArssItemStackComponents.SEQUENCER_DATA.get()))
+                    Minecraft.getInstance().keyboardHandler.setClipboard(saveToString(stack));
+            }, null);
+        return InteractionResultHolder.success(stack);
+    }
+
+    @Override
+    public InteractionResult useOn(UseOnContext ctx) {
+        if (ctx.getLevel().getBlockEntity(ctx.getClickedPos()) instanceof SequencerBlockEntity be) {
+            ItemStack stack = ctx.getItemInHand();
+            if (ctx.getPlayer() instanceof ServerPlayer player) {
+                if (!player.isShiftKeyDown())
+                    stack.set(ArssItemStackComponents.SEQUENCER_DATA.get(), ArssItemStackComponents.SequencerData.fromCompoundTag(be.memoryItemData(new CompoundTag())));
+                else if (stack.has(ArssItemStackComponents.SEQUENCER_DATA.get())) {
+                    be.loadMemoryItem(stack.get(ArssItemStackComponents.SEQUENCER_DATA.get()).toCompoundTag(new CompoundTag()));
+                    be.setChanged();
+                }
+            }
+            return InteractionResult.SUCCESS;
+        }
+        Block block = ctx.getLevel().getBlockState(ctx.getClickedPos()).getBlock();
+        if (block instanceof JukeboxBlock || block instanceof AnalogJukebox)
+            return InteractionResult.PASS;
+        if (ctx.getPlayer() != null)
+            return use(ctx.getLevel(), ctx.getPlayer(), ctx.getHand()).getResult();
+        return InteractionResult.PASS;
+    }
 }

@@ -60,7 +60,7 @@ public class RedstoneBooster extends Item {
 
     @Override
     public boolean canAttackBlock(BlockState state, Level level, BlockPos pos, Player player) {
-        if (player.isCrouching() && state.hasProperty(ArssBlockStateProperties.BOOSTED) && state.getValue(ArssBlockStateProperties.BOOSTED)) {
+        if (player.isShiftKeyDown() && state.hasProperty(ArssBlockStateProperties.BOOSTED) && state.getValue(ArssBlockStateProperties.BOOSTED)) {
             level.setBlockAndUpdate(pos, state.setValue(ArssBlockStateProperties.BOOSTED, false));
             if (player instanceof ServerPlayer serverPlayer && level instanceof ServerLevel serverLevel) {
                 serverPlayer.displayClientMessage(Component.translatable("display.arss.redstone_booster.reclaimed"), true);
@@ -76,7 +76,7 @@ public class RedstoneBooster extends Item {
 
     @Override
     public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
-        if (entity instanceof Player player && player.isCrouching() && state.hasProperty(ArssBlockStateProperties.BOOSTED) && state.getValue(ArssBlockStateProperties.BOOSTED)) {
+        if (entity instanceof Player player && player.isShiftKeyDown() && state.hasProperty(ArssBlockStateProperties.BOOSTED) && state.getValue(ArssBlockStateProperties.BOOSTED)) {
             level.setBlockAndUpdate(pos, state.setValue(ArssBlockStateProperties.BOOSTED, false));
             if (player instanceof ServerPlayer serverPlayer && level instanceof ServerLevel serverLevel) {
                 serverPlayer.displayClientMessage(Component.translatable("display.arss.redstone_booster.reclaimed"), true);

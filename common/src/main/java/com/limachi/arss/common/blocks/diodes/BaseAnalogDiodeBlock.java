@@ -54,7 +54,7 @@ import static com.limachi.arss.common.ArssBlockStateProperties.*;
 
 @SuppressWarnings({"deprecation", "unused"})
 public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IAcceptCrouchInteractWithItem {
-    @Config(path = "diodes", name = "sides_as_readers", reload = true, cmt="Read sides like the back (ex: will use the content of a chest or the orientation of an item frame on the side as a valid redstone signal)")
+    @Config(path = "Diodes", name = "SidesAsReaders", reload = true, cmt="Read sides like the back (ex: will use the content of a chest or the orientation of an item frame on the side as a valid redstone signal)")
     static public boolean ALL_POWERS_ON_SIDES = true;
 
     protected BaseAnalogDiodeBlock(Properties props) { super(props); }
