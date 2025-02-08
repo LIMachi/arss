@@ -1,0 +1,42 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "AAA",
+    "ABA",
+    "ACA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "B": [
+      {
+        "item": "minecraft:chest"
+      },
+      {
+        "item": "minecraft:ender_chest"
+      },
+      {
+        "item": "minecraft:trapped_chest"
+      },
+      {
+        "item": "minecraft:barrel"
+      },
+      {
+        "tag": "minecraft:shulker_boxes"
+      }
+    ],
+    "C": [
+      {
+        "item": "minecraft:comparator"
+      },
+      {
+        "item": "arss:better_comparator"
+      }
+    ]
+  },
+  "result": {
+    "id": "arss:instrument_swapper"
+  }
+}

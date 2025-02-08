@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:blasting",
+  "category": "redstone",
+  "ingredient": [
+    {
+      "tag": "c:music_discs"
+    }
+  ],
+  "result": {
+    "id": "arss:sequencer_memory_disc"
+  },
+  "experience": 3.0,
+  "cookingtime": 200
+}

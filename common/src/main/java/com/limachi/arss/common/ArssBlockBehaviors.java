@@ -1,5 +1,6 @@
 package com.limachi.arss.common;
 
+import com.limachi.arss.Arss;
 import com.limachi.arss.common.blocks.AnalogRedstoneTorch;
 
 import net.minecraft.core.BlockPos;
@@ -23,12 +24,8 @@ public class ArssBlockBehaviors {
         ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit);
     }
 
-    public static boolean isWrench(ItemStack stack) {
-        return stack.is(Items.REDSTONE_TORCH) || stack.is(AnalogRedstoneTorch.R_ITEM.get());
-    }
-
     public static ItemInteractionResult useItemOnRedstoneDotBlock(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (isWrench(stack) && !player.isShiftKeyDown()) {
+        if (Arss.isWrench(stack) && !player.isShiftKeyDown()) {
             level.setBlock(pos, state.setValue(HIDE_DOT, !state.getValue(HIDE_DOT)), 3);
             return ItemInteractionResult.SUCCESS;
         }
@@ -36,7 +33,7 @@ public class ArssBlockBehaviors {
     }
 
     public static ItemInteractionResult useItemOnScrollableBlockPowerToLock(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (isWrench(stack) && player.isShiftKeyDown()) {
+        if (Arss.isWrench(stack) && player.isShiftKeyDown()) {
             boolean can_scroll = !state.getValue(CAN_SCROLL);
             level.setBlock(pos, state.setValue(CAN_SCROLL, can_scroll), 3);
             player.displayClientMessage(Component.translatable("display.arss.scrollable_block.can_scroll." + can_scroll), true);

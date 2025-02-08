@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "minecraft:comparator"
+    }
+  ],
+  "result": {
+    "id": "arss:better_comparator"
+  }
+}

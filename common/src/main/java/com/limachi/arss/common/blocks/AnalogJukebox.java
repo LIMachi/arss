@@ -1,5 +1,6 @@
 package com.limachi.arss.common.blocks;
 
+import com.limachi.arss.Arss;
 import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.common.menus.AnalogJukeboxMenu;
 import com.limachi.arss.utils.annotations.RegisterBlock;
@@ -62,7 +63,7 @@ public class AnalogJukebox extends Block implements EntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         ItemStack recordStack = player.getItemInHand(hand);
-        if (recordStack.getItem() == Items.REDSTONE_TORCH || recordStack.getItem() == AnalogRedstoneTorch.R_ITEM.get()) {
+        if (Arss.isWrench(recordStack)) {
             level.setBlock(pos, state.setValue(HIDE_DOT, !state.getValue(HIDE_DOT)), 3);
             return ItemInteractionResult.SUCCESS;
         }

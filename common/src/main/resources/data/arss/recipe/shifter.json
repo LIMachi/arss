@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "minecraft:repeater"
+    },
+    {
+      "item": "arss:delayer"
+    }
+  ],
+  "result": {
+    "id": "arss:shifter",
+    "count": 2
+  }
+}

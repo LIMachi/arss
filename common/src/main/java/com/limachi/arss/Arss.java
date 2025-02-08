@@ -3,6 +3,7 @@ package com.limachi.arss;
 import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.annotations.Mod;
 import com.limachi.arss.utils.annotations.RegisterTab;
+
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -17,12 +18,15 @@ public final class Arss extends ModBase {
 
     public static TagKey<Item> WRENCH = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("arss", "arss_wrench"));
 
+    public static boolean isWrench(ItemStack stack) {
+        return stack.is(Arss.WRENCH);
+    }
+
     @RegisterTab(defaultTab = true)
     public static void tab(CreativeModeTab.Builder builder) {
         builder.title(Component.translatable("arss.tab.title"));
         builder.icon(()->new ItemStack(Items.COMPARATOR));
     }
 
-    public Arss() {
-    }
+    public Arss() {}
 }

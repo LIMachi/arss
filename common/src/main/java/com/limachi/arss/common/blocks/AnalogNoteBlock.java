@@ -1,5 +1,6 @@
 package com.limachi.arss.common.blocks;
 
+import com.limachi.arss.Arss;
 import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.common.items.RedstoneBooster;
 import com.limachi.arss.utils.annotations.RegisterBlock;
@@ -92,8 +93,7 @@ public class AnalogNoteBlock extends NoteBlock implements EntityBlock {
 
     @Override
     public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        Item held = player.getItemInHand(hand).getItem();
-        if (held == Items.REDSTONE_TORCH || held == AnalogRedstoneTorch.R_ITEM.get()) {
+        if (Arss.isWrench(player.getItemInHand(hand))) {
             level.setBlock(pos, state.setValue(HIDE_DOT, !state.getValue(HIDE_DOT)), 3);
             return ItemInteractionResult.SUCCESS;
         }

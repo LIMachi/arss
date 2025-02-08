@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:blasting",
+  "category": "redstone",
+  "ingredient": {
+    "item": "arss:enriched_redstone"
+  },
+  "result": {
+    "id": "arss:perfected_redstone"
+  },
+  "experience": 3.0,
+  "cookingtime": 50
+}

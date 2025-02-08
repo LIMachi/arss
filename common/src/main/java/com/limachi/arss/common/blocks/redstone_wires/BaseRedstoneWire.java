@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.state.properties.RedstoneSide;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-/*
 public abstract class BaseRedstoneWire extends RedStoneWireBlock {
 
     protected IntegerProperty range;
@@ -225,4 +224,3 @@ public abstract class BaseRedstoneWire extends RedStoneWireBlock {
 //        return InteractionResult.PASS;
 //    }
 }
-*/

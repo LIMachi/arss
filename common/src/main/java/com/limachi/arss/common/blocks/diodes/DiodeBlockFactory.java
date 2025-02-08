@@ -194,7 +194,7 @@ public class DiodeBlockFactory {
 
             @Override
             public boolean overrideCrouchInteraction(ItemStack stack, Player player, BlockState state, BlockPos pos) {
-                return override != null && override.overrideCrouchInteraction(stack, player, state, pos);
+                return override == null ? Arss.isWrench(stack) : override.overrideCrouchInteraction(stack, player, state, pos);
             }
         }
 

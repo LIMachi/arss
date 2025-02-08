@@ -13,8 +13,14 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public abstract class ModBase {
     public static Logger logger;
@@ -57,6 +63,7 @@ public abstract class ModBase {
         instance = registries.initMod();
         registries.register();
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new SingleRunnableReloadListener(()->configs.load()), ResourceLocation.fromNamespaceAndPath(registries.mod_id, "config"));
+        extractor.runOnMethods(ReloadListener.class, (m, a)->ReloadListenerRegistry.register(a.type(), (preparationBarrier, resourceManager, profilerFiller, profilerFiller2, executor, executor2) -> (CompletableFuture<Void>)m.get(null, true, preparationBarrier, resourceManager, profilerFiller, profilerFiller2, executor, executor2), ResourceLocation.fromNamespaceAndPath(registries.mod_id, Registries.defaultToMethod(a.value(), m))));
         CommandManager.register();
         StaticInitializer.initialize(Stage.LAST, true);
         StaticInitializer.initialize(Stage.LAST, false);

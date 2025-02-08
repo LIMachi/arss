@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "H",
+    "J",
+    "C"
+  ],
+  "key": {
+    "H": {
+      "item": "minecraft:hopper"
+    },
+    "J": {
+      "item": "minecraft:jukebox"
+    },
+    "C": [
+      {
+        "item": "minecraft:comparator"
+      },
+      {
+        "item": "arss:better_comparator"
+      }
+    ]
+  },
+  "result": {
+    "id": "arss:analog_jukebox"
+  }
+}

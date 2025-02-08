@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    " T ",
+    "TQT",
+    "SSS"
+  ],
+  "key": {
+    "T": [
+      {
+        "item": "minecraft:redstone_torch"
+      },
+      {
+        "item": "arss:analog_redstone_torch"
+      }
+    ],
+    "Q": {
+      "item": "minecraft:quartz"
+    },
+    "S": {
+      "item": "minecraft:stone"
+    }
+  },
+  "result": {
+    "id": "arss:better_comparator"
+  }
+}

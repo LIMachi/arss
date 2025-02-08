@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "minecraft:repeater"
+    },
+    {
+      "item": "arss:analog_cell"
+    }
+  ],
+  "result": {
+    "id": "arss:delayer",
+    "count": 2
+  }
+}

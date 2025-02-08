@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "arss:analog_nor"
+    },
+    {
+      "item": "arss:analog_and"
+    }
+  ],
+  "result": {
+    "id": "arss:analog_xor",
+    "count": 2
+  }
+}

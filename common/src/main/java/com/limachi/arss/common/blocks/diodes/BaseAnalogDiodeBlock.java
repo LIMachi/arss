@@ -1,6 +1,7 @@
 package com.limachi.arss.common.blocks.diodes;
 
 import com.limachi.arss.Arss;
+import com.limachi.arss.common.ArssBlockBehaviors;
 import com.limachi.arss.common.block_entities.BaseAnalogDiodeBlockEntity;
 import com.limachi.arss.common.block_entities.IOnUseBlockListener;
 import com.limachi.arss.utils.IAcceptCrouchInteractWithItem;
@@ -241,15 +242,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IAccept
     @Override
     protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         if (player.getAbilities().mayBuild) {
-            if (itemStack.getItem() == Items.REDSTONE_TORCH /*|| itemStack == AnalogRedstoneTorchBlock.AnalogRedstoneTorchItem.R_ITEM.get()*/) {
-                SideToggling newSidedness = cycleSideStates(blockState.getValue(SIDES), player.isShiftKeyDown());
-                blockState = blockState.setValue(SIDES, newSidedness);
-                level.setBlock(blockPos, blockState, 3);
-                player.displayClientMessage(Component.translatable("display.arss.diode_block.sidedness." + newSidedness), true);
-                refreshOutputState(level, blockPos, blockState, true);
-                return ItemInteractionResult.SUCCESS;
-            }
-            if (itemStack.is(Arss.WRENCH)) {
+            if (Arss.isWrench(itemStack)) {
                 SideToggling newSidedness = cycleSideStates(blockState.getValue(SIDES), player.isShiftKeyDown());
                 blockState = blockState.setValue(SIDES, newSidedness);
                 level.setBlock(blockPos, blockState, 3);

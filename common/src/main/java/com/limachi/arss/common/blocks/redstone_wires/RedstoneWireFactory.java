@@ -31,7 +31,6 @@ import net.minecraft.world.phys.Vec3;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/*
 @SuppressWarnings("unused")
 public abstract class RedstoneWireFactory {
 
@@ -113,4 +112,3 @@ public abstract class RedstoneWireFactory {
         return REDSTONE_WIRES.values().stream().map(e->e.getSecond().get()).collect(Collectors.toSet());
     }
 }
-*/

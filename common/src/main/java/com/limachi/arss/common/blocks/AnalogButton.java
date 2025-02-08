@@ -3,7 +3,6 @@ package com.limachi.arss.common.blocks;
 import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.common.ArssBlockBehaviors;
 import com.limachi.arss.common.ArssBlockStateProperties;
-import com.limachi.arss.utils.IAcceptCrouchInteractWithItem;
 import com.limachi.arss.utils.annotations.RegisterBlock;
 import com.limachi.arss.utils.annotations.RegisterBlockItem;
 import com.limachi.arss.utils.client.annotations.FabricLayer;
@@ -32,7 +31,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class AnalogButton extends ButtonBlock implements IScrollBlockPowerOutput, IAcceptCrouchInteractWithItem {
+public class AnalogButton extends ButtonBlock implements IScrollAndLockPower {
 
     @HasRedstoneTint
     @FabricLayer("cutout")
@@ -85,10 +84,5 @@ public class AnalogButton extends ButtonBlock implements IScrollBlockPowerOutput
         level.setBlock(pos, state.setValue(POWERED, Boolean.TRUE), 3);
         this.updateNeighbours(state, level, pos);
         level.scheduleTick(pos, this, state.getValue(ArssBlockStateProperties.BOOSTED) ? 1 : 20);
-    }
-
-    @Override
-    public boolean overrideCrouchInteraction(ItemStack stack, Player player, BlockState state, BlockPos pos) {
-        return ArssBlockBehaviors.isWrench(stack);
     }
 }

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "arss:sequencer_memory_disc"
+    }
+  ],
+  "result": {
+    "id": "arss:sequencer_memory_disc"
+  }
+}

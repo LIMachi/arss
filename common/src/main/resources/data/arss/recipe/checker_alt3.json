@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "RA",
+    "CR"
+  ],
+  "key": {
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "C": [
+      {
+        "item": "minecraft:comparator"
+      },
+      {
+        "item": "arss:better_comparator"
+      }
+    ],
+    "A": {
+      "item": "arss:adder"
+    }
+  },
+  "result": {
+    "id": "arss:checker",
+    "count": 2
+  }
+}

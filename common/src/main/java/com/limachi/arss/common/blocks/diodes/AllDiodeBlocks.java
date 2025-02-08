@@ -1,5 +1,7 @@
 package com.limachi.arss.common.blocks.diodes;
 
+import com.limachi.arss.Arss;
+import com.limachi.arss.common.ArssBlockBehaviors;
 import com.limachi.arss.common.block_entities.*;
 import com.limachi.arss.common.items.SequencerMemoryDisc;
 import com.limachi.arss.utils.Stage;

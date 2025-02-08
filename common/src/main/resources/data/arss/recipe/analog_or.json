@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "arss:demuxer"
+    },
+    {
+      "item": "arss:demuxer"
+    }
+  ],
+  "result": {
+    "id": "arss:analog_or",
+    "count": 2
+  }
+}
