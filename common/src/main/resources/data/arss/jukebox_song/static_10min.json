@@ -1,0 +1,11 @@
+{
+  "sound_event": {
+    "sound_id": "arss:static_10min"
+  },
+  "description": {
+    "translate": "item.arss.sequencer_memory_item.desc",
+    "fallback": "dfgjiooi650vgno;nmp5xz"
+  },
+  "length_in_seconds": 600,
+  "comparator_output": 1
+}

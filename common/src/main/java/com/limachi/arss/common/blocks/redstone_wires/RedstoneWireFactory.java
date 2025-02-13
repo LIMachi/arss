@@ -5,6 +5,7 @@ import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.client.annotations.FabricLayer;
 import com.mojang.datafixers.util.Pair;
 
+import com.mojang.serialization.MapCodec;
 import dev.architectury.registry.registries.RegistrySupplier;
 
 import dev.architectury.utils.Env;
@@ -45,7 +46,7 @@ public abstract class RedstoneWireFactory {
     public static Item getItem(String name) { return REDSTONE_WIRES.get(name).getFirst().get(); }
     public static RegistrySupplier<Item> getItemRegister(String name) { return REDSTONE_WIRES.get(name).getFirst(); }
 
-    private static final Vec3[] COLORS = Util.make(new Vec3[16], vec -> {
+    public static final Vec3[] COLORS = Util.make(new Vec3[16], vec -> {
         for(int i = 0; i <= 15; ++i) {
             double f = (double)i / 15.;
             double r = f * 0.6 + (f > 0. ? 0.4 : 0.3);
@@ -83,9 +84,13 @@ public abstract class RedstoneWireFactory {
     }
 
     public static void create(String fName, BlockBehaviour.Properties bProps, Item.Properties iProps, IntegerProperty fRange, int fMaxRange, int fRangeFalloff) {
-        class Product extends BaseRedstoneWire {
+        class Product extends /*BaseRedstoneWire*/NewRedstoneWire {
 
-            protected Product() { super(bProps, fRange, fMaxRange, fRangeFalloff); }
+//            public final MapCodec<Product> CODEC = simpleCodec(p->new Product());
+
+            protected Product() {
+                super(bProps, fRange, fMaxRange, fRangeFalloff);
+            }
 
             @Override
             public void appendHoverText(ItemStack stack, Item.TooltipContext ctx, List<Component> components, TooltipFlag flags) {
@@ -98,17 +103,37 @@ public abstract class RedstoneWireFactory {
                 super.createBlockStateDefinition(builder);
                 builder.add(fRange);
             }
+
+            //            @Override
+//            protected int range(BlockState blockState) {
+//                return fRange != null ? blockState.getValue(fRange) : super.range(blockState);
+//            }
+//
+//            @Override
+//            protected BlockState setRange(BlockState blockState, int range) {
+//                return fRange != null ? blockState.setValue(fRange, range) : blockState;
+//            }
+//
+//            @Override
+//            protected int maxRange(BlockState blockState) {
+//                return fMaxRange;
+//            }
+//
+//            @Override
+//            protected int rangeFallOff(BlockState blockState) {
+//                return fRangeFalloff;
+//            }
         }
         RegistrySupplier<Block> R_BLOCK = ModBase.registries.block(fName, Product::new);
-        RegistrySupplier<Item> R_ITEM = ModBase.registries.item(fName, ()->new BlockItem(R_BLOCK.get(), new Item.Properties()));
+        RegistrySupplier<Item> R_ITEM = ModBase.registries.item(fName, p->new BlockItem(R_BLOCK.get(), p));
         REDSTONE_WIRES.put(fName, new Pair<>(R_ITEM, R_BLOCK));
         EnvExecutor.runInEnv(Env.CLIENT, ()->()->{
             ModBase.ClientModBase.registries.registerBlockTint((s, g, p, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getValue(BlockStateProperties.POWER)), R_BLOCK.getId());
         });
     }
 
-    @FabricLayer("cutout")
-    public static Collection<Block> registerCutoutRender() {
-        return REDSTONE_WIRES.values().stream().map(e->e.getSecond().get()).collect(Collectors.toSet());
-    }
+//    @FabricLayer("cutout")
+//    public static Collection<Block> registerCutoutRender() {
+//        return REDSTONE_WIRES.values().stream().map(e->e.getSecond().get()).collect(Collectors.toSet());
+//    }
 }

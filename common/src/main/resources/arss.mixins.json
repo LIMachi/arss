@@ -8,8 +8,10 @@
     "client.KeyboardHandlerMixin"
   ],
   "mixins": [
+    "JukeBoxBlockEntityMixin",
     "LevelMixin",
     "NoteBlockMixin",
+    "RedStoneWireBlockAccessor",
     "RedStoneWireBlockMixin"
   ],
   "injectors": {

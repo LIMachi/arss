@@ -11,8 +11,10 @@ import com.limachi.arss.utils.annotations.RegisterItem;
 import dev.architectury.registry.registries.RegistrySupplier;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -22,6 +24,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -33,12 +36,13 @@ import java.util.List;
 public class SequencerMemoryDisc extends Item {
 
     public static final ResourceLocation SOUND_LOCATION = ResourceLocation.fromNamespaceAndPath(ModBase.registries.mod_id, "static_10min");
+    public static final ResourceKey<JukeboxSong> SONG = ResourceKey.create(Registries.JUKEBOX_SONG, SOUND_LOCATION);
     public static final SoundEvent SOUND = SoundEvent.createVariableRangeEvent(SOUND_LOCATION);
 
     @RegisterItem
     public static RegistrySupplier<Item> R_ITEM;
 
-    public SequencerMemoryDisc() { super(new Properties().stacksTo(1)); }
+    public SequencerMemoryDisc(Properties props) { super(props.stacksTo(1).jukeboxPlayable(SONG)); }
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext ctx, List<Component> components, TooltipFlag flags) {

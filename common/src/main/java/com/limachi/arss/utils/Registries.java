@@ -230,6 +230,15 @@ public class Registries {
         };
     }
 
+    public static boolean hasConstructor(Class<?> clazz, Class<?> ... parameterTypes) {
+        try {
+            clazz.getConstructor(parameterTypes);
+            return true;
+        } catch (NoSuchMethodException | SecurityException ignore) {
+            return false;
+        }
+    }
+
     public static <T, S, P> Function<P, S> defaultInstanceSupplier(Class<T> clazz, Class<S> sup, Class<P> param) {
         Constructor<T> c;
         if (!sup.isAssignableFrom(clazz)) {
@@ -282,20 +291,20 @@ public class Registries {
 
     public static final String[] DEFAULT_TABS = new String[]{"automatic"};
 
-    public <T extends Item> RegistrySupplier<T> item(String reg_key, Supplier<T> n, String infoKey) {
+    public <T extends Item> RegistrySupplier<T> item(String reg_key, Function<Item.Properties, T> n, String infoKey) {
         return item(reg_key, n, infoKey, DEFAULT_TABS);
     }
 
-    public <T extends Item> RegistrySupplier<T> item(String reg_key, Supplier<T> n) {
+    public <T extends Item> RegistrySupplier<T> item(String reg_key, Function<Item.Properties, T> n) {
         return item(reg_key, n, null, DEFAULT_TABS);
     }
 
-    public <T extends Item> RegistrySupplier<T> item(String reg_key, Supplier<T> n, String[] tab) {
+    public <T extends Item> RegistrySupplier<T> item(String reg_key, Function<Item.Properties, T> n, String[] tab) {
         return item(reg_key, n, null, tab);
     }
 
-    public <T extends Item> RegistrySupplier<T> item(String reg_key, Supplier<T> n, String infoKey, String[] tab) {
-        var out = items.register(reg_key, n);
+    public <T extends Item> RegistrySupplier<T> item(String reg_key, Function<Item.Properties, T> n, String infoKey, String[] tab) {
+        var out = items.register(reg_key, ()->n.apply(new Item.Properties()));
 //        if (out != null && infoKey != null && !infoKey.isBlank())
 //            JEIInfo.registerInfo(out, infoKey);
         if (tab != null && out != null)
@@ -335,7 +344,10 @@ public class Registries {
     protected void extractItems() {
         ModBase.extractor.runOnFields(RegisterItem.class, (f, a)->{
             String name = defaultToClass(a.value(), f.clazz());
-            ((FieldAccess<?, RegistrySupplier<Item>>) f).set(null, false, item(name, defaultInstanceSupplier(f.clazz(), Item.class), a.jeiInfoKey(), a.tab()));
+            if (hasConstructor(f.clazz(), Item.Properties.class))
+                ((FieldAccess<?, RegistrySupplier<Item>>) f).set(null, false, item(name, defaultInstanceSupplier(f.clazz(), Item.class, Item.Properties.class), a.jeiInfoKey(), a.tab()));
+            else
+                ModBase.logger.error("@RegisterItem on a class that does not have a Object(Item.Properties) constructor exposed: " + f.clazz());
         });
     }
 
@@ -351,7 +363,7 @@ public class Registries {
             String name = defaultToClass(a.value(), f.clazz());
             String block = defaultToClass(a.block(), f.clazz());
             ((FieldAccess<?, RegistrySupplier<BlockItem>>) f).set(null, false, item(name,
-                    ()-> new BlockItem(blocks.getRegistrar().get(ResourceLocation.fromNamespaceAndPath(mod_id, block)), new Item.Properties()),
+                    p->new BlockItem(blocks.getRegistrar().get(ResourceLocation.fromNamespaceAndPath(mod_id, block)), p),
                     a.jeiInfoKey(), a.tab()));
             f.type();
         });

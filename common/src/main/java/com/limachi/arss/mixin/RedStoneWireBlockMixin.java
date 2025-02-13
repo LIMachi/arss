@@ -1,34 +1,27 @@
 package com.limachi.arss.mixin;
 
+import com.limachi.arss.common.blocks.redstone_wires.NewRedstoneWire;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RedStoneWireBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.RedstoneSide;
-import net.minecraft.world.phys.shapes.VoxelShape;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
-import org.spongepowered.asm.mixin.gen.Invoker;
-
-import java.util.Map;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(RedStoneWireBlock.class)
-public interface RedStoneWireBlockMixin {
-
-    @Accessor("SHAPES_CACHE")
-    Map<BlockState, VoxelShape> getShapesCache();
-
-    @Accessor("shouldSignal")
-    boolean getShouldSignal();
-
-    @Accessor("shouldSignal")
-    void setShouldSignal(boolean value);
-
-    @Invoker("getConnectionState")
-    BlockState invGetConnectionState(BlockGetter blockGetter, BlockState blockState, BlockPos blockPos);
-
-    @Invoker("getConnectingSide")
-    RedstoneSide invGetConnectingSide(BlockGetter blockGetter, BlockPos blockPos, Direction direction);
+public abstract class RedStoneWireBlockMixin implements RedStoneWireBlockAccessor {
+    @Inject(method = "checkCornerChangeAt", at = @At("HEAD"), cancellable = true)
+    public void checkCornerChangeAtMixin(Level level, BlockPos blockPos, CallbackInfo ci) {
+        if (level.getBlockState(blockPos).getBlock() instanceof NewRedstoneWire) {
+            level.updateNeighborsAt(blockPos, (Block)(Object)this);
+            for (Direction direction : Direction.values())
+                level.updateNeighborsAt(blockPos.relative(direction), (Block)(Object)this);
+            ci.cancel();
+        }
+    }
 }

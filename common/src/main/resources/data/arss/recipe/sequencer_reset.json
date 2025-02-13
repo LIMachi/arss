@@ -1,6 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "redstone",
+  "group": "sequencer",
   "ingredients": [
     {
       "item": "arss:sequencer"

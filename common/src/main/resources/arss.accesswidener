@@ -1,4 +1,48 @@
 accessWidener v2 named
-#accessible field net/miecraft/world/level/block/RedStoneWireBlock crossState Lnet/minecraft/world/level/block/state/BlockState;
-#accessible field net/miecraft/world/level/block/RedStoneWireBlock SHAPES_CACHE Ljava/util/map;
-#accessible field net/miecraft/world/level/block/RedStoneWireBlock shouldSignal LBoolean;
+
+#void, bool, byte, char, short, int, long, float, double, object
+#V     Z     B     C     S      I    J     F      D       L<path>;
+
+#class: <access> class <name> (access: accessible extendable transitive-*)
+#field: <access> field <name> <typeDesc> (access: accessible mutable transitive-*)
+#method: <access> method <name> <funcDesc> (access: accessible extendable transitive-*)
+
+#accessible: class/field -> public, method: public +final (if private)
+#extendable: class -> public -final, method: protected -final (extendable method = containing class extendable)
+#mutable: -final (for accessible + mutable, need 2 entries)
+#transitive-*: also apply to dependents/add-ons
+
+#useful types:
+#<generic>: Ljava/lang/Object; (or LP; if <T extends P> T)
+#Map<?, ?>: Ljava/util/Map;
+#BlockPos: Lnet/minecraft/core/BlockPos;
+#BlockState: Lnet/minecraft/world/level/block/state/BlockState;
+#Direction: Lnet/minecraft/core/Direction;
+#BlockGetter: Lnet/minecraft/world/level/BlockGetter;
+#Level: Lnet/minecraft/world/level/Level;
+
+#### RedStoneWireBlock
+#public BlockState crossState
+accessible field net/minecraft/world/level/block/RedStoneWireBlock crossState Lnet/minecraft/world/level/block/state/BlockState;
+mutable field net/minecraft/world/level/block/RedStoneWireBlock crossState Lnet/minecraft/world/level/block/state/BlockState;
+
+#public static final Map<BlockState, VoxelShape> SHAPES_CACHE
+accessible field net/minecraft/world/level/block/RedStoneWireBlock SHAPES_CACHE Ljava/util/Map;
+
+#public boolean shouldSignal
+accessible field net/minecraft/world/level/block/RedStoneWireBlock shouldSignal Z
+
+#protected RedstoneSide getConnectingSide(get, pos, dir, ocl)
+extendable method net/minecraft/world/level/block/RedStoneWireBlock getConnectingSide (Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Z)Lnet/minecraft/world/level/block/state/properties/RedstoneSide;
+
+#protected boolean canSurviveOn(get, pos, state)
+extendable method net/minecraft/world/level/block/RedStoneWireBlock canSurviveOn (Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z
+
+#protected BlockState getMissingConnections(get, state, pos)
+extendable method net/minecraft/world/level/block/RedStoneWireBlock getMissingConnections (Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;
+
+#protected void updatePowerStrength(lvl, pos, state)
+extendable method net/minecraft/world/level/block/RedStoneWireBlock updatePowerStrength (Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V
+
+#public final BlockState getConnectionState(get, state, pos)
+extendable method net/minecraft/world/level/block/RedStoneWireBlock getConnectionState (Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;

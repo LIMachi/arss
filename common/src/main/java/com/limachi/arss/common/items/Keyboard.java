@@ -75,7 +75,7 @@ public class Keyboard extends Item implements IItemMixin {
         return getTint(index, stack.getOrDefault(OUTPUT.get(), 0), stack.getOrDefault(CATCH.get(), false));
     }
 
-    public Keyboard() { super(new Properties().stacksTo(1).component(OUTPUT.get(), 0).component(CATCH.get(), false).component(TARGET.get(), NamedPos.UNSET)); }
+    public Keyboard(Properties props) { super(props.stacksTo(1).component(OUTPUT.get(), 0).component(CATCH.get(), false).component(TARGET.get(), NamedPos.UNSET)); }
 
     public static boolean validBlock(BlockState state) {
         return !(state.getBlock() instanceof RedStoneWireBlock) && state.isSignalSource() && !state.hasBlockEntity() && state.hasProperty(BlockStateProperties.POWER);

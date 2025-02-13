@@ -6,7 +6,9 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.Repeatable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -16,7 +18,7 @@ public class AnnotationExtractor extends ClassExtractor {
 
     protected record RepeatableAnnotation(Class<?> a, Class<?> r, Function<Object, Object[]> getter){}
 
-    protected HashMap<Class<? extends Annotation>, HashMap<Class<?>, ClassAnnotations<?, ?>>> annotations;
+    protected HashMap<Class<? extends Annotation>, TreeMap<Class<?>, ClassAnnotations<?, ?>>> annotations; //replaced hashmap with treemap, so that annotation of the same kind are always iterated in the same order even between reloads (since hashmap can produce random iteration order, even if the sets are equals between reloads)
     protected HashMap<Class<? extends Annotation>, HashMap<Class<?>, RepeatableAnnotation>> repeaters;
 
     public AnnotationExtractor() { super(null, null, null); }
@@ -38,7 +40,7 @@ public class AnnotationExtractor extends ClassExtractor {
                 repeaters.get(repeatable).put(repeater, new RepeatableAnnotation(repeatable, repeater, (Function<Object, Object[]>) (Object) yielder));
             }
         }
-        annotations.computeIfAbsent(annotation.annotationType(), k -> new HashMap<>());
+        annotations.computeIfAbsent(annotation.annotationType(), k -> new TreeMap<>(Comparator.comparing((Class<?> c) -> c.getName())));
         var cah = annotations.get(annotation.annotationType());
         ClassAnnotations<C, A> i = (ClassAnnotations<C, A>) cah.get(clazz);
         if (i == null)

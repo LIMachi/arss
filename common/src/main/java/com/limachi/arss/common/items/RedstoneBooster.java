@@ -32,7 +32,7 @@ public class RedstoneBooster extends Item {
 //        event.enqueueWork(()->BrewingRecipeRegistry.addRecipe(Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.STRONG_SWIFTNESS)), Ingredient.of(Items.REDSTONE_BLOCK), new ItemStack(R_ITEM.get())));
 //    }
 
-    public RedstoneBooster() { super(new Properties().durability(16)); }
+    public RedstoneBooster(Properties props) { super(props.durability(16)); }
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext ctx, List<Component> components, TooltipFlag flags) {

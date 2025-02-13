@@ -41,6 +41,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -60,7 +61,6 @@ public class DiodeBlockFactory {
     }
 
     public static final BlockBehaviour.Properties PROPS = BlockBehaviour.Properties.ofFullCopy(Blocks.COMPARATOR);
-    public static final Item.Properties I_PROPS = new Item.Properties();
 
     private static final HashMap<String, Pair<RegistrySupplier<Item>, RegistrySupplier<Block>>> DIODE_BLOCKS = new HashMap<>();
 
@@ -89,7 +89,7 @@ public class DiodeBlockFactory {
             return 0;
         };
         private BlockBehaviour.Properties blockProperties = PROPS;
-        private Item.Properties itemProperties = I_PROPS;
+        private Function<Item.Properties, Item.Properties> itemProperties = p->p;
         private int delay = 1;
         private BaseAnalogDiodeBlock.TickingMode tickingMode = BaseAnalogDiodeBlock.TickingMode.ON_CHANGE;
         private boolean hasPowerTint = false;
@@ -110,7 +110,7 @@ public class DiodeBlockFactory {
 
         public Builder mode(EnumProperty<?> mode) { this.mode = mode; return this; }
         public Builder blockProperties(BlockBehaviour.Properties blockProperties) { this.blockProperties = blockProperties; return this; }
-        public Builder itemProperties(Item.Properties itemProperties) { this.itemProperties = itemProperties; return this; }
+        public Builder itemProperties(Function<Item.Properties, Item.Properties> itemProperties) { this.itemProperties = itemProperties; return this; }
         public Builder delay(int delay) { this.delay = delay; return this; }
         public Builder tickingMode(BaseAnalogDiodeBlock.TickingMode mode) { tickingMode = mode; return this; }
         public Builder hasPowerTint(boolean state) { hasPowerTint = state; return this; }
@@ -132,7 +132,7 @@ public class DiodeBlockFactory {
         return out;
     }
 
-    private static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, BlockBehaviour.Properties props, Item.Properties iProps, int fDelay, BaseAnalogDiodeBlock.TickingMode fTickingMode, boolean hasPowerTint, BlockEntityBuilder beb, boolean canToggleBothSides, boolean canToggleInput, List<Property<?>> extraProps, UseMethod use, BiFunction<Block, Item.Properties, BlockItem> itemBuilder, IAcceptCrouchInteractWithItem override) {
+    private static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, BlockBehaviour.Properties props, Function<Item.Properties, Item.Properties> iProps, int fDelay, BaseAnalogDiodeBlock.TickingMode fTickingMode, boolean hasPowerTint, BlockEntityBuilder beb, boolean canToggleBothSides, boolean canToggleInput, List<Property<?>> extraProps, UseMethod use, BiFunction<Block, Item.Properties, BlockItem> itemBuilder, IAcceptCrouchInteractWithItem override) {
         Supplier<Block> gBlock;
 
         class Product extends BaseAnalogDiodeBlock {
@@ -212,15 +212,13 @@ public class DiodeBlockFactory {
                 }
 
                 @Override
-                public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-                    return beb.build(pos, state);
-                }
+                public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return beb.build(pos, state); }
             }
 
             gBlock = Product2::new;
         }
         RegistrySupplier<Block> R_BLOCK = Arss.registries.block(fName, gBlock);
-        RegistrySupplier<Item> R_ITEM = Arss.registries.item(fName, ()->itemBuilder.apply(R_BLOCK.get(), iProps));
+        RegistrySupplier<Item> R_ITEM = Arss.registries.item(fName, p->itemBuilder.apply(R_BLOCK.get(), iProps.apply(p)));
         DIODE_BLOCKS.put(fName, new Pair<>(R_ITEM, R_BLOCK));
         if (hasPowerTint)
             EnvExecutor.runInEnv(Env.CLIENT, ()->()->{

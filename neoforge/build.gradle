@@ -7,6 +7,12 @@ architectury {
     neoForge()
 }
 
+processResources {
+    from(rootProject.file("common/src/main/resources")) {
+        include("arss.accesswidener")
+    }
+}
+
 configurations {
     common {
         canBeResolved = true
@@ -62,4 +68,9 @@ shadowJar {
 
 remapJar {
     input.set shadowJar.archiveFile
+    atAccessWideners.add("arss.accesswidener")
+}
+
+loom {
+    accessWidenerPath = project(":common").loom.accessWidenerPath
 }

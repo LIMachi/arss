@@ -1,6 +1,6 @@
 {
   "type": "minecraft:blasting",
-  "category": "redstone",
+  "category": "blocks",
   "ingredient": [
     {
       "tag": "c:music_discs"
