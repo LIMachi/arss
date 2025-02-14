@@ -2,16 +2,20 @@ package com.limachi.arss.client;
 
 import com.limachi.arss.Arss;
 import com.limachi.arss.utils.client.annotations.StaticInitClient;
+
 import dev.architectury.event.events.client.ClientTickEvent;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.client.Minecraft;
+
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWDropCallback;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-/*
+
 @Environment(EnvType.CLIENT)
 public class DropEventListener {
     private static boolean initialized = false;
@@ -48,4 +52,3 @@ public class DropEventListener {
         });
     }
 }
-*/

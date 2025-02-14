@@ -19,6 +19,8 @@ public class NewRedstoneWire extends RedStoneWireBlock {
     protected int maxRange;
     protected int rangeFalloff;
 
+    protected final RedStoneWireBlock vanilla = (RedStoneWireBlock)Blocks.REDSTONE_WIRE;
+
     protected NewRedstoneWire(BlockBehaviour.Properties bProps, IntegerProperty fRange, int fMaxRange, int fRangeFalloff) {
         super(bProps);
         range = fRange;
@@ -48,9 +50,9 @@ public class NewRedstoneWire extends RedStoneWireBlock {
     }
 
     private RedstoneWireFactory.PR calculate(Level level, BlockPos pos) {
-        ((RedStoneWireBlock)Blocks.REDSTONE_WIRE).shouldSignal = false;
+        vanilla.shouldSignal = false;
         int source = level.getBestNeighborSignal(pos);
-        ((RedStoneWireBlock)Blocks.REDSTONE_WIRE).shouldSignal = true;
+        vanilla.shouldSignal = true;
         if (source == 15) return new RedstoneWireFactory.PR(15, maxRange);
         RedstoneWireFactory.PR j = new RedstoneWireFactory.PR();
         for(Direction direction : Direction.Plane.HORIZONTAL) {
@@ -67,34 +69,43 @@ public class NewRedstoneWire extends RedStoneWireBlock {
     }
 
     private RedstoneWireFactory.PR getWireSignal(BlockState state) {
-        if (!state.is(this)) { return new RedstoneWireFactory.PR(); }
+        if (!(state.getBlock() instanceof RedStoneWireBlock)) { return new RedstoneWireFactory.PR(); }
         int p = state.getValue(POWER);
-        int r = state.getValue(range) - 1;
-        if (r <= 0) {
-            p = Math.max(0, p - rangeFalloff);
-            r = p > 0 ? maxRange : 0;
-        }
+        int r = maxRange;
+        if (state.getBlock() == this) {
+            r = state.getValue(range) - 1;
+            if (r <= 0) {
+                p = Math.max(0, p - rangeFalloff);
+                r = p > 0 ? maxRange : 0;
+            }
+        } else
+            --p;
         return new RedstoneWireFactory.PR(p, r);
     }
 
     @Override
     public int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction dir) {
-        if (!((RedStoneWireBlock)Blocks.REDSTONE_WIRE).shouldSignal) return 0;
+        if (!vanilla.shouldSignal) return 0;
         int s = super.getDirectSignal(state, level, pos, dir);
         return state.is(Blocks.REDSTONE_WIRE) ? s - 1 : s;
     }
 
     @Override
     public int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction dir) {
-        if (((RedStoneWireBlock)Blocks.REDSTONE_WIRE).shouldSignal && dir != Direction.DOWN) {
+        if (vanilla.shouldSignal && dir != Direction.DOWN) {
             int i = state.getValue(POWER);
             if (i == 0) {
                 return 0;
             } else {
-                return dir != Direction.UP && !getConnectionState(level, state, pos).getValue(PROPERTY_BY_DIRECTION.get(dir.getOpposite())).isConnected() ? 0 : i;
+                return dir != Direction.UP && getConnectionState(level, state, pos).getValue(PROPERTY_BY_DIRECTION.get(dir.getOpposite())).isConnected() ? i : 0;
             }
         } else {
             return 0;
         }
+    }
+
+    @Override
+    protected boolean isSignalSource(BlockState blockState) {
+        return vanilla.shouldSignal;
     }
 }

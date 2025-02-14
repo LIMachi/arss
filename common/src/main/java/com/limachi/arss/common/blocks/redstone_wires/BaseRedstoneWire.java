@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import com.limachi.arss.vanillaInterface.IRedStoneWire;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -34,10 +32,7 @@ import static com.limachi.arss.common.blocks.redstone_wires.RedstoneWireFactory.
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
 import static net.minecraft.world.level.block.state.properties.RedstoneSide.*;
 
-public abstract class BaseRedstoneWire extends RedStoneWireBlock implements IRedStoneWire {
-
-    @Override
-    public <W extends RedStoneWireBlock> W self() { return (W)this; }
+public abstract class BaseRedstoneWire extends RedStoneWireBlock {
 
     public class PowerAndRange {
         public int power;
@@ -47,7 +42,7 @@ public abstract class BaseRedstoneWire extends RedStoneWireBlock implements IRed
 
         public PowerAndRange(BlockState state) {
             if (state.getBlock() instanceof BaseRedstoneWire b) {
-                if (shouldSignal())
+                if (shouldSignal)
                     power = state.getValue(POWER);
                 else
                     power = 0;
@@ -312,9 +307,9 @@ public abstract class BaseRedstoneWire extends RedStoneWireBlock implements IRed
 
     //FIXME/TODO: our wire should carfully use this when interacting with vanilla wires
     protected PowerAndRange calculateTargetStrength(Level level, BlockPos blockPos) {
-        setShouldSignal(false);
+        shouldSignal = false;
         PowerAndRange best = getBestDecayedSignal(level, blockPos);
-        setShouldSignal(true);
+        shouldSignal = true;
 
         if (best.isBest())
             return best;
@@ -396,11 +391,11 @@ public abstract class BaseRedstoneWire extends RedStoneWireBlock implements IRed
     }
 
     protected int getDirectSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
-        return !shouldSignal() ? 0 : blockState.getSignal(blockGetter, blockPos, direction);
+        return !shouldSignal ? 0 : blockState.getSignal(blockGetter, blockPos, direction);
     }
 
     protected int getSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
-        if (shouldSignal() && direction != Direction.DOWN) {
+        if (shouldSignal && direction != Direction.DOWN) {
             int i = blockState.getValue(POWER);
             if (range(blockState) > 0)
                 i -= 1;
@@ -431,7 +426,7 @@ public abstract class BaseRedstoneWire extends RedStoneWireBlock implements IRed
     }
 
     protected boolean isSignalSource(BlockState blockState) {
-        return shouldSignal();
+        return shouldSignal;
     }
 
     protected void spawnParticlesAlongLine(Level level, RandomSource randomSource, BlockPos blockPos, Vec3 vec3, Direction direction, Direction direction2, float f, float g) {

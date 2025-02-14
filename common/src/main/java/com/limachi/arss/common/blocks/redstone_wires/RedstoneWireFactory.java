@@ -5,7 +5,6 @@ import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.client.annotations.FabricLayer;
 import com.mojang.datafixers.util.Pair;
 
-import com.mojang.serialization.MapCodec;
 import dev.architectury.registry.registries.RegistrySupplier;
 
 import dev.architectury.utils.Env;
@@ -85,9 +84,6 @@ public abstract class RedstoneWireFactory {
 
     public static void create(String fName, BlockBehaviour.Properties bProps, Item.Properties iProps, IntegerProperty fRange, int fMaxRange, int fRangeFalloff) {
         class Product extends /*BaseRedstoneWire*/NewRedstoneWire {
-
-//            public final MapCodec<Product> CODEC = simpleCodec(p->new Product());
-
             protected Product() {
                 super(bProps, fRange, fMaxRange, fRangeFalloff);
             }
@@ -103,26 +99,6 @@ public abstract class RedstoneWireFactory {
                 super.createBlockStateDefinition(builder);
                 builder.add(fRange);
             }
-
-            //            @Override
-//            protected int range(BlockState blockState) {
-//                return fRange != null ? blockState.getValue(fRange) : super.range(blockState);
-//            }
-//
-//            @Override
-//            protected BlockState setRange(BlockState blockState, int range) {
-//                return fRange != null ? blockState.setValue(fRange, range) : blockState;
-//            }
-//
-//            @Override
-//            protected int maxRange(BlockState blockState) {
-//                return fMaxRange;
-//            }
-//
-//            @Override
-//            protected int rangeFallOff(BlockState blockState) {
-//                return fRangeFalloff;
-//            }
         }
         RegistrySupplier<Block> R_BLOCK = ModBase.registries.block(fName, Product::new);
         RegistrySupplier<Item> R_ITEM = ModBase.registries.item(fName, p->new BlockItem(R_BLOCK.get(), p));
@@ -132,8 +108,8 @@ public abstract class RedstoneWireFactory {
         });
     }
 
-//    @FabricLayer("cutout")
-//    public static Collection<Block> registerCutoutRender() {
-//        return REDSTONE_WIRES.values().stream().map(e->e.getSecond().get()).collect(Collectors.toSet());
-//    }
+    @FabricLayer("cutout")
+    public static Collection<Block> registerCutoutRender() {
+        return REDSTONE_WIRES.values().stream().map(e->e.getSecond().get()).collect(Collectors.toSet());
+    }
 }
