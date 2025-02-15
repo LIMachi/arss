@@ -30,7 +30,7 @@ import java.util.List;
 
 import static com.limachi.arss.common.ArssBlockStateProperties.HIDE_DOT;
 
-@SuppressWarnings({"unused", "deprecation"})
+@SuppressWarnings("unused")
 public class AnalogJukebox extends Block implements EntityBlock {
 
     @FabricLayer("cutout")
@@ -125,8 +125,8 @@ public class AnalogJukebox extends Block implements EntityBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level unusedLevel, BlockState unusedState, BlockEntityType<T> type) {
         return (level, pos, state, be) -> {
-            if (be instanceof com.limachi.arss.common.block_entities.AnalogJukebox o && level instanceof ServerLevel)
-                o.tick();
+            if (be instanceof com.limachi.arss.common.block_entities.AnalogJukebox o)
+                o.tick(level, state);
         };
     }
 }

@@ -6,76 +6,88 @@ import com.limachi.arss.utils.annotations.RegisterBlockEntity;
 import dev.architectury.registry.registries.RegistrySupplier;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.JukeboxSong;
+import net.minecraft.world.item.JukeboxSongPlayer;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.Optional;
 
 public class AnalogJukebox extends MinimalListInventory.MinimalListInventoryBlockEntity {
 
     @RegisterBlockEntity
     public static RegistrySupplier<BlockEntityType<BlockEntity>> TYPE;
 
-    protected int playing = 0;
+    protected int playing;
+    private final JukeboxSongPlayer jukeboxSongPlayer;
 
-    private int ticksSinceLastEvent;
-    private long recordStartedTick;
-    private long tickCount;
+    public AnalogJukebox(BlockPos pos, BlockState state) {
+        super(TYPE.get(), pos, state, 15);
+        jukeboxSongPlayer = new JukeboxSongPlayer(this::onSongChanged, this.getBlockPos());
+        playing = 0;
+    }
 
-    public AnalogJukebox(BlockPos pos, BlockState state) { super(TYPE.get(), pos, state, 15); }
+    public void onSongChanged() {
+        if (level != null)
+            level.updateNeighborsAt(getBlockPos(), getBlockState().getBlock());
+        setChanged();
+    }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.loadAdditional(tag, provider);
-        playing = tag.getInt("Playing");
-        if (playing > 0)
-            play(playing + 1);
+        playing = Math.clamp(tag.getInt("playing"), 0, 15);
+        if (tag.contains("ticks", 4) && playing > 0)
+            JukeboxSong.fromStack(provider, getItem(playing)).ifPresent(h->jukeboxSongPlayer.setSongWithoutPlaying(h, tag.getLong("ticks")));
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
-        tag.putInt("Playing", playing);
+        tag.putInt("playing", playing);
+        if (jukeboxSongPlayer.getSong() != null)
+            tag.putLong("ticks", jukeboxSongPlayer.getTicksSinceSongStarted());
     }
 
     public int playing() { return playing; }
 
     public void play(int rsPower) {
         if (level instanceof ServerLevel) {
-            ItemStack record = rsPower > 0 ? getItem(rsPower - 1) : ItemStack.EMPTY;
-            playing = record.isEmpty() ? 0 : rsPower;
-            if (playing != 0) {
-                recordStartedTick = tickCount;
-//                SoundUtils.startRecord(level, worldPosition, record);
-            }
-//            else
-//                SoundUtils.stopRecord(level, worldPosition);
-            setChanged();
-            level.updateNeighborsAt(worldPosition, level.getBlockState(worldPosition).getBlock());
+            Optional<Holder<JukeboxSong>> optional = JukeboxSong.fromStack(level.registryAccess(), rsPower > 0 ? getItem(rsPower - 1) : ItemStack.EMPTY);
+            playing = optional.isEmpty() ? 0 : rsPower;
+            if (playing != 0)
+                jukeboxSongPlayer.play(level, optional.get());
+            else
+                jukeboxSongPlayer.stop(level, getBlockState());
         }
     }
 
     public boolean insertRecord(ItemStack recordStack) {
-//        if (recordStack.getItem() instanceof RecordItem && level instanceof ServerLevel) {
-//            for (int i = 0; i < getContainerSize(); ++i)
-//                if (getItem(i).isEmpty()) {
-//                    int power = level.getBestNeighborSignal(worldPosition);
-//                    if (power == i + 1) {
-//                        playing = power;
-//                        recordStartedTick = tickCount;
-////                        SoundUtils.startRecord(level, worldPosition, recordStack);
-//                    }
-//                    setItem(i, recordStack);
-//                    level.updateNeighborsAt(worldPosition, level.getBlockState(worldPosition).getBlock());
-//                    return true;
-//                }
-//        }
+        if (level instanceof ServerLevel) {
+            return JukeboxSong.fromStack(level.registryAccess(), recordStack).map(h->{
+                for (int i = 0; i < getContainerSize(); ++i)
+                    if (getItem(i).isEmpty()) {
+                        int power = level.getBestNeighborSignal(worldPosition);
+                        if (power == i + 1) {
+                            playing = power;
+                            jukeboxSongPlayer.play(level, h);
+                        }
+                        setItem(i, recordStack);
+                        level.updateNeighborsAt(worldPosition, level.getBlockState(worldPosition).getBlock());
+                        return true;
+                    }
+                return false;
+            }).orElse(false);
+        }
         return false;
     }
 
@@ -83,7 +95,7 @@ public class AnalogJukebox extends MinimalListInventory.MinimalListInventoryBloc
         if (level instanceof ServerLevel) {
             if (playing > 0) {
                 playing = 0;
-//                SoundUtils.stopRecord(level, worldPosition);
+                jukeboxSongPlayer.stop(level, getBlockState());
             }
             for (int i = 0; i < getContainerSize(); ++i) {
                 ItemStack record = getItem(i);
@@ -102,17 +114,14 @@ public class AnalogJukebox extends MinimalListInventory.MinimalListInventoryBloc
     }
 
     public int getAnalogOutputSignal() {
-        if (playing == 0) return 0;
-        Item record = getItem(playing - 1).getItem();
-//        if (record instanceof RecordItem)
-//            return ((RecordItem)record).getAnalogOutput();
+        if (jukeboxSongPlayer.getSong() instanceof JukeboxSong s)
+            return s.comparatorOutput();
         return 0;
     }
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        return //stack.getItem() instanceof RecordItem &&
-         super.canPlaceItem(slot, stack);
+        return stack.has(DataComponents.JUKEBOX_PLAYABLE);
     }
 
     @Override
@@ -120,43 +129,19 @@ public class AnalogJukebox extends MinimalListInventory.MinimalListInventoryBloc
         if (level instanceof ServerLevel) {
             if (playing != 0 && getItem(playing - 1).isEmpty()) {
                 playing = 0;
-//                SoundUtils.stopRecord(level, worldPosition);
+                jukeboxSongPlayer.stop(level, getBlockState());
             } else if (playing == 0) {
                 int power = level.getBestNeighborSignal(worldPosition);
                 if (power > 0) {
-                    ItemStack record = getItem(power - 1);
-                    if (!record.isEmpty()) {
+                    JukeboxSong.fromStack(level.registryAccess(), getItem(power - 1)).ifPresent(h->{
                         playing = power;
-                        recordStartedTick = tickCount;
-//                        SoundUtils.startRecord(level, worldPosition, record);
-                    }
+                        jukeboxSongPlayer.play(level, h);
+                    });
                 }
             }
         }
         super.setChanged();
     }
 
-//    private boolean shouldRecordStopPlaying(RecordItem record) {
-//        return this.tickCount >= this.recordStartedTick + (long)record.getLengthInTicks() + 20L;
-//    }
-
-    public void tick() {
-//        ++this.ticksSinceLastEvent;
-//        if (playing != 0) {
-//            ItemStack stack = getItem(playing - 1);
-//            if (stack.getItem() instanceof RecordItem record) {
-//                if (shouldRecordStopPlaying(record))
-//                    play(0);
-//                else if (ticksSinceLastEvent >= 20) {
-//                    ticksSinceLastEvent = 0;
-//                    if (level != null)
-//                        level.gameEvent(GameEvent.JUKEBOX_PLAY, worldPosition, GameEvent.Context.of(getBlockState()));
-//                    Vec3 vec3 = Vec3.atBottomCenterOf(worldPosition).add(0.0D, 1.2F, 0.0D);
-//                    float f = (float)level.getRandom().nextInt(4) / 24.0F;
-//                    ((ServerLevel)level).sendParticles(ParticleTypes.NOTE, vec3.x(), vec3.y(), vec3.z(), 0, f, 0.0D, 0.0D, 1.0D);
-//                }
-//            }
-//        }
-//        ++this.tickCount;
-    }
+    public void tick(Level level, BlockState state) { jukeboxSongPlayer.tick(level, state); }
 }
