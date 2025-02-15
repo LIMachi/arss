@@ -18,9 +18,7 @@ public final class Arss extends ModBase {
 
     public static TagKey<Item> WRENCH = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("arss", "arss_wrench"));
 
-    public static boolean isWrench(ItemStack stack) {
-        return stack.is(Arss.WRENCH);
-    }
+    public static boolean isWrench(ItemStack stack) { return stack.is(Arss.WRENCH); }
 
     @RegisterTab(defaultTab = true)
     public static void tab(CreativeModeTab.Builder builder) {

@@ -16,6 +16,7 @@ import org.lwjgl.glfw.GLFWDropCallback;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/*
 @Environment(EnvType.CLIENT)
 public class DropEventListener {
     private static boolean initialized = false;
@@ -52,3 +53,4 @@ public class DropEventListener {
         });
     }
 }
+*/

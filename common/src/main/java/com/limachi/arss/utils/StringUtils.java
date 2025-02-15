@@ -79,4 +79,18 @@ public class StringUtils {
         public int len() { return chars.length; }
         public int remainder() { return Math.clamp(chars.length - cursor, 0, chars.length); }
     }
+
+    public static String subString(String str, int start, int end) {
+        if (str == null || str.isEmpty())
+            return str;
+        while (start < 0)
+            start = str.length() + start;
+        while (start >= str.length())
+            start = start - str.length();
+        while (end < 0)
+            end = str.length() + end;
+        while (end >= str.length())
+            end = end - str.length();
+        return end >= start ? str.substring(start, end) : new StringBuilder(str).reverse().substring(end, start);
+    }
 }

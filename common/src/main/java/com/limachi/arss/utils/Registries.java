@@ -8,7 +8,7 @@ import com.limachi.arss.utils.network.IMsg;
 import com.limachi.arss.utils.network.IS2CMsg;
 import com.limachi.arss.utils.reflect.FieldAccess;
 import com.limachi.arss.utils.reflect.MethodAccess;
-import com.limachi.arss.utils.reflect.Utils;
+import com.limachi.arss.utils.reflect.ReflectUtils;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -94,7 +94,7 @@ public class Registries {
             ModBase.logger.error("message registration without receiver declared (should extend one or more of IS2CMsg/IC2SMsg): " + id);
             return;
         }
-        registerMessageReceivers(clazz, id, CustomPacketPayload.codec(ClassMsg::write, i -> Utils.unsafeInstance(clazz).read(i)));
+        registerMessageReceivers(clazz, id, CustomPacketPayload.codec(ClassMsg::write, i -> ReflectUtils.unsafeInstance(clazz).read(i)));
         logRegistration("message", id);
     }
 
@@ -441,8 +441,8 @@ public class Registries {
 
     protected void extractMenus() {
         ModBase.extractor.runOnFields(RegisterMenu.class, (f, a)->{
-            final Constructor<AbstractContainerMenu> ctr = (Constructor<AbstractContainerMenu>) Utils.getMatchingConstructor(f.clazz(), int.class, Inventory.class, RegistryFriendlyByteBuf.class);
-            ((FieldAccess<?, RegistrySupplier<MenuType<AbstractContainerMenu>>>)f).set(null, false, menu(defaultToClass(a.value(), f.clazz()), (id, inventory, buf) -> Utils.nullableInstance(ctr, id, inventory, buf)));
+            final Constructor<AbstractContainerMenu> ctr = (Constructor<AbstractContainerMenu>) ReflectUtils.getMatchingConstructor(f.clazz(), int.class, Inventory.class, RegistryFriendlyByteBuf.class);
+            ((FieldAccess<?, RegistrySupplier<MenuType<AbstractContainerMenu>>>)f).set(null, false, menu(defaultToClass(a.value(), f.clazz()), (id, inventory, buf) -> ReflectUtils.nullableInstance(ctr, id, inventory, buf)));
         });
     }
 

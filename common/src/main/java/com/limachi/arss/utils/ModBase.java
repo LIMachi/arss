@@ -7,20 +7,20 @@ import com.limachi.arss.utils.commands.CommandManager;
 import com.limachi.arss.utils.config.ConfigManager;
 import com.limachi.arss.utils.reflect.AnnotationExtractor;
 import com.limachi.arss.utils.scrollSystem.ScrollHandler;
+
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.ReloadListenerRegistry;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.profiling.ProfilerFiller;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
 public abstract class ModBase {
     public static Logger logger;

@@ -3,10 +3,9 @@ package com.limachi.arss.utils.client;
 import com.limachi.arss.common.ArssItemStackComponents;
 import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.Registries;
-import com.limachi.arss.utils.Stage;
 import com.limachi.arss.utils.StaticInitializer;
 import com.limachi.arss.utils.client.annotations.*;
-import com.limachi.arss.utils.reflect.Utils;
+import com.limachi.arss.utils.reflect.ReflectUtils;
 
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
@@ -19,7 +18,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.item.ItemColor;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.network.chat.Component;
@@ -99,7 +97,7 @@ public class ClientRegistries {
             MenuRegistry.registerScreenFactory(menu.get(), new MenuRegistry.ScreenFactory<M, S>() {
                 @Override
                 public S create(M containerMenu, Inventory inventory, Component component) {
-                    return Utils.nullableInstance(screen, containerMenu, inventory, component);
+                    return ReflectUtils.nullableInstance(screen, containerMenu, inventory, component);
                 }
             });
         }

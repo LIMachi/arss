@@ -83,7 +83,7 @@ public abstract class RedstoneWireFactory {
     }
 
     public static void create(String fName, BlockBehaviour.Properties bProps, Item.Properties iProps, IntegerProperty fRange, int fMaxRange, int fRangeFalloff) {
-        class Product extends /*BaseRedstoneWire*/NewRedstoneWire {
+        class Product extends BaseRedstoneWire {
             protected Product() {
                 super(bProps, fRange, fMaxRange, fRangeFalloff);
             }
