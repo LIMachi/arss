@@ -4,11 +4,11 @@ import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.annotations.Config;
 import com.limachi.arss.utils.reflect.AnnotationExtractor;
 import com.limachi.arss.utils.reflect.FieldAccess;
-import dev.architectury.platform.Mod;
+
 import dev.architectury.platform.Platform;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.screens.Screen;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -149,9 +149,4 @@ public class ConfigManager {
     }
 
     public boolean save() { return file.save(); }
-
-    @Environment(EnvType.CLIENT)
-    public void registerScreen() {
-        Platform.getMod(ModBase.registries.mod_id).registerConfigurationScreen(parent->new ConfigScreen(parent, this));
-    }
 }

@@ -5,6 +5,7 @@ import com.limachi.arss.utils.client.ClientRegistries;
 import com.limachi.arss.utils.client.ClientStage;
 import com.limachi.arss.utils.commands.CommandManager;
 import com.limachi.arss.utils.config.ConfigManager;
+import com.limachi.arss.utils.config.ConfigScreen;
 import com.limachi.arss.utils.reflect.AnnotationExtractor;
 import com.limachi.arss.utils.scrollSystem.ScrollHandler;
 
@@ -80,7 +81,7 @@ public abstract class ModBase {
             registries.register();
             ScrollHandler.register();
             StaticInitializer.initialize(ClientStage.LAST, true);
-            configs.registerScreen();
+            Platform.getMod(ModBase.registries.mod_id).registerConfigurationScreen(parent->new ConfigScreen(parent, configs));
             StaticInitializer.initialize(ClientStage.LAST, false);
         }
     }

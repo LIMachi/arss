@@ -10,11 +10,13 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
+import org.spongepowered.asm.mixin.Mixin;
 
 public class CheckDistVisitor extends ClassVisitor {
-    final String onlyin = OnlyIn.class.descriptorString();
-    final String onlyins = OnlyIns.class.descriptorString();
+    final String onlyIn = OnlyIn.class.descriptorString();
+    final String onlyIns = OnlyIns.class.descriptorString();
     final String dist = Dist.class.descriptorString();
+    final String mixin = Mixin.class.descriptorString();
     boolean skip = false;
     protected CheckDistVisitor() {
         super(Opcodes.ASM9);
@@ -22,10 +24,12 @@ public class CheckDistVisitor extends ClassVisitor {
 
     @Override
     public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-        if (descriptor.equals(onlyin))
+        if (descriptor.equals(onlyIn))
             return new OnlyInVisitor();
-        else if (descriptor.equals(onlyins))
+        else if (descriptor.equals(onlyIns))
             return new OnlyInsVisitor();
+        else if (descriptor.equals(mixin))
+            skip = true;
         return super.visitAnnotation(descriptor, visible);
     }
 
@@ -56,7 +60,7 @@ public class CheckDistVisitor extends ClassVisitor {
 
         @Override
         public AnnotationVisitor visitAnnotation(String name, String descriptor) {
-            if (descriptor.equals(onlyin))
+            if (descriptor.equals(onlyIn))
                 return new OnlyInVisitor();
             return super.visitAnnotation(name, descriptor);
         }

@@ -1,5 +1,6 @@
 package com.limachi.arss.utils.reflect;
 
+import com.limachi.arss.utils.StackTrace;
 import org.objectweb.asm.ClassReader;
 
 import java.io.File;
@@ -74,14 +75,19 @@ public class ClassExtractor {
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
                 String entryName = entry.getName();
-                if (entryName.endsWith(".class") && !entry.isDirectory() && pattern.matcher(entryName).find())
+                if (entryName.endsWith(".class") && !entry.isDirectory() && pattern.matcher(entryName).find()) {
+                    String name = entryName.replace("/", ".").replace(".class", "");
                     try {
-                        if (skip != null && skip.test(new ClassReader(jarFile.getInputStream(entry))))
+                        if (skip != null && skip.test(new ClassReader(jarFile.getInputStream(entry)))) {
+                            System.out.println("skipped: " + entryName);
                             continue;
-                        classes.add(clazz.getClassLoader().loadClass(entryName.replace("/", ".").replace(".class", "")));
-                    } catch (Throwable ignore) {
-                        System.err.println(ignore);
+                        }
+                        classes.add(clazz.getClassLoader().loadClass(name));
+                    } catch (Throwable error) {
+                        System.err.println("class " + name + " error:");
+                        System.err.println(new StackTrace(error));
                     }
+                }
             }
             try {
                 jarFile.close();

@@ -16,7 +16,6 @@ import net.minecraft.util.Mth;
 
 import java.util.List;
 
-
 @Environment(EnvType.CLIENT)
 public class SequencerHelpScreen extends BlockingPopupScreen {
     public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(ModBase.registries.mod_id, "textures/screen/sequencer_help_screen.png");

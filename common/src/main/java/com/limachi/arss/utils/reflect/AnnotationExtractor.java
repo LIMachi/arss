@@ -1,5 +1,6 @@
 package com.limachi.arss.utils.reflect;
 
+import com.limachi.arss.utils.StackTrace;
 import org.objectweb.asm.ClassReader;
 
 import java.lang.annotation.Annotation;
@@ -59,14 +60,19 @@ public class AnnotationExtractor extends ClassExtractor {
         if (clear)
             annotations.clear();
         for (Class<?> c : classes) {
-            for (Annotation a : c.getAnnotations())
-                insert(c, a, null, null);
-            for (Field f : c.getDeclaredFields())
-                for (Annotation a : f.getAnnotations())
-                    insert(c, a, f, null);
-            for (Method m : c.getDeclaredMethods())
-                for (Annotation a : m.getAnnotations())
-                    insert(c, a, null, m);
+            try {
+                for (Annotation a : c.getAnnotations())
+                    insert(c, a, null, null);
+                for (Field f : c.getDeclaredFields())
+                    for (Annotation a : f.getAnnotations())
+                        insert(c, a, f, null);
+                for (Method m : c.getDeclaredMethods())
+                    for (Annotation a : m.getAnnotations())
+                        insert(c, a, null, m);
+            } catch (Throwable error) {
+                System.err.println("class " + c + " error:");
+                System.err.println(new StackTrace(error));
+            }
         }
         return (T)this;
     }

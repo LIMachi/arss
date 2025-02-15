@@ -1,10 +1,10 @@
 package com.limachi.arss.utils.network;
 
 import com.limachi.arss.utils.Game;
+
 import dev.architectury.networking.NetworkManager;
-import dev.architectury.utils.Env;
-import dev.architectury.utils.EnvExecutor;
 import dev.architectury.utils.GameInstance;
+
 import net.minecraft.server.level.ServerPlayer;
 
 @FunctionalInterface

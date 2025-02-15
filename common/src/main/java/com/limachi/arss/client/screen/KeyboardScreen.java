@@ -29,7 +29,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
 
-@RegisterMenuScreen
+@RegisterMenuScreen("keyboard")
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
 public class KeyboardScreen extends AbstractContainerScreen<KeyboardMenu> implements MidiHandler.ICatchMIDI {
@@ -60,7 +60,7 @@ public class KeyboardScreen extends AbstractContainerScreen<KeyboardMenu> implem
         return false;
     }
 
-
+    @Environment(EnvType.CLIENT)
     class BindingButton extends Button {
         boolean selected = false;
         int compactBinding = -1;

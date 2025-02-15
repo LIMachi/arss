@@ -88,7 +88,7 @@ public class Game {
     }
 
     public static <T> T getLogical(Supplier<Supplier<T>> client, Supplier<Supplier<T>> server, Supplier<T> def) {
-        if (isLogicalServer())
+        if (isLogicalServer() && server != null)
             return server.get().get();
         return EnvExecutor.getInEnv(Env.CLIENT, ()->()->{
             if (getClient() instanceof Minecraft mc && mc.isSameThread())

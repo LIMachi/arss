@@ -25,7 +25,7 @@ import net.minecraft.world.item.ItemStack;
 @SuppressWarnings("unused")
 public class InstrumentSwapperMenu extends AbstractContainerMenu {
 
-    @RegisterMenu
+    @RegisterMenu("instrument_swapper")
     public static RegistrySupplier<MenuType<InstrumentSwapperMenu>> MENU;
 
     private final ContainerLevelAccess accessor;

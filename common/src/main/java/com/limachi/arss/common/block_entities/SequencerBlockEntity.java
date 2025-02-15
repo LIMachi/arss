@@ -11,12 +11,14 @@ import com.limachi.arss.utils.annotations.RegisterMsg;
 import com.limachi.arss.utils.annotations.StaticInit;
 import com.limachi.arss.utils.network.IC2SMsg;
 import com.limachi.arss.utils.network.IS2CMsg;
+
 import com.mojang.datafixers.util.Pair;
 
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.registries.RegistrySupplier;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
+
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;

@@ -20,7 +20,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
+//import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
@@ -432,30 +432,30 @@ public class Codecs {
             return ops.createList(Arrays.stream(value).map(r->ops.createLong(r.asLong())));
         }
     };
-    public static final Codec<Level> LEVEL = new PrimitiveCodec<>() {
-        @Override
-        public <T> DataResult<Level> read(DynamicOps<T> ops, T input) {
-            return ops.getStringValue(input).flatMap(n->{
-                var location = ResourceLocation.parse(n);
-                Level out = EnvExecutor.getEnvSpecific(()->()->{
-                    var cl = Minecraft.getInstance().level;
-                    if (cl == null)
-                        return null;
-                    return cl.dimension().location().equals(location) ? cl : null;
-                }, ()->()->{
-                    var server = GameInstance.getServer();
-                    if (server == null)
-                        return null;
-                    return server.getLevel(ResourceKey.create(Registries.DIMENSION, location));
-                });
-                if (out == null)
-                    return DataResult.error(()->"Could not find level: " + n);
-                return DataResult.success(out);
-            });
-        }
-        @Override
-        public <T> T write(DynamicOps<T> ops, Level value) { return ops.createString(value.dimension().location().toString()); }
-    };
+//    public static final Codec<Level> LEVEL = new PrimitiveCodec<>() {
+//        @Override
+//        public <T> DataResult<Level> read(DynamicOps<T> ops, T input) {
+//            return ops.getStringValue(input).flatMap(n->{
+//                var location = ResourceLocation.parse(n);
+//                Level out = EnvExecutor.getEnvSpecific(()->()->{
+//                    var cl = Minecraft.getInstance().level;
+//                    if (cl == null)
+//                        return null;
+//                    return cl.dimension().location().equals(location) ? cl : null;
+//                }, ()->()->{
+//                    var server = GameInstance.getServer();
+//                    if (server == null)
+//                        return null;
+//                    return server.getLevel(ResourceKey.create(Registries.DIMENSION, location));
+//                });
+//                if (out == null)
+//                    return DataResult.error(()->"Could not find level: " + n);
+//                return DataResult.success(out);
+//            });
+//        }
+//        @Override
+//        public <T> T write(DynamicOps<T> ops, Level value) { return ops.createString(value.dimension().location().toString()); }
+//    };
     public static <T> Pair<List<T>, Stream<T>> collectSome(int qty, Stream<T> stream) {
         var t = new ArrayList<T>(qty);
         var it = stream.spliterator();
@@ -570,7 +570,7 @@ public class Codecs {
         CODECS.put(BlockPos.MutableBlockPos.class, POS);
         CODECS.put(BlockPos.MutableBlockPos[].class, POS_ARRAY);
 
-        CODECS.put(Level.class, LEVEL);
+//        CODECS.put(Level.class, LEVEL);
 
         CODECS.put(Vec3.class, VEC3);
         CODECS.put(Vec3[].class, VEC3_ARRAY);

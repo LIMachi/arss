@@ -1,10 +1,12 @@
 package com.limachi.arss.utils.codec;
 
 import com.limachi.arss.utils.ModBase;
-import com.mojang.serialization.Codec;
+
 import dev.architectury.utils.EnvExecutor;
 import dev.architectury.utils.GameInstance;
+
 import io.netty.handler.codec.DecoderException;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -13,11 +15,10 @@ import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
+//import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
@@ -252,22 +253,22 @@ public class StreamCodecs {
         return out;
     }
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, Level> LEVEL = StreamCodec.of((b, l)->{
-        b.writeUtf(l.dimension().location().toString());
-    }, b->{
-        var location = ResourceLocation.parse(b.readUtf());
-        return EnvExecutor.getEnvSpecific(()->()->{
-            var cl = Minecraft.getInstance().level;
-            if (cl == null)
-                return null;
-            return cl.dimension().location().equals(location) ? cl : null;
-        }, ()->()->{
-            var server = GameInstance.getServer();
-            if (server == null)
-                return null;
-            return server.getLevel(ResourceKey.create(Registries.DIMENSION, location));
-        });
-    });
+//    public static final StreamCodec<RegistryFriendlyByteBuf, Level> LEVEL = StreamCodec.of((b, l)->{
+//        b.writeUtf(l.dimension().location().toString());
+//    }, b->{
+//        var location = ResourceLocation.parse(b.readUtf());
+//        return EnvExecutor.getEnvSpecific(()->()->{
+//            var cl = Minecraft.getInstance().level;
+//            if (cl == null)
+//                return null;
+//            return cl.dimension().location().equals(location) ? cl : null;
+//        }, ()->()->{
+//            var server = GameInstance.getServer();
+//            if (server == null)
+//                return null;
+//            return server.getLevel(ResourceKey.create(Registries.DIMENSION, location));
+//        });
+//    });
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Vec3> VEC3 = StreamCodec.of(FriendlyByteBuf::writeVec3, FriendlyByteBuf::readVec3);
 
@@ -345,7 +346,7 @@ public class StreamCodecs {
         CODECS.put(BlockPos.MutableBlockPos.class, POS);
         CODECS.put(BlockPos.MutableBlockPos[].class, POS_ARRAY);
 
-        CODECS.put(Level.class, LEVEL);
+//        CODECS.put(Level.class, LEVEL);
 
         CODECS.put(Vec3.class, VEC3);
         CODECS.put(Vec3[].class, VEC3_ARRAY);

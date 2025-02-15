@@ -2,13 +2,12 @@ package com.limachi.arss.common.blocks;
 
 import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.common.ArssBlockBehaviors;
-import com.limachi.arss.utils.network.IMsg;
 import com.limachi.arss.utils.annotations.RegisterBlock;
 import com.limachi.arss.utils.annotations.RegisterBlockItem;
 import com.limachi.arss.utils.annotations.RegisterMsg;
 import com.limachi.arss.utils.client.annotations.FabricLayer;
-
 import com.limachi.arss.utils.network.IS2CMsg;
+
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.registries.RegistrySupplier;
 
@@ -62,15 +61,16 @@ public class AnalogDispenser extends DispenserBlock {
         ClientDef.commonHoverText("analog_dispenser_block", components);
     }
 
-    @RegisterMsg
-    public record ResyncDeltaMovement(int entityId, Level level, Vec3 velocity) implements IS2CMsg<ResyncDeltaMovement> {
-        @Override
-        public void run(NetworkManager.PacketContext ctx) {
-            Entity entity = level.getEntity(entityId);
-            if (entity != null)
-                entity.setDeltaMovement(velocity);
-        }
-    }
+    //FIXME!!!, Level is no longer a valid message type
+//    @RegisterMsg
+//    public record ResyncDeltaMovement(int entityId, Level level, Vec3 velocity) implements IS2CMsg<ResyncDeltaMovement> {
+//        @Override
+//        public void run(NetworkManager.PacketContext ctx) {
+//            Entity entity = level.getEntity(entityId);
+//            if (entity != null)
+//                entity.setDeltaMovement(velocity);
+//        }
+//    }
 
     protected Vec3 projectionVelocity(ServerLevel level, BlockPos pos, Direction facing) {
         double power = level.getSignal(pos.relative(facing.getOpposite()), facing.getOpposite()) * (facing == Direction.UP || facing == Direction.DOWN ? 0.08 : 0.17);

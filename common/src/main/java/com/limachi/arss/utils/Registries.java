@@ -19,7 +19,6 @@ import dev.architectury.registry.menu.MenuRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -70,7 +69,7 @@ public class Registries {
         CustomPacketPayload.Type<T> s2cType = s2c ? new CustomPacketPayload.Type<>(c2s ? ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath() + "_s2c") : id) : null;
         CustomPacketPayload.Type<T> c2sType = c2s ? new CustomPacketPayload.Type<>(s2c ? ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath() + "_c2s") : id) : null;
         if (s2c)
-            NetworkManager.registerReceiver(NetworkManager.Side.S2C, s2cType, codec, T::run);
+            Game.runPhysical(()->()->NetworkManager.registerReceiver(NetworkManager.Side.S2C, s2cType, codec, T::run), ()->()->NetworkManager.registerS2CPayloadType(s2cType, codec));
         if (c2s)
             NetworkManager.registerReceiver(NetworkManager.Side.C2S, c2sType, codec, T::run);
         messages.put(msg, new Pair<>(c2sType, s2cType));
@@ -167,8 +166,6 @@ public class Registries {
 //        addDiscardSuffixes(Block.class, "_item", "_block_item", "_block", "_block_entity", "_be", "_b_e", "_i", "_b");
         addDiscardSuffixes(BlockEntity.class, "_block_entity", "_be", "_b_e");
         addDiscardSuffixes(IMsg.class, "_msg", "_message");
-        addDiscardSuffixes(AbstractContainerMenu.class, "_menu", "_screen", "_menu_screen");
-        addDiscardSuffixes(Screen.class, "_menu", "_screen", "_menu_screen");
     }
 
     public static String discardSuffixes(Class<?> clazz, String input) {

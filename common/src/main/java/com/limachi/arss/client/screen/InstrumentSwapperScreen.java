@@ -16,7 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-@RegisterMenuScreen
+@RegisterMenuScreen("instrument_swapper")
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
 public class InstrumentSwapperScreen extends AbstractContainerScreen<InstrumentSwapperMenu> {

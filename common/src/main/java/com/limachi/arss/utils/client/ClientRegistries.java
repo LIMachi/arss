@@ -92,15 +92,16 @@ public class ClientRegistries {
         });
     }
 
+    @Environment(EnvType.CLIENT)
     protected record ErasedMenuScreen<M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>>(RegistrySupplier<MenuType<M>> menu, Class<S> screen) {
-        void register() {
-            MenuRegistry.registerScreenFactory(menu.get(), new MenuRegistry.ScreenFactory<M, S>() {
-                @Override
-                public S create(M containerMenu, Inventory inventory, Component component) {
-                    return ReflectUtils.nullableInstance(screen, containerMenu, inventory, component);
-                }
-            });
+        @Environment(EnvType.CLIENT)
+        private class Factory implements MenuRegistry.ScreenFactory<M, S> {
+            @Override
+            public S create(M containerMenu, Inventory inventory, Component component) {
+                return ReflectUtils.nullableInstance(screen, containerMenu, inventory, component);
+            }
         }
+        void register() { MenuRegistry.registerScreenFactory(menu.get(), new Factory()); }
     }
 
     protected <M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>> void extractMenuScreens() {
