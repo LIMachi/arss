@@ -1,5 +1,6 @@
 package com.limachi.arss.utils;
 
+import com.limachi.arss.utils.client.ClientUtils;
 import dev.architectury.platform.Platform;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
@@ -9,7 +10,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.Level;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -110,5 +115,14 @@ public class Game {
         if (isFabricLike())
             return fabricLike.get().get();
         return def.get();
+    }
+
+    public static Level getLevel(ResourceLocation location) {
+        return getLogical(()->()->ClientUtils.getLevel(location), ()->()->{
+            var server = GameInstance.getServer();
+            if (server == null)
+                return null;
+            return server.getLevel(ResourceKey.create(Registries.DIMENSION, location));
+        }, ()->null);
     }
 }

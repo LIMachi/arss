@@ -61,16 +61,15 @@ public class AnalogDispenser extends DispenserBlock {
         ClientDef.commonHoverText("analog_dispenser_block", components);
     }
 
-    //FIXME!!!, Level is no longer a valid message type
-//    @RegisterMsg
-//    public record ResyncDeltaMovement(int entityId, Level level, Vec3 velocity) implements IS2CMsg<ResyncDeltaMovement> {
-//        @Override
-//        public void run(NetworkManager.PacketContext ctx) {
-//            Entity entity = level.getEntity(entityId);
-//            if (entity != null)
-//                entity.setDeltaMovement(velocity);
-//        }
-//    }
+    @RegisterMsg
+    public record ResyncDeltaMovement(int entityId, Vec3 velocity) implements IS2CMsg<ResyncDeltaMovement> {
+        @Override
+        public void run(NetworkManager.PacketContext ctx) {
+            Entity entity = ctx.getPlayer().level().getEntity(entityId);
+            if (entity != null)
+                entity.setDeltaMovement(velocity);
+        }
+    }
 
     protected Vec3 projectionVelocity(ServerLevel level, BlockPos pos, Direction facing) {
         double power = level.getSignal(pos.relative(facing.getOpposite()), facing.getOpposite()) * (facing == Direction.UP || facing == Direction.DOWN ? 0.08 : 0.17);
@@ -97,7 +96,7 @@ public class AnalogDispenser extends DispenserBlock {
         for (Entity test : after)
             if (!before.contains(test)) {
                 test.setDeltaMovement(projectionVelocity(level, pos, dir));
-//                NetworkManager.toClients(Arss.MOD_ID, new ResyncDeltaMovement(test.getId(), level, test.getDeltaMovement()));
+                new ResyncDeltaMovement(test.getId(), test.getDeltaMovement()).sendToClients(level, pos);
             }
     }
 
