@@ -2,11 +2,12 @@ package com.limachi.arss.utils;
 
 public enum Stage {
     FIRST,
+    EVENTS,
     MSG,
     TAB,
     BLOCK,
-    ITEM,
     BLOCK_ITEM,
+    ITEM,
     BLOCK_ENTITY,
     ENTITY_ATTRIBUTE,
     ENTITY,

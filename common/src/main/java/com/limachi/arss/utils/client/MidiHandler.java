@@ -1,6 +1,5 @@
 package com.limachi.arss.utils.client;
 
-import com.limachi.arss.Arss;
 import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.annotations.Config;
 import com.limachi.arss.utils.client.annotations.StaticInitClient;
@@ -8,15 +7,8 @@ import com.limachi.arss.utils.client.annotations.StaticInitClient;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import net.minecraft.client.Minecraft;
-
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWDropCallback;
-
 import javax.sound.midi.*;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +27,7 @@ public class MidiHandler {
 
     private static MidiDevice inputDevice = null;
 
-    @Config(cmt = "name of the bound MIDI device", path = "MIDI", name = "Device")
+    @Config(cmt = "name of the bound MIDI device", path = "MIDI", name = "Device", client = true)
     public static String deviceName = "";
 
     private static final TestReceiver RECEIVER_INSTANCE = new TestReceiver();

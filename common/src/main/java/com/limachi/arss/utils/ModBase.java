@@ -40,9 +40,10 @@ public abstract class ModBase {
             }
             if (registries == null) {
                 logger = LogManager.getLogger(a.value());
-                configs = new ConfigManager(Platform.getConfigFolder().resolve(a.value() + ".cfg"));
-                configs.extract(extractor);
-                configs.load();
+                configs = new ConfigManager(a.value(), extractor);
+//                configs.extract(extractor);
+//                configs.load();
+//                configs.save();
                 registries = new Registries(a.value(), (Class<ModBase>)c);
             } else {
                 System.err.println("@Mod is used multiple times: " + registries.mod + " & " + c);
@@ -63,7 +64,7 @@ public abstract class ModBase {
         registries.extractInStages();
         instance = registries.initMod();
         registries.register();
-        ReloadListenerRegistry.register(PackType.SERVER_DATA, new SingleRunnableReloadListener(()->configs.load()), ResourceLocation.fromNamespaceAndPath(registries.mod_id, "config"));
+//        ReloadListenerRegistry.register(PackType.SERVER_DATA, new SingleRunnableReloadListener(()->configs.load()), ResourceLocation.fromNamespaceAndPath(registries.mod_id, "config"));
         extractor.runOnMethods(ReloadListener.class, (m, a)->ReloadListenerRegistry.register(a.type(), (preparationBarrier, resourceManager, profilerFiller, profilerFiller2, executor, executor2) -> (CompletableFuture<Void>)m.get(null, true, preparationBarrier, resourceManager, profilerFiller, profilerFiller2, executor, executor2), ResourceLocation.fromNamespaceAndPath(registries.mod_id, Registries.defaultToMethod(a.value(), m))));
         CommandManager.register();
         StaticInitializer.initialize(Stage.LAST, true);

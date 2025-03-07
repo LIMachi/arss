@@ -442,7 +442,7 @@ public class SequencerScreen extends Screen {
             addRenderableWidget(CycleButton.builder(t -> Component.translatable("screen.arss.sequencer.input_side." + t)).withValues(ImmutableList.of("back", "right", "left", "disabled")).withInitialValue(be.getMappings().get("record")).create(left + 10, top + IMAGE_HEIGHT - 45, SCREEN_WIDTH - 20, 16, Component.translatable("screen.arss.sequencer.input_mapping.record_pass_through"), (b, v) -> {
                 if (stillValid()) {
                     be.getMappings().put("record", (String)v);
-                    new ChangeMappingMsg(be.getBlockPos(), "record", (String)v);
+                    new ChangeMappingMsg(be.getBlockPos(), "record", (String)v).sendToServer();
                 }
                 b.setFocused(false);
                 setFocused(null);
@@ -450,7 +450,7 @@ public class SequencerScreen extends Screen {
             addRenderableWidget(CycleButton.builder(t -> Component.translatable("screen.arss.sequencer.input_side." + t)).withValues(ImmutableList.of("back", "right", "left", "disabled")).withInitialValue(be.getMappings().get("start")).create(left + 10, top + IMAGE_HEIGHT - 25, (SCREEN_WIDTH - 24) / 2, 16, Component.translatable("screen.arss.sequencer.input_mapping.start"), (b, v) -> {
                 if (stillValid()) {
                     be.getMappings().put("start", (String)v);
-                    new ChangeMappingMsg(be.getBlockPos(), "start", (String)v);
+                    new ChangeMappingMsg(be.getBlockPos(), "start", (String)v).sendToServer();
                 }
                 b.setFocused(false);
                 setFocused(null);
@@ -458,7 +458,7 @@ public class SequencerScreen extends Screen {
             addRenderableWidget(CycleButton.builder(t -> Component.translatable("screen.arss.sequencer.input_side." + t)).withValues(ImmutableList.of("back", "right", "left", "disabled")).withInitialValue(be.getMappings().get("finish")).create(left + SCREEN_WIDTH - (SCREEN_WIDTH - 24) / 2 - 12, top + IMAGE_HEIGHT - 25, (SCREEN_WIDTH - 20) / 2, 16, Component.translatable("screen.arss.sequencer.input_mapping.finish"), (b, v) -> {
                 if (stillValid()) {
                     be.getMappings().put("finish", (String)v);
-                    new ChangeMappingMsg(be.getBlockPos(), "finish", (String)v);
+                    new ChangeMappingMsg(be.getBlockPos(), "finish", (String)v).sendToServer();
                 }
                 b.setFocused(false);
                 setFocused(null);

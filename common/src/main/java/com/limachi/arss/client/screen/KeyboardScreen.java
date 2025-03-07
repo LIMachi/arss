@@ -29,7 +29,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
 
-@RegisterMenuScreen("keyboard")
+@RegisterMenuScreen
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
 public class KeyboardScreen extends AbstractContainerScreen<KeyboardMenu> implements MidiHandler.ICatchMIDI {

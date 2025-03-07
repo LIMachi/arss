@@ -25,7 +25,7 @@ import net.minecraft.world.item.ItemStack;
 @SuppressWarnings("unused")
 public class InstrumentSwapperMenu extends AbstractContainerMenu {
 
-    @RegisterMenu("instrument_swapper")
+    @RegisterMenu
     public static RegistrySupplier<MenuType<InstrumentSwapperMenu>> MENU;
 
     private final ContainerLevelAccess accessor;
@@ -37,7 +37,7 @@ public class InstrumentSwapperMenu extends AbstractContainerMenu {
             for (int column = 0; column < 8; ++column) {
                 addSlot(new Slot(container, row * 8 + column, 17 + column * 18, 25 + row * 28 ){
                     @Override
-                    public boolean mayPlace(ItemStack stack) { return stack.getItem() instanceof BlockItem; }
+                    public boolean mayPlace(ItemStack stack) { return InstrumentSwapper.accept(stack); }
                 });
             }
         for (int row = 0; row < 3; ++row)

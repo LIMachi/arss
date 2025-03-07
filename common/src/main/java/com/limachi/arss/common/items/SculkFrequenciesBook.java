@@ -1,18 +1,22 @@
 package com.limachi.arss.common.items;
 
-import com.limachi.arss.client.ClientDef;
+import com.limachi.arss.utils.Events;
 import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.Stage;
+import com.limachi.arss.utils.annotations.RegisterEventListener;
 import com.limachi.arss.utils.annotations.StaticInit;
 
 import dev.architectury.event.EventResult;
-import dev.architectury.event.events.common.InteractionEvent;
 import dev.architectury.registry.CreativeTabRegistry;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.Filterable;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemLore;
@@ -44,22 +48,20 @@ public class SculkFrequenciesBook {
         return out;
     }
 
-    @StaticInit
-    public static void registerClickEvent() {
-        InteractionEvent.RIGHT_CLICK_BLOCK.register((player, hand, pos, face) -> {
-            if (player instanceof ServerPlayer serverPlayer) {
-                ItemStack stack = player.getItemInHand(hand);
-                if (stack.is(Items.BOOK) || stack.is(Items.WRITABLE_BOOK) || stack.is(Items.WRITTEN_BOOK)) {
-                    BlockState state = serverPlayer.level().getBlockState(pos);
-                    if (state.is(Blocks.SCULK_SENSOR) || state.is(Blocks.CALIBRATED_SCULK_SENSOR))
-                        serverPlayer.setItemInHand(hand, book(false));
-                }
+    @RegisterEventListener(Events.RIGHT_CLICK_BLOCK)
+    public static EventResult clickBookOnSculk(Player player, InteractionHand hand, BlockPos pos, Direction face) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            ItemStack stack = player.getItemInHand(hand);
+            if (stack.is(Items.BOOK) || stack.is(Items.WRITABLE_BOOK) || stack.is(Items.WRITTEN_BOOK)) {
+                BlockState state = serverPlayer.level().getBlockState(pos);
+                if (state.is(Blocks.SCULK_SENSOR) || state.is(Blocks.CALIBRATED_SCULK_SENSOR))
+                    serverPlayer.setItemInHand(hand, book(false));
             }
-            return EventResult.pass();
-        });
+        }
+        return EventResult.pass();
     }
 
-    @StaticInit(Stage.ITEM)
+    @StaticInit(Stage.ITEM) //FIXME: seem to fail on servers (but does not cause a crash, and the item is visible in the creative tab)
     public static void putBookInCreativeTab() {
         CreativeTabRegistry.appendStack(ModBase.registries.default_tab, book(true));
     }

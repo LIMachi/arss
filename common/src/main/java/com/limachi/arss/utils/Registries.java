@@ -43,6 +43,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
+@SuppressWarnings({"unchecked", "unused"})
 public class Registries {
     public final Class<? extends ModBase> mod;
     public final String mod_id;
@@ -166,6 +167,7 @@ public class Registries {
 //        addDiscardSuffixes(Block.class, "_item", "_block_item", "_block", "_block_entity", "_be", "_b_e", "_i", "_b");
         addDiscardSuffixes(BlockEntity.class, "_block_entity", "_be", "_b_e");
         addDiscardSuffixes(IMsg.class, "_msg", "_message");
+        addDiscardSuffixes(AbstractContainerMenu.class, "_menu", "_screen", "_menu_screen");
     }
 
     public static String discardSuffixes(Class<?> clazz, String input) {
@@ -432,6 +434,10 @@ public class Registries {
         });
     }
 
+    protected void extractEvents() {
+        ModBase.extractor.runOnMethods(RegisterEventListener.class, (m, a)->a.value().register(m));
+    }
+
     public <T extends AbstractContainerMenu> RegistrySupplier<MenuType<T>> menu(String reg_key, MenuRegistry.ExtendedMenuTypeFactory<T> builder) {
         return logRegistration("menu", menus.register(reg_key, ()->MenuRegistry.ofExtended(builder)));
     }
@@ -451,11 +457,12 @@ public class Registries {
 
     public void extractInStages() {
         synchronized (this) {
+            stage(Stage.EVENTS, this::extractEvents);
             stage(Stage.MSG, this::extractMsgs);
             stage(Stage.TAB, this::extractTabs);
             stage(Stage.BLOCK, this::extractBlocks);
-            stage(Stage.ITEM, this::extractItems);
             stage(Stage.BLOCK_ITEM, this::extractBlockItems);
+            stage(Stage.ITEM, this::extractItems);
             stage(Stage.BLOCK_ENTITY, this::extractBlockEntities);
             stage(Stage.MENU, this::extractMenus);
         }

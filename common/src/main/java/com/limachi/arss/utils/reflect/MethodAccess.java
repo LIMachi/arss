@@ -60,19 +60,13 @@ public class MethodAccess<C, T> implements InstancedAccess<C, T>, Named {
     }
 
     @Override
-    public T get() {
-        return get(object, LOG);
-    }
+    public T get() { return get(object, LOG); }
 
     @Override
-    public boolean set(T val) {
-        return false;
-    }
+    public boolean set(T val) { return false; }
 
     @Override
-    public T apply(C c) {
-        return get(c, LOG);
-    }
+    public T apply(C c) { return get(c, LOG); }
 
     @Override
     public void accept(C c, T t) {}
@@ -87,6 +81,38 @@ public class MethodAccess<C, T> implements InstancedAccess<C, T>, Named {
         }
     }
 
+    public T getStatic(Object ... params) { return get(null, LOG, params); }
+
+    public boolean mayCallWith(Class<?> ret, Class<?> ... params) {
+        if (!ret.isAssignableFrom(returnType()) || params.length != method.getParameterCount())
+            return false;
+        var pt = parameters();
+        for (int i = 0; i < params.length; ++i)
+            if (!pt[i].getType().isAssignableFrom(params[i]))
+                return false;
+        return true;
+    }
+
+    public boolean mayCallWith(Class<?> ret, Parameter ... params) {
+        if (!ret.isAssignableFrom(returnType()) || params.length != method.getParameterCount())
+            return false;
+        var pt = parameters();
+        for (int i = 0; i < params.length; ++i)
+            if (!pt[i].getType().isAssignableFrom(params[i].getType()))
+                return false;
+        return true;
+    }
+
+    public boolean mayCallWith(Class<?> ret, Object ... params) {
+        if (!ret.isAssignableFrom(returnType()) || params.length != method.getParameterCount())
+            return false;
+        var pt = parameters();
+        for (int i = 0; i < params.length; ++i)
+            if (!pt[i].getType().isAssignableFrom(params[i].getClass()))
+                return false;
+        return true;
+    }
+
     @Override
     public String name() { return method.getName(); }
 
@@ -97,4 +123,7 @@ public class MethodAccess<C, T> implements InstancedAccess<C, T>, Named {
     public Parameter[] parameters() { return method.getParameters(); }
 
     public Class<?> returnType() { return type; }
+
+    @Override
+    public String toString() { return "MethodAccess{" + ReflectUtils.opinionatedDescriptor(this) + "}"; }
 }

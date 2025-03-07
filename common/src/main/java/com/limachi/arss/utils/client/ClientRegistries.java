@@ -33,6 +33,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
+@SuppressWarnings({"unchecked", "unused"})
 @Environment(EnvType.CLIENT)
 public class ClientRegistries {
     protected HashMap<ResourceLocation, BlockColor> blockTints = new HashMap<>();
@@ -46,6 +47,10 @@ public class ClientRegistries {
     public void registerItemTint(ItemColor itemTint, ResourceLocation ... ids) {
         for (var id : ids)
             itemTints.put(id, itemTint);
+    }
+
+    static {
+        Registries.addDiscardSuffixes(Screen.class, "_menu", "_screen", "_menu_screen");
     }
 
     protected void extractBlockTinters() {
@@ -92,23 +97,27 @@ public class ClientRegistries {
         });
     }
 
+    //dark type casting magic
+    //basically, we trick the compiler in thinking our code is sound by putting seemingly valid bounds on interfaces
+    //but there is no way to check this at compilation :)
     @Environment(EnvType.CLIENT)
-    protected record ErasedMenuScreen<M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>>(RegistrySupplier<MenuType<M>> menu, Class<S> screen) {
-        @Environment(EnvType.CLIENT)
-        private class Factory implements MenuRegistry.ScreenFactory<M, S> {
-            @Override
-            public S create(M containerMenu, Inventory inventory, Component component) {
-                return ReflectUtils.nullableInstance(screen, containerMenu, inventory, component);
-            }
+    private record S<M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>>(RegistrySupplier<MenuType<M>> menu, Class<S> screen) implements MenuRegistry.ScreenFactory<M, S> {
+        static <M0 extends AbstractContainerMenu, S0 extends Screen & MenuAccess<M0>> Class<S0> cast(Class<?> c) { return (Class<S0>) c; }
+
+        @Override
+        public S create(M containerMenu, Inventory inventory, Component component) {
+            return ReflectUtils.nullableInstance(screen, containerMenu, inventory, component);
         }
-        void register() { MenuRegistry.registerScreenFactory(menu.get(), new Factory()); }
+
+        void register() { MenuRegistry.registerScreenFactory(menu.get(), this); }
     }
 
-    protected <M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>> void extractMenuScreens() {
-        ModBase.extractor.runOnClasses(RegisterMenuScreen.class, (c, a)->{
-            String name = Registries.defaultToClass(a.value(), c);
-            new ErasedMenuScreen<>(Registries.searchRegistry(ModBase.registries.menus, ModBase.registries.mod_id + ":" + name), (Class<S>)c).register();
-        });
+    protected void extractEvents() {
+        ModBase.extractor.runOnMethods(RegisterClientEventListener.class, (m, a)->a.value().register(m));
+    }
+
+    protected void extractMenuScreens() {
+        ModBase.extractor.runOnClasses(RegisterMenuScreen.class, (c, a)->new S<>(Registries.searchRegistry(ModBase.registries.menus, ModBase.registries.mod_id + ":" + Registries.defaultToClass(a.value(), c)), S.cast(c)).register());
     }
 
     protected static void stage(ClientStage stage, Runnable run) {
@@ -119,6 +128,7 @@ public class ClientRegistries {
 
     public void extractInStages() {
         synchronized (this) {
+            stage(ClientStage.EVENTS, this::extractEvents);
             stage(ClientStage.SCREEN, this::extractMenuScreens);
             stage(ClientStage.KEY_BINDING, this::extractKeyBindings);
             stage(ClientStage.BLOCK_TINTER, this::extractBlockTinters);

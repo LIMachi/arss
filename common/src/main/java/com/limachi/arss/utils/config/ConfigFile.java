@@ -2,20 +2,28 @@ package com.limachi.arss.utils.config;
 
 import com.limachi.arss.utils.reflect.FieldAccess;
 
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
-public class ConfigFile {
+public class ConfigFile implements Cloneable {
+    protected final HashMap<String, ConfigValue<?, ?>> parts;
+
+    public ConfigFile() {
+        parts = new HashMap<>();
+    }
+
+    protected ConfigFile(HashMap<String, ConfigValue<?, ?>> parts) {
+        this.parts = parts;
+    }
+
+    @Override
+    public ConfigFile clone() { return new ConfigFile((HashMap<String, ConfigValue<?, ?>>)parts.clone()); }
+
     protected record Serializer<T>(Function<T, String> serialize, Function<String, T> deserialize){}
 
     protected static final HashMap<Class<?>, Serializer<?>> SERIALIZERS = new HashMap<>();
@@ -97,9 +105,12 @@ public class ConfigFile {
         }
     }
 
-    protected final Path filePath;
-
-    protected final HashMap<String, ConfigValue<?, ?>> parts = new HashMap<>();
+    public String dump() {
+        StringBuilder out = new StringBuilder();
+        for (var e : parts.entrySet())
+            out.append(e.getKey()).append(": ").append(e.getValue().access.get().toString()).append('\n');
+        return out.toString();
+    }
 
     public <T, O> boolean registerValue(String path, String comment, FieldAccess<?, T> access, Function<O, O> validator, boolean reload) {
         if (access == null || path == null)
@@ -109,9 +120,6 @@ public class ConfigFile {
         parts.put(path, new ConfigValue<>(comment == null || comment.isBlank() ? "" : "#" + comment.replaceAll("\n\r?|\r\n?", "\n#") + "\n", access, validator, reload));
         return true;
     }
-
-    public ConfigFile(String filePath) { this.filePath = new File(filePath).toPath(); }
-    public ConfigFile(Path filePath) { this.filePath = filePath; }
 
     protected static String readKey(String line) {
         boolean inDoubleQuote = false;
@@ -181,13 +189,21 @@ public class ConfigFile {
         return out;
     }
 
-    public boolean load(boolean reload) {
+    public boolean load(String raw, boolean reload) {
+        return load(Arrays.stream(raw.split("[\r\n]")).filter(l->!l.isBlank()).toList(), reload);
+    }
+
+    public boolean load(Path filePath, boolean reload) {
         List<String> lines;
         try {
             lines = Files.readAllLines(filePath);
         } catch (IOException ignore) {
-            return save();
+            return false;
         }
+        return load(lines, reload);
+    }
+
+    protected boolean load(List<String> lines, boolean reload) {
         for (String line : lines) {
             line = line.strip();
             if (line.isBlank() || line.startsWith("#"))
@@ -201,32 +217,36 @@ public class ConfigFile {
             if (!part.read(line.substring(key.length() + 1).strip()))
                 return false;
         }
-        return reload || save();
+        return true;
     }
 
-    public boolean save() {
+    public String saveAsRaw() {
         if (parts.isEmpty())
-            return true;
+            return "";
+        StringBuilder out = new StringBuilder();
+        var entries = new ArrayList<>(parts.entrySet());
+        entries.sort(Map.Entry.comparingByKey());
+        for (var entry : entries) {
+            String cmt = entry.getValue().comment();
+            if (!cmt.isBlank())
+                out.append(cmt);
+            String w = entry.getValue().write();
+            if (w == null)
+                return "";
+            out.append(entry.getKey()).append('=').append(w).append("\n\n");
+        }
+        return out.toString();
+    }
+
+    public boolean save(Path filePath) {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath.toFile()));
-            var entries = new ArrayList<>(parts.entrySet());
-            entries.sort(Map.Entry.comparingByKey());
-            for (var entry : entries) {
-                String cmt = entry.getValue().comment();
-                if (!cmt.isBlank())
-                    writer.write(cmt);
-                String w = entry.getValue().write();
-                if (w == null)
-                    return false;
-                writer.write(entry.getKey() + "=" + w);
-                writer.newLine();
-                writer.newLine();
-            }
+            FileWriter writer = new FileWriter(filePath.toFile());
+            writer.write(saveAsRaw());
             writer.flush();
-            return true;
         } catch (IOException ignore) {
             return false;
         }
+        return true;
     }
 
     public <T> T get(String path) {

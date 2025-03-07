@@ -26,6 +26,6 @@ public class ConfigScreen extends Screen {
     protected void init() {
         leftPos = (width - imageWidth) / 2;
         topPos = (height - imageHeight) / 2;
-        addRenderableOnly(new FittingMultiLineTextWidget(leftPos + 2, topPos + 2, 250, 16, Component.literal(config.file.toString()), font));
+        addRenderableOnly(new FittingMultiLineTextWidget(leftPos + 2, topPos + 2, 250, 16, Component.literal(config.client.dump()), font));
     }
 }

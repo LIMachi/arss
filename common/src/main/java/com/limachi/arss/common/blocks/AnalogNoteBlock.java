@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.List;
@@ -67,7 +69,7 @@ public class AnalogNoteBlock extends NoteBlock implements EntityBlock {
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos p_55045_, boolean p_55046_) {
         int power = level.getBestNeighborSignal(pos);
         int prevPower = level.getBlockEntity(pos) instanceof com.limachi.arss.common.block_entities.AnalogNoteBlock be ? be.getPreviousInput() : 0;
-        int _new = getNote(state, level, pos, false);
+        int _new = getNote(state, level, pos);
         if (!((_new == -1 && power == 0) || _new == state.getValue(NOTE))) {
 //            _new = net.minecraftforge.common.ForgeHooks.onNoteChange(level, pos, state, state.getValue(NOTE), _new);
 //            if (_new == -1) return;
@@ -78,16 +80,17 @@ public class AnalogNoteBlock extends NoteBlock implements EntityBlock {
                 be.setPreviousInput(power);
             level.setBlock(pos, state.setValue(NOTE, _new != -1 ? _new : state.getValue(NOTE)).setValue(POWERED, power > 0), 3);
             if (power > 0 && !boosted)
-                playNote(state, level, pos);
+                playNote(null, state, level, pos);
         } else if (_new != state.getValue(NOTE))
             level.setBlock(pos, state.setValue(NOTE, _new != -1 ? _new : state.getValue(NOTE)), 3);
         if (power > 0 && boosted)
-            playNote(state, level, pos);
+            playNote(null, state, level, pos);
     }
 
-    private void playNote(BlockState state, Level level, BlockPos pos) {
+    private void playNote(Entity entity, BlockState state, Level level, BlockPos pos) {
         if (state.getValue(INSTRUMENT).worksAboveNoteBlock() || level.getBlockState(pos.above()).isAir()) {
             level.blockEvent(pos, this, 0, 0);
+            level.gameEvent(entity, GameEvent.NOTE_BLOCK_PLAY, pos);
         }
     }
 
@@ -101,27 +104,30 @@ public class AnalogNoteBlock extends NoteBlock implements EntityBlock {
             return ItemInteractionResult.SUCCESS;
         else {
             int power = level.getBestNeighborSignal(pos);
-            int _new = getNote(state, level, pos, false);
+            int _new = getNote(state, level, pos);
             if (!((_new == -1 && power == 0) || _new == state.getValue(NOTE))) {
 //                _new = net.minecraftforge.common.ForgeHooks.onNoteChange(level, pos, state, state.getValue(NOTE), _new);
 //                if (_new == -1) return ItemInteractionResult.FAIL;
             }
             level.setBlock(pos, state.setValue(NOTE, _new != -1 ? _new : state.getValue(NOTE)).setValue(HIGH, !state.getValue(HIGH)), 3);
             player.displayClientMessage(Component.translatable("display.arss.analog_note_block.high_pitch." + level.getBlockState(pos).getValue(HIGH)), true);
-            playNote(state, level, pos);
+            playNote(player, state, level, pos);
             player.awardStat(Stats.TUNE_NOTEBLOCK);
             return ItemInteractionResult.CONSUME;
         }
     }
 
-    protected int getNote(BlockState state, Level level, BlockPos pos, boolean clamp) {
+    protected int getNote(BlockState state, Level level, BlockPos pos) {
         int power = level.getBestNeighborSignal(pos);
-        return Math.max(power + (state.getValue(HIGH) ? 10 : 0) - 1, clamp ? 0 : -1);
+        return Math.max(power + (state.getValue(HIGH) ? 10 : 0) - 1, -1);
     }
 
     @Override
     public boolean triggerEvent(BlockState state, Level level, BlockPos pos, int p_55026_, int p_55027_) {
-        return super.triggerEvent(state.setValue(NOTE, getNote(state, level, pos, true)), level, pos, p_55026_, p_55027_);
+        int note = getNote(state, level, pos);
+        if (note == -1)
+            return false;
+        return super.triggerEvent(state.setValue(NOTE, note), level, pos, p_55026_, p_55027_);
     }
 
     @Override

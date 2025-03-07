@@ -1,6 +1,1 @@
-test on server
-comparative test between fabric and neo
-redo the wires
-redo the jukebox
-sometimes lever does not change power when scrolled until flipped off then on again
-sequencer does not update the head on every tick in test mode (only when a signal changes)
+easter egg: make the amethyst block sounds when inserted into an instrument swapper

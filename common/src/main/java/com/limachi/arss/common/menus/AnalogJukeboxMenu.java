@@ -25,7 +25,7 @@ import net.minecraft.world.item.ItemStack;
 @SuppressWarnings("unused")
 public class AnalogJukeboxMenu extends AbstractContainerMenu {
 
-    @RegisterMenu("analog_jukebox")
+    @RegisterMenu
     public static RegistrySupplier<MenuType<AnalogJukeboxMenu>> MENU;
 
     private final ContainerLevelAccess accessor;

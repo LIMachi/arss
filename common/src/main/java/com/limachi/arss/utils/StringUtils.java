@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("unused")
 public class StringUtils {
     public static Pattern CAMEL_TO_SNAKE_REGEX = Pattern.compile("\\B([A-Z][^A-Z]+?)");
     public static Pattern CLASS_NAME_REGEX = Pattern.compile("(?:\\w+\\$)*(\\w+)\\$?(?:\\(.*\\)?)?$");

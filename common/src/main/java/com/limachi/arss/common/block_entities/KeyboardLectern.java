@@ -1,6 +1,9 @@
 package com.limachi.arss.common.block_entities;
 
+import com.limachi.arss.utils.Events;
+import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.annotations.RegisterBlockEntity;
+import com.limachi.arss.utils.annotations.RegisterEventListener;
 import com.limachi.arss.utils.annotations.RegisterMsg;
 import com.limachi.arss.utils.network.IC2SMsg;
 import com.limachi.arss.utils.network.IS2CMsg;
@@ -19,6 +22,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,6 +34,20 @@ public class KeyboardLectern extends BlockEntity {
     protected static final HashMap<UUID, HashSet<BlockPos>> CONTROLLED_LECTERNS = new HashMap<>();
     protected ItemStack keyboard = ItemStack.EMPTY;
     protected int userCount = 0;
+
+    @RegisterEventListener(Events.PLAYER_QUIT)
+    public static void onQuit(ServerPlayer player) {
+        Level level = player.level();
+        ModBase.logger.error("player logging out: " + player + " -> " + level);
+        var set = CONTROLLED_LECTERNS.get(player.getUUID());
+        if (set != null) {
+            for (BlockPos p : set)
+                if (level.getBlockEntity(p) instanceof KeyboardLectern ke)
+                    ke.removeUser(player);
+            CONTROLLED_LECTERNS.remove(player.getUUID());
+        }
+    }
+
 
     @RegisterBlockEntity
     public static RegistrySupplier<BlockEntityType<KeyboardLectern>> TYPE;

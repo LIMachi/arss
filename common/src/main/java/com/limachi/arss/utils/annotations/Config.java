@@ -52,7 +52,12 @@ public @interface Config {
     String name() default "";
 
     /**
-     * can this value be reloaded at run time or should it be read only once at startup
+     * can this value be reloaded at run time or should it be read only once at startup/server connection
      */
     boolean reload() default false;
+
+    /**
+     * is this value specific to client configs (will not be present in server configs)
+     */
+    boolean client() default false;
 }

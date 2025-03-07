@@ -1,5 +1,9 @@
 0: booster is consumed when removed
 1: gate might be destroyed if the applied booster is destroyed when removed (caused by bug 0)
-5: note block trigger when signal is set to 0 (both in high or low mode) (check vanilla code for changes)
-9: redstone variants don't work as intended (wrong model, loose power like a standard wire)
-10: a bug can occur when a sequencer (diode) item has data on it and is saved in a player inventory (Missing id error)
+?2: note block trigger when signal is set to 0 (both in high or low mode) (check vanilla code for changes)
+?3: config don't reload on /reload (also should make the server config autoritative)
+?4: (unable to reproduce in single player) gates are updated to many times on one tick by other gates (sequencer square -> edge -> sequencer saw -> pixel) (check if same bug as note block bug)
+?5: keyboard lectern shown as connected after server reload (possible fix: track when a connected player disconnects)
+?6: sequencer buttons (for input) are not working
+?7: noteblock firing on block update instead of signal change
+?8: changing the content of a crafter near a diode does not update it

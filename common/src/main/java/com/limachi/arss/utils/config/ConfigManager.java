@@ -1,15 +1,24 @@
 package com.limachi.arss.utils.config;
 
+import com.limachi.arss.utils.Game;
 import com.limachi.arss.utils.ModBase;
+import com.limachi.arss.utils.SingleRunnableReloadListener;
 import com.limachi.arss.utils.annotations.Config;
+import com.limachi.arss.utils.annotations.RegisterMsg;
+import com.limachi.arss.utils.network.IS2CMsg;
 import com.limachi.arss.utils.reflect.AnnotationExtractor;
 import com.limachi.arss.utils.reflect.FieldAccess;
 
+import dev.architectury.event.events.common.PlayerEvent;
+import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Platform;
+import dev.architectury.registry.ReloadListenerRegistry;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,25 +91,75 @@ public class ConfigManager {
         return null;
     }
 
-    protected ConfigFile file;
-    protected boolean loaded = false;
+    protected ConfigFile client;
+    protected ConfigFile server;
+    protected Path clientPath;
+    protected Path serverPath;
 
-    public ConfigManager(ConfigFile file) { this.file = file; }
-    public ConfigManager(String path) { file = new ConfigFile(path); }
-    public ConfigManager(Path path) { file = new ConfigFile(path); }
+    public ConfigManager(String modId, AnnotationExtractor extractor) {
+        client = new ConfigFile();
+        server = new ConfigFile();
+        extract(extractor);
+        serverPath = Platform.getConfigFolder().resolve(modId + "-server.cfg").toAbsolutePath();
+        PlayerEvent.PLAYER_JOIN.register(p->new SyncToClient(server.saveAsRaw()).sendToClient(p));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, new SingleRunnableReloadListener(()->{
+            server.load(serverPath, true);
+            String raw = server.saveAsRaw();
+            try {
+                Files.writeString(serverPath, raw);
+            } catch (IOException ignore) {}
+            new SyncToClient(raw).sendToClients();
+        }), ResourceLocation.fromNamespaceAndPath(modId, "server-config"));
+        if (Game.isPhysicalClient()) {
+            clientPath = Platform.getConfigFolder().resolve(modId + "-client.cfg").toAbsolutePath();
+            ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, new SingleRunnableReloadListener(()->{
+                client.load(clientPath, true);
+                client.save(clientPath);
+            }), ResourceLocation.fromNamespaceAndPath(modId, "client-config"));
+            client.load(clientPath, false);
+            client.save(clientPath);
+        }
+        server.load(serverPath, false);
+        server.save(serverPath);
+    }
 
-    public <T> void register(String path, String comment, Class<?> type, FieldAccess<?, T> access, Function<Object, Object> validator, boolean reload) {
+    @RegisterMsg
+    public record SyncToClient(String raw) implements IS2CMsg<SyncToClient> {
+        @Override
+        public void run(NetworkManager.PacketContext ctx) {
+            ModBase.configs.server.load(raw, false);
+        }
+    }
+
+    public <T> void register(String path, String comment, Class<?> type, FieldAccess<?, T> access, Function<Object, Object> validator, boolean reload, boolean isClient) {
         Class<?> innerType = type.isArray() ? type.getComponentType() : type;
         if (!DEFAULTS.containsKey(innerType)) {
             ModBase.logger.error("@Config on invalid/unsupported type: " + innerType);
             return;
         }
-        file.registerValue(path, comment, access, validator, reload);
+        if (isClient)
+            client.registerValue(path, comment, access, validator, reload);
+        else
+            server.registerValue(path, comment, access, validator, reload);
+    }
+
+    private static void reloadCmt(Config a, StringBuilder cmt) {
+        if (!cmt.isEmpty())
+            cmt.append('\n');
+        if (a.reload()) {
+            cmt.append("Will be reloaded at the same time as ");
+            if (a.client())
+                cmt.append("client resource (default F3 + T)\n");
+            else
+                cmt.append("server datapack (by the '/reload' command)");
+        } else
+            cmt.append("Can only be changed between restart (might be reset to default while the game/server is running)");
     }
 
     public void extract(AnnotationExtractor extractor) {
         extractor.runOnFields(Config.class, (f, a)->{
             StringBuilder cmt = new StringBuilder(a.cmt());
+            reloadCmt(a, cmt);
             Class<?> ft = f.type();
             boolean isArray = ft.isArray();
             Class<?> type = isArray ? ft.getComponentType() : ft;
@@ -129,7 +188,7 @@ public class ConfigManager {
                 }
                 return v;
             };
-            register((path.isBlank() ? "" : path + ".") + name, cmt.toString(), ft, f, pred, a.reload());
+            register((path.isBlank() ? "" : path + ".") + name, cmt.toString(), ft, f, pred, a.reload(), a.client());
         });
     }
 
@@ -139,14 +198,7 @@ public class ConfigManager {
         reloadListeners.add(runnable);
     }
 
-    public boolean load() {
-        boolean ok = file.load(loaded);
-        if (loaded)
-            for (Runnable listener: reloadListeners)
-                listener.run();
-        loaded = true;
-        return ok;
-    }
+    public boolean save() { return Game.getLogical(()->()->client.save(clientPath), ()->()->server.save(serverPath), ()->false); }
 
-    public boolean save() { return file.save(); }
+    public String dump() { return "Client:\n" + client.dump() + "\nServer:\n" + server.dump(); }
 }

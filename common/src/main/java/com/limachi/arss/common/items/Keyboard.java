@@ -3,15 +3,18 @@ package com.limachi.arss.common.items;
 import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.common.blocks.KeyboardLectern;
 import com.limachi.arss.common.menus.KeyboardMenu;
+import com.limachi.arss.utils.client.ClientEvents;
 import com.limachi.arss.utils.IItemMixin;
+import com.limachi.arss.utils.client.annotations.RegisterClientEventListener;
 import com.limachi.arss.utils.network.IC2SMsg;
 import com.limachi.arss.utils.annotations.*;
 import com.limachi.arss.utils.client.annotations.ItemTinter;
 
-import dev.architectury.event.events.common.InteractionEvent;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.registries.RegistrySupplier;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -38,12 +41,12 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 public class Keyboard extends Item implements IItemMixin {
-    @StaticInit
-    public static void registerComponent() {
-        InteractionEvent.CLIENT_LEFT_CLICK_AIR.register((p, h)->{
-            if (p.isShiftKeyDown() && p.getItemInHand(h).getItem() instanceof Keyboard)
-                new ClearKeyboardTargetMsg().sendToServer();
-        });
+
+    @Environment(EnvType.CLIENT)
+    @RegisterClientEventListener(ClientEvents.LEFT_CLICK_AIR)
+    public static void leftClickAir(Player player, InteractionHand hand) {
+        if (player.isShiftKeyDown() && player.getItemInHand(hand).getItem() instanceof Keyboard)
+            new ClearKeyboardTargetMsg().sendToServer();
     }
 
     @Config(min = "2", max = "32", cmt = "how far a keyboard item can transmit redstone signal", reload = true, path = "RemoteKeyboard", name = "MaximumReach")

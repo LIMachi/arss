@@ -25,7 +25,7 @@ public class KeyboardMenu extends AbstractContainerMenu implements IAcceptUpStre
     public final InteractionHand hand;
     public final Inventory inv;
 
-    @RegisterMenu("keyboard")
+    @RegisterMenu
     public static RegistrySupplier<MenuType<KeyboardMenu>> MENU;
 
     public KeyboardMenu(int id, Inventory playerInv, boolean offHand) {
