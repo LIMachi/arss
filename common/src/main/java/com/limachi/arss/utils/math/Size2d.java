@@ -44,4 +44,6 @@ public record Size2d(double w, double h) implements Constable {
     public Size2d div(double v) { return new Size2d(w / v, h / v); }
     public Size2d div(double w, double h) { return new Size2d(this.w / w, this.h / h); }
     public Size2d div(Size2d size) { return new Size2d(w / size.w, h / size.h); }
+    public Size2d min(Size2d other) { return new Size2d(Double.min(w, other.w), Double.min(h, other.h)); }
+    public Size2d max(Size2d other) { return new Size2d(Double.max(w, other.w), Double.max(h, other.h)); }
 }

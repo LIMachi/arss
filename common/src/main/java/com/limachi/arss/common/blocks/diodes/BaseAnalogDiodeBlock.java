@@ -14,6 +14,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
@@ -121,27 +123,30 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IAccept
     }
 
     public static int sGetInputSignal(Level level, BlockPos pos, BlockState state, boolean analog) {
-        if (state.getBlock() instanceof BaseAnalogDiodeBlock && state.getValue(SIDES) != SideToggling.INPUT_DISABLED)
-            return ((BaseAnalogDiodeBlock)state.getBlock()).commonSignalGetter(level, pos, state, state.getValue(FACING), analog);
+        if (!state.hasProperty(SIDES) || state.getValue(SIDES).acceptBack())
+            return commonSignalGetter(level, pos, state, state.getValue(FACING), analog);
         return 0;
     }
 
     public static int sGetAlternateSignal(LevelReader level, BlockPos pos, BlockState state) {
-        if (state.getBlock() instanceof BaseAnalogDiodeBlock) {
-            Pair<Integer, Integer> s = sGetAlternateSignals(level, pos, state);
-            return Math.max(s.getFirst(), s.getSecond());
-        }
-        return 0;
+        Pair<Integer, Integer> s = sGetAlternateSignals(level, pos, state);
+        return Math.max(s.getFirst(), s.getSecond());
     }
 
     public static Pair<Integer, Integer> sGetAlternateSignals(LevelReader level, BlockPos pos, BlockState state) {
-        if (state.getBlock() instanceof BaseAnalogDiodeBlock instance) {
+        if (state.hasProperty(FACING)) {
             Direction direction = state.getValue(FACING);
             Direction clock = direction.getClockWise();
-            SideToggling sides = state.getValue(SIDES);
-            int left = sides.acceptLeft() ? instance.getAlternateSignalAt(level, pos.relative(clock), clock) : 0;
+            boolean acceptLeft = true;
+            boolean acceptRight = true;
+            if (state.hasProperty(SIDES)) {
+                SideToggling sides = state.getValue(SIDES);
+                acceptLeft = sides.acceptLeft();
+                acceptRight = sides.acceptRight();
+            }
+            int left = acceptLeft ? getAlternateSignalAt(level, pos.relative(clock), clock) : 0;
             Direction counter = direction.getCounterClockWise();
-            int right = sides.acceptRight() ? instance.getAlternateSignalAt(level, pos.relative(counter), counter) : 0;
+            int right = acceptRight ? getAlternateSignalAt(level, pos.relative(counter), counter) : 0;
             return Pair.of(left, right);
         }
         return Pair.of(0, 0);
@@ -155,7 +160,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IAccept
         return 0;
     }
 
-    protected int getDirectionalSignal(Level level, BlockPos pos, BlockState state, Direction dir) {
+    protected static int getDirectionalSignal(Level level, BlockPos pos, BlockState state, Direction dir) {
         BlockPos blockpos = pos.relative(dir);
         int i = level.getSignal(blockpos, dir);
         if (i >= 15) {
@@ -188,7 +193,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IAccept
         ANALOG_OVERRIDES.put(CrafterBlock.class, (level, pos)->level.getBlockEntity(pos) instanceof CrafterBlockEntity crafter ? getCrafterSignal(crafter) : 0);
     }
 
-    protected int commonSignalGetter(Level level, BlockPos pos, BlockState state, Direction back, boolean analog) {
+    protected static int commonSignalGetter(Level level, BlockPos pos, BlockState state, Direction back, boolean analog) {
         int i = getDirectionalSignal(level, pos, state, back);
         BlockPos backPos = pos.relative(back);
         BlockState t_state = level.getBlockState(backPos);
@@ -216,7 +221,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IAccept
         return commonSignalGetter(level, pos, state, state.getValue(FACING), true);
     }
 
-    private ItemFrame getItemFrame(Level level, Direction dir, BlockPos pos) {
+    private static ItemFrame getItemFrame(Level level, Direction dir, BlockPos pos) {
         List<ItemFrame> list = level.getEntitiesOfClass(ItemFrame.class, new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1), e -> e != null && e.getDirection() == dir);
         return list.size() == 1 ? list.get(0) : null;
     }
@@ -265,7 +270,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IAccept
             if (modeProp != null) {
                 state = player.isShiftKeyDown() ? cycleBack(state, modeProp) : state.cycle(modeProp);
                 Enum<?> s = state.getValue(modeProp);
-//                SoundUtils.playComparatorClick(level, pos, s.ordinal()); //FIXME
+                level.playSound(player, pos, SoundEvents.COMPARATOR_CLICK, SoundSource.BLOCKS, 0.3F, 0.5F + 0.05F * (float)s.ordinal());
                 player.displayClientMessage(Component.translatable("display.arss." + name + ".mode." + s), true);
                 level.setBlockAndUpdate(pos, state);
                 refreshOutputState(level, pos, state, true);
@@ -310,12 +315,12 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IAccept
         return 0;
     }
 
-    protected int getAlternateSignalAt(LevelReader level, BlockPos pos, Direction dir) {
+    protected static int getAlternateSignalAt(LevelReader level, BlockPos pos, Direction dir) {
         if (ALL_POWERS_ON_SIDES) {
             BlockPos start = pos.relative(dir.getOpposite());
             return commonSignalGetter((Level) level, start, level.getBlockState(start), dir, true);
         }
-        return level.getControlInputSignal(pos.relative(dir), dir, this.sideInputDiodesOnly());
+        return level.getControlInputSignal(pos.relative(dir), dir, false);
     }
 
     private void refreshOutputState(Level level, BlockPos pos, BlockState state, boolean recalculate) {

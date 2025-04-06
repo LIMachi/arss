@@ -43,4 +43,6 @@ public record Pos2d(double x, double y) implements Constable {
     public Pos2d div(double v) { return new Pos2d(x / v, y / v); }
     public Pos2d div(double x, double y) { return new Pos2d(this.x / x, this.y / y); }
     public Pos2d div(Pos2d size) { return new Pos2d(x / size.x, y / size.y); }
+    public Pos2d min(Pos2d other) { return new Pos2d(Double.min(x, other.x), Double.min(y, other.y)); }
+    public Pos2d max(Pos2d other) { return new Pos2d(Double.max(x, other.x), Double.max(y, other.y)); }
 }

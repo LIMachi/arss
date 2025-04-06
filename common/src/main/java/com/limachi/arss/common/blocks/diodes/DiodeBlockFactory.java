@@ -81,6 +81,11 @@ public class DiodeBlockFactory {
         ItemInteractionResult use(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit);
     }
 
+    @FunctionalInterface
+    public interface BlockEventHandler {
+        boolean triggerEvent(BlockState state, Level level, BlockPos pos, int var0, int var1);
+    }
+
     public static final class Builder {
         private String name = "Must be a valid registry key";
         private EnumProperty<?> mode = null;
@@ -101,11 +106,12 @@ public class DiodeBlockFactory {
         private boolean canToggleInput = false;
         private UseMethod use = null;
         private IAcceptCrouchInteractWithItem override = null;
+        private BlockEventHandler blockEventHandler = null;
 
         private Builder() {}
 
         public void finish() {
-            create(name, mode, generator, blockProperties, itemProperties, delay, tickingMode, hasPowerTint, blockEntityBuilder, canToggleBothSides, canToggleInput, extraProperties, use, itemProvider, override);
+            create(name, mode, generator, blockProperties, itemProperties, delay, tickingMode, hasPowerTint, blockEntityBuilder, canToggleBothSides, canToggleInput, extraProperties, use, itemProvider, override, blockEventHandler);
         }
 
         public Builder mode(EnumProperty<?> mode) { this.mode = mode; return this; }
@@ -121,6 +127,7 @@ public class DiodeBlockFactory {
         public Builder canToggleInput(boolean state) { canToggleInput = state; return this; }
         public Builder catchUse(UseMethod use) { this.use = use; return this; }
         public Builder itemBuilder(BiFunction<Block, Item.Properties, BlockItem> builder) { itemProvider = builder; return this; }
+        public Builder blockEventHandler(BlockEventHandler handler) { blockEventHandler = handler; return this; }
 
         public Builder overrideItemCrouch(IAcceptCrouchInteractWithItem override) { this.override = override; return this; }
     }
@@ -132,7 +139,7 @@ public class DiodeBlockFactory {
         return out;
     }
 
-    private static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, BlockBehaviour.Properties props, Function<Item.Properties, Item.Properties> iProps, int fDelay, BaseAnalogDiodeBlock.TickingMode fTickingMode, boolean hasPowerTint, BlockEntityBuilder beb, boolean canToggleBothSides, boolean canToggleInput, List<Property<?>> extraProps, UseMethod use, BiFunction<Block, Item.Properties, BlockItem> itemBuilder, IAcceptCrouchInteractWithItem override) {
+    private static void create(String fName, EnumProperty<?> fMode, SignalGenerator fGen, BlockBehaviour.Properties props, Function<Item.Properties, Item.Properties> iProps, int fDelay, BaseAnalogDiodeBlock.TickingMode fTickingMode, boolean hasPowerTint, BlockEntityBuilder beb, boolean canToggleBothSides, boolean canToggleInput, List<Property<?>> extraProps, UseMethod use, BiFunction<Block, Item.Properties, BlockItem> itemBuilder, IAcceptCrouchInteractWithItem override, BlockEventHandler blockEventHandler) {
         Supplier<Block> gBlock;
 
         class Product extends BaseAnalogDiodeBlock {
@@ -195,6 +202,13 @@ public class DiodeBlockFactory {
             @Override
             public boolean overrideCrouchInteraction(ItemStack stack, Player player, BlockState state, BlockPos pos) {
                 return override == null ? Arss.isWrench(stack) : override.overrideCrouchInteraction(stack, player, state, pos);
+            }
+
+            @Override
+            public boolean triggerEvent(BlockState state, Level level, BlockPos pos, int var0, int var1) {
+                if (blockEventHandler != null)
+                    return blockEventHandler.triggerEvent(state, level, pos, var0, var1);
+                return super.triggerEvent(state, level, pos, var0, var1);
             }
         }
 

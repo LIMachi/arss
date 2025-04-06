@@ -8,7 +8,9 @@ import dev.architectury.event.EventActor;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.*;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -64,12 +66,12 @@ public enum Events {
     /** @see PlayerEvent#CLOSE_MENU */ CLOSE_MENU(PlayerEvent.CloseMenu.class),
     /** @see PlayerEvent#FILL_BUCKET */ FILL_BUCKET(PlayerEvent.FillBucket.class),
     /** @see PlayerEvent#ATTACK_ENTITY */ ATTACK_ENTITY(PlayerEvent.AttackEntity.class),
-    /** @see TickEvent#SERVER_PRE */ TICK_SERVER_PRE(TickEvent.class),
-    /** @see TickEvent#SERVER_POST */ TICK_SERVER_POST(TickEvent.class),
-    /** @see TickEvent#SERVER_LEVEL_PRE */ TICK_SERVER_LEVEL_PRE(TickEvent.class),
-    /** @see TickEvent#SERVER_LEVEL_POST */ TICK_SERVER_LEVEL_POST(TickEvent.class),
-    /** @see TickEvent#PLAYER_PRE */ TICK_PLAYER_PRE(TickEvent.class),
-    /** @see TickEvent#PLAYER_POST */ TICK_PLAYER_POST(TickEvent.class),
+    /** @see TickEvent#SERVER_PRE */ TICK_SERVER_PRE(void.class, MinecraftServer.class),
+    /** @see TickEvent#SERVER_POST */ TICK_SERVER_POST(void.class, MinecraftServer.class),
+    /** @see TickEvent#SERVER_LEVEL_PRE */ TICK_SERVER_LEVEL_PRE(void.class, ServerLevel.class),
+    /** @see TickEvent#SERVER_LEVEL_POST */ TICK_SERVER_LEVEL_POST(void.class, ServerLevel.class),
+    /** @see TickEvent#PLAYER_PRE */ TICK_PLAYER_PRE(void.class, Player.class),
+    /** @see TickEvent#PLAYER_POST */ TICK_PLAYER_POST(void.class, Player.class),
     ;
 
     private final Class<?>[] parameters;
@@ -81,6 +83,16 @@ public enum Events {
             throw new RuntimeException("Event: " + clazz + " is not a functional interface");
         parameters = m.getParameterTypes();
         returnType = m.getReturnType();
+    }
+
+    Events(Class<?> returnType, Class<?>[] parameters) {
+        this.parameters = parameters;
+        this.returnType = returnType;
+    }
+
+    Events(Class<?> returnType, Class<?> parameter) {
+        parameters = new Class[]{parameter};
+        this.returnType = returnType;
     }
 
     Events() {

@@ -6,11 +6,12 @@ import com.google.common.collect.Multimap;
 import com.limachi.arss.common.ArssItemStackComponents;
 import com.limachi.arss.common.block_entities.KeyboardLectern;
 import com.limachi.arss.common.items.Keyboard;
+import com.limachi.arss.utils.client.ClientEvents;
 import com.limachi.arss.utils.client.MidiHandler;
 
-import com.limachi.arss.utils.client.annotations.StaticInitClient;
-import dev.architectury.event.events.client.ClientTickEvent;
+import com.limachi.arss.utils.client.annotations.RegisterClientEventListener;
 
+import dev.architectury.event.EventResult;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -24,6 +25,11 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 
+//TODO: rework this from the ground up
+//instead of ticking greedily, register and unregister keybinds when interacting with a keyboard item and keyboard lectern
+//ticking should only be used to detect when a stack is no longer available and if the player is too far from the lectern
+
+/*
 @Environment(EnvType.CLIENT)
 public class KeyboardTicker {
 
@@ -32,7 +38,7 @@ public class KeyboardTicker {
     private static class Origin {
         final BlockPos lectern;
         final int playerSlot;
-        int power = 0;
+        int key = 0;
 
         Origin(BlockPos lectern) {
             this.lectern = lectern;
@@ -46,9 +52,9 @@ public class KeyboardTicker {
 
         void send() {
             if (playerSlot != -1)
-                new Keyboard.KeyPressVisualFeedbackSlotMsg(playerSlot, power).sendToServer();
+                new Keyboard.KeyPressVisualFeedbackSlotMsg(playerSlot, key).sendToServer();
             else if (lectern != null)
-                new com.limachi.arss.common.blocks.KeyboardLectern.KeyPressVisualFeedbackLecternMsg(lectern, power).sendToServer();
+                new com.limachi.arss.common.blocks.KeyboardLectern.KeyPressVisualFeedbackLecternMsg(lectern, key).sendToServer();
         }
     }
 
@@ -59,19 +65,22 @@ public class KeyboardTicker {
     private static final BlockPos INVALID_POS = new BlockPos(30000001, 1023, 30000001);
 
     private static void addAllBindings(BlockPos fromPos, ItemStack stack) {
-        int[] bindings = Keyboard.getBindings(stack).raw();
-        if (bindings != null) {
-            BlockPos pos = INVALID_POS;
-            ArssItemStackComponents.NamedPos target = stack.get(ArssItemStackComponents.TARGET.get());
-            if (target != null) {
-                pos = target.pos();
-                if (pos.distSqr(fromPos) > Keyboard.KEYBOARD_REACH * Keyboard.KEYBOARD_REACH)
-                    pos = INVALID_POS;
-            }
-            for (int i = 0; i < bindings.length && i < 15; ++i) {
+        var tb = Keyboard.getBindings(stack);
+        int[] bindings = tb.input();
+        ArssItemStackComponents.BindingTarget[] targets = tb.target();
+        BlockPos pos;
+        ArssItemStackComponents.NamedPos target = stack.get(ArssItemStackComponents.TARGETS.get());
+        if (target != null) {
+            for (int i = 0; i < 15; ++i) {
                 if (bindings[i] == -1)
                     continue;
-                cachedMappings.put(bindings[i], new KeyAction(pos, i + 1, cachedOrigins.size() - 1));
+                int t = targets[i].target();
+                if (t == 0)
+                    continue;
+                pos = target.pos()[t];
+                if (pos.distSqr(fromPos) > Keyboard.KEYBOARD_REACH * Keyboard.KEYBOARD_REACH)
+                    pos = INVALID_POS;
+                cachedMappings.put(bindings[i], new KeyAction(pos, targets[i].power(), cachedOrigins.size() - 1));
             }
         }
     }
@@ -99,38 +108,39 @@ public class KeyboardTicker {
             }
         }
     }
-
-    @StaticInitClient
-    public static void registerTickEvent() {
-        ClientTickEvent.CLIENT_PRE.register(client->{
-            if (client.player == null)
-                return;
-            reloadCache(client.player);
-            if (cachedMappings.isEmpty())
-                return;
-            long window = Minecraft.getInstance().getWindow().getWindow();
-            HashMap<BlockPos, Integer> messages = new HashMap<>();
-            for (int binding : cachedMappings.keySet()) {
-                boolean play = (binding < 0 && GLFW.glfwGetKey(window, -binding) == GLFW.GLFW_PRESS) || (binding >= 0 && MidiHandler.keyState(binding >> 8, binding & 0xFF));
-                for (KeyAction action : cachedMappings.get(binding))
-                    messages.compute(action.target, (pos, power) -> {
-                        if (play) {
-                            int out = power == null ? action.power : Math.max(action.power, power);
-                            cachedOrigins.get(action.origin).power = out;
-                            return out;
-                        }
-                        return power == null ? 0 : power;
-                    });
-            }
-            for (Origin origin : cachedOrigins)
-                origin.send();
-            for (Map.Entry<BlockPos, Integer> msg : messages.entrySet())
-                if (!INVALID_POS.equals(msg.getKey()))
-                    new Keyboard.KeyboardItemMsg(msg.getKey(), msg.getValue()).sendToServer();
-        });
+    @RegisterClientEventListener(ClientEvents.TICK_PRE)
+    public static void tick(Minecraft mc) {
+        if (mc.player == null)
+            return;
+        reloadCache(mc.player);
+        if (cachedMappings.isEmpty())
+            return;
+        long window = Minecraft.getInstance().getWindow().getWindow();
+        HashMap<BlockPos, Integer> messages = new HashMap<>();
+        for (int binding : cachedMappings.keySet()) {
+            boolean play = (binding < 0 && GLFW.glfwGetKey(window, -binding) == GLFW.GLFW_PRESS) || (binding >= 0 && MidiHandler.keyState(binding >> 8, binding & 0xFF));
+            for (KeyAction action : cachedMappings.get(binding))
+                messages.compute(action.target, (pos, power) -> {
+                    if (play) {
+                        int out = power == null ? action.power : Math.max(action.power, power);
+                        cachedOrigins.get(action.origin).key = out;
+                        return out;
+                    }
+                    return power == null ? 0 : power;
+                });
+        }
+        for (Origin origin : cachedOrigins)
+            origin.send();
+        for (Map.Entry<BlockPos, Integer> msg : messages.entrySet())
+            if (!INVALID_POS.equals(msg.getKey()))
+                new Keyboard.KeyboardItemMsg(msg.getKey(), msg.getValue()).sendToServer();
     }
 
-    public static boolean consumeKeyPress(int key) {
-        return cachedMappings.containsKey(-key) || prevCachedMappings.contains(-key);
+    @RegisterClientEventListener(ClientEvents.KEY_PRESSED)
+    public static EventResult keyPressed(Minecraft client, int keyCode, int scanCode, int action, int modifiers) {
+        if (cachedMappings.containsKey(-keyCode) || prevCachedMappings.contains(-keyCode))
+            return EventResult.interruptFalse();
+        return EventResult.pass();
     }
 }
+*/

@@ -62,7 +62,7 @@ public class ConfigManager {
 
     private static <T> T getMax(Class<T> target, Config a, StringBuilder cmt) {
         var e = DEFAULTS.get(target);
-        if (!a.min().isBlank()) {
+        if (!a.max().isBlank()) {
             if (!cmt.isEmpty())
                 cmt.append('\n');
             cmt.append("Maximum value: '").append(a.max()).append('\'');

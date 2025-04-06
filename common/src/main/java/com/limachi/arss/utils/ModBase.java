@@ -16,7 +16,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,9 +40,6 @@ public abstract class ModBase {
             if (registries == null) {
                 logger = LogManager.getLogger(a.value());
                 configs = new ConfigManager(a.value(), extractor);
-//                configs.extract(extractor);
-//                configs.load();
-//                configs.save();
                 registries = new Registries(a.value(), (Class<ModBase>)c);
             } else {
                 System.err.println("@Mod is used multiple times: " + registries.mod + " & " + c);
@@ -59,12 +55,12 @@ public abstract class ModBase {
     public static void init(AnnotationExtractor extractor) {
         ModBase.extractor = extractor;
         extractMod(extractor);
+        extractor.runOnMethods(PreRegistries.class, (m, a)->m.getStatic());
         StaticInitializer.initialize(Stage.FIRST, true);
         StaticInitializer.initialize(Stage.FIRST, false);
         registries.extractInStages();
         instance = registries.initMod();
         registries.register();
-//        ReloadListenerRegistry.register(PackType.SERVER_DATA, new SingleRunnableReloadListener(()->configs.load()), ResourceLocation.fromNamespaceAndPath(registries.mod_id, "config"));
         extractor.runOnMethods(ReloadListener.class, (m, a)->ReloadListenerRegistry.register(a.type(), (preparationBarrier, resourceManager, profilerFiller, profilerFiller2, executor, executor2) -> (CompletableFuture<Void>)m.get(null, true, preparationBarrier, resourceManager, profilerFiller, profilerFiller2, executor, executor2), ResourceLocation.fromNamespaceAndPath(registries.mod_id, Registries.defaultToMethod(a.value(), m))));
         CommandManager.register();
         StaticInitializer.initialize(Stage.LAST, true);

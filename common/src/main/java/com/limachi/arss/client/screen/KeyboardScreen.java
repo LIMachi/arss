@@ -2,7 +2,7 @@ package com.limachi.arss.client.screen;
 
 import com.limachi.arss.common.ArssItemStackComponents;
 import com.limachi.arss.common.items.Keyboard;
-import com.limachi.arss.common.menus.KeyboardMenu;
+//import com.limachi.arss.common.menus.KeyboardMenu;
 import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.client.MidiHandler;
 import com.limachi.arss.utils.client.annotations.RegisterMenuScreen;
@@ -29,6 +29,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
 
+/*
 @RegisterMenuScreen
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
@@ -173,3 +174,4 @@ public class KeyboardScreen extends AbstractContainerScreen<KeyboardMenu> implem
     @Override
     public boolean shouldCloseOnEsc() { return !((getFocused() instanceof BindingButton)); }
 }
+*/

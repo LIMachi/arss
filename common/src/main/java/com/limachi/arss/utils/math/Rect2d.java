@@ -12,7 +12,7 @@ public record Rect2d(double x, double y, double w, double h) implements Constabl
                 "Rect2d", ClassDesc.of(Rect2d.class.getName()),
                 Double.valueOf(x).describeConstable().orElseThrow(), Double.valueOf(y).describeConstable().orElseThrow(), Double.valueOf(w).describeConstable().orElseThrow(), Double.valueOf(h).describeConstable().orElseThrow()));
     }
-    public String toString() { return "Rec2d(" + x + ", " + x + ", " + w + ", " + h + ")"; }
+    public String toString() { return "Rec2d(" + x + ", " + y + ", " + w + ", " + h + ")"; }
     public boolean equals(Object o) { return this == o || (o instanceof Rect2d other && other.x == x && other.y == y && other.w == w && other.h == h); }
     public int hashCode() { return Objects.hash(x, y, w, h); }
     public static Rect2d from(Pos2d pos, Size2d size) { return new Rect2d(pos.x(), pos.y(), size.w(), size.h()); }
@@ -21,6 +21,8 @@ public record Rect2d(double x, double y, double w, double h) implements Constabl
     public static Rect2d from(Size2d size) { return new Rect2d(0., 0., size.w(), size.h()); }
     public static Rect2d from(double w, double h) { return new Rect2d(0., 0., w, h); }
     public static Rect2d from(Pos2d topLeft, Pos2d bottomRight) { return from(topLeft, bottomRight.x() - topLeft.x(), bottomRight.y() - topLeft.x()); }
+    public static Rect2d from(Vec2d vec) { return vec.rect(); }
+    public static Rect2d from(Pos2d pos, Vec2d vec) { return vec.rect0().add(pos); }
     public static Rect2d splat(double p, double s) { return new Rect2d(p, p, s, s); }
     public static Rect2d splat(double v) { return new Rect2d(v, v, v, v); }
     public Pos2d pos() { return Pos2d.from(this); }
@@ -57,5 +59,7 @@ public record Rect2d(double x, double y, double w, double h) implements Constabl
     public Rect2d sub(Pos2d pos) { return from(pos.sub(x, y), w, h); }
     public Rect2d subSize(double w, double h) { return new Rect2d(x, y, this.w - w, this.h - h); }
     public Rect2d sub(Size2d size) { return from(x, y, size.sub(w, h)); }
-    public boolean inside(Pos2d pos) { return pos.x() >= x && pos.x() <= x1() && pos.y() >= x && pos.x() <= y1(); }
+    public boolean inside(Pos2d pos) { return pos.x() >= x && pos.x() <= x1() && pos.y() >= y && pos.y() <= y1(); }
+    public boolean inside(double x, double y) { return x >= this.x && x <= x1() && y >= this.y && x <= y1(); }
+    public Rect2d merge(Rect2d other) { return from(pos().min(other.pos()), bottomRight().max(other.bottomRight())); }
 }

@@ -1,11 +1,9 @@
 package com.limachi.arss.client.screen;
 
 import com.limachi.arss.common.block_entities.ProgrammableGateBlockEntity;
-import com.limachi.arss.utils.client.GUI;
-import com.limachi.arss.utils.math.Rect2d;
+import com.limachi.arss.utils.client.screens.SimpleScreen;
 import com.limachi.arss.utils.network.IC2SMsg;
 import com.limachi.arss.utils.annotations.RegisterMsg;
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import dev.architectury.networking.NetworkManager;
 
@@ -15,7 +13,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -27,7 +24,7 @@ import org.lwjgl.glfw.GLFW;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
-public class ProgrammableGateScreen extends Screen {
+public class ProgrammableGateScreen extends SimpleScreen {
     public final int GUI_WIDTH = 210;
     public final int GUI_HEIGHT = 223;
     public final int GRID_LEFT = 20;
@@ -36,8 +33,6 @@ public class ProgrammableGateScreen extends Screen {
     private final ProgrammableGateBlockEntity be;
     private final Player player = Minecraft.getInstance().player;
     protected final byte[] layout;
-    int left = 0;
-    int top = 0;
 
     public static void client_open(ProgrammableGateBlockEntity be) {
         if (Minecraft.getInstance().isSameThread())
@@ -46,6 +41,8 @@ public class ProgrammableGateScreen extends Screen {
 
     public ProgrammableGateScreen(ProgrammableGateBlockEntity be) {
         super(Component.empty());
+        imageWidth = GUI_WIDTH;
+        imageHeight = GUI_HEIGHT;
         this.be = be;
         this.layout = be.layout.clone();
     }
@@ -56,36 +53,9 @@ public class ProgrammableGateScreen extends Screen {
         return RedStoneWireBlock.getColorForPower(8) | 0xFF000000;
     }
 
-    @Override
-    public void renderBackground(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(gui, mouseX, mouseY, partialTick);
-        GUI.blitBackground(gui, new Rect2d(left, top, GUI_WIDTH, GUI_HEIGHT));
-    }
-
-    @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        if (Minecraft.getInstance().screen == this)
-            renderBackground(gui, mouseX, mouseY, partialTick);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        super.render(gui, mouseX, mouseY, partialTick);
-        gui.drawString(font, Component.translatable("screen.arss.programmable_gate.title"), left + 8, top + 8, 4210752, false);
-        for (int y = 0; y < 16; ++y) {
-            gui.drawString(minecraft.font, "0123456789ABCDEF?".substring(y, y + 1), left + GRID_LEFT + y * 11, top + GRID_TOP - 10, color((byte)y), false);
-            gui.drawString(minecraft.font, "0123456789ABCDEF?".substring(y, y + 1), left + GRID_LEFT + y * 11, top + GRID_TOP + 16 * 11, color((byte)y), false);
-            gui.drawString(minecraft.font, "0123456789ABCDEF?".substring(y, y + 1), left + GRID_LEFT - 10, top + GRID_TOP + y * 11, color((byte)y), false);
-            gui.drawString(minecraft.font, "0123456789ABCDEF?".substring(y, y + 1), left + GRID_LEFT + 16 * 11, top + GRID_TOP + y * 11, color((byte)y), false);
-            for (int x = 0; x < 16; ++x) {
-                byte v = layout[x + y * 16];
-                gui.fill(left + GRID_LEFT - 2 + x * 11, top + GRID_TOP - 1 + y * 11, left + GRID_LEFT - 2 + x * 11 + 10, top + GRID_TOP - 1 + y * 11 + 10, color(v));
-                gui.drawString(minecraft.font, "0123456789ABCDEF?".substring(v, v + 1), left + GRID_LEFT + x * 11, top + GRID_TOP + y * 11, -1, false);
-            }
-        }
-    }
-
     protected boolean doClick(double x, double y, int offset) {
-        int sx = (int)Math.round(x - (GRID_LEFT - 2) - left);
-        int sy = (int)Math.round(y - (GRID_TOP - 1) - top);
+        int sx = (int)Math.round(x - (GRID_LEFT - 2) - leftPos);
+        int sy = (int)Math.round(y - (GRID_TOP - 1) - topPos);
         boolean x_in = sx >= 0 && sx < 16 * 11;
         boolean y_in = sy >= 0 && sy < 16 * 11;
         boolean horizontal = (sx < 0 && sx >= -11) || (sx >= 16 * 11 && sx < 17 * 11);
@@ -136,11 +106,19 @@ public class ProgrammableGateScreen extends Screen {
     }
 
     @Override
-    protected void init() {
-        super.init();
-        left = (width - GUI_WIDTH) / 2;
-        top = (height - GUI_HEIGHT) / 2;
-        clearWidgets();
+    public void renderFg(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        guiGraphics.drawString(font, Component.translatable("screen.arss.programmable_gate.title"), leftPos + 8, topPos + 8, 4210752, false);
+        for (int y = 0; y < 16; ++y) {
+            guiGraphics.drawString(minecraft.font, "0123456789ABCDEF?".substring(y, y + 1), leftPos + GRID_LEFT + y * 11, topPos + GRID_TOP - 10, color((byte)y), false);
+            guiGraphics.drawString(minecraft.font, "0123456789ABCDEF?".substring(y, y + 1), leftPos + GRID_LEFT + y * 11, topPos + GRID_TOP + 16 * 11, color((byte)y), false);
+            guiGraphics.drawString(minecraft.font, "0123456789ABCDEF?".substring(y, y + 1), leftPos + GRID_LEFT - 10, topPos + GRID_TOP + y * 11, color((byte)y), false);
+            guiGraphics.drawString(minecraft.font, "0123456789ABCDEF?".substring(y, y + 1), leftPos + GRID_LEFT + 16 * 11, topPos + GRID_TOP + y * 11, color((byte)y), false);
+            for (int x = 0; x < 16; ++x) {
+                byte v = layout[x + y * 16];
+                guiGraphics.fill(leftPos + GRID_LEFT - 2 + x * 11, topPos + GRID_TOP - 1 + y * 11, leftPos + GRID_LEFT - 2 + x * 11 + 10, topPos + GRID_TOP - 1 + y * 11 + 10, color(v));
+                guiGraphics.drawString(minecraft.font, "0123456789ABCDEF?".substring(v, v + 1), leftPos + GRID_LEFT + x * 11, topPos + GRID_TOP + y * 11, -1, false);
+            }
+        }
     }
 
     @Override
@@ -160,8 +138,7 @@ public class ProgrammableGateScreen extends Screen {
     }
 
     @Override
-    public void onClose() {
+    public void closing() {
         new NewLayoutMsg(be.getBlockPos(), layout).sendToServer();
-        super.onClose();
     }
 }

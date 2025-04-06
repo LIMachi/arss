@@ -3,10 +3,14 @@ package com.limachi.arss.client;
 import com.limachi.arss.common.block_entities.KeyboardLectern;
 import com.limachi.arss.utils.client.ClientStage;
 import com.limachi.arss.utils.client.annotations.StaticInitClient;
+
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;

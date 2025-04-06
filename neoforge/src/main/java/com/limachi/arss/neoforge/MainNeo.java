@@ -13,16 +13,12 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 @Mod("arss")
 public final class MainNeo {
-    public MainNeo() {
-        ModBase.init(new AnnotationExtractor(ModBase.class, CheckDistVisitor::skipInvalidEnv));
-    }
+    public MainNeo() { ModBase.init(new AnnotationExtractor(ModBase.class, CheckDistVisitor::skipInvalidEnv)); }
 
     @EventBusSubscriber(value = Dist.CLIENT, modid = "arss", bus = EventBusSubscriber.Bus.MOD)
     public static class Client {
         @SubscribeEvent
-        public static void init(RenderLevelStageEvent.RegisterStageEvent event) {
-            ModBase.ClientModBase.init();
-        }
+        public static void init(RenderLevelStageEvent.RegisterStageEvent event) { ModBase.ClientModBase.init(); }
     }
 
 

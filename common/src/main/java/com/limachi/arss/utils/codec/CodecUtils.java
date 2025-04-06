@@ -1,8 +1,12 @@
 package com.limachi.arss.utils.codec;
 
 import com.limachi.arss.utils.reflect.ReflectUtils;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.PrimitiveCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -10,11 +14,15 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.codec.StreamDecoder;
 import net.minecraft.network.codec.StreamEncoder;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 public class CodecUtils {
+    //TODO: test if this works
     public static <T extends Record> Codec<T> recordCodec() { return recordCodec(ReflectUtils.classOfGeneric()); }
     public static <T extends Record> Codec<T> recordCodec(Class<T> rec) {
         var comps = rec.getRecordComponents();
@@ -68,11 +76,42 @@ public class CodecUtils {
         });
     }
 
+    //TODO: test if this works
+    public static <T> Codec<T[]> arrayCodec() { return arrayCodec(ReflectUtils.classOfGeneric()); }
+    public static <T> Codec<T[]> arrayCodec(Class<T[]> clazz) {
+        final Codec<T> inner = (Codec<T>)autoCodec(clazz.componentType());
+        return new PrimitiveCodec<>() {
+            @Override
+            public <D> DataResult<T[]> read(DynamicOps<D> ops, D input) {
+                return ops.getStream(input).flatMap(s->{
+                    List<D> list = s.toList();
+                    T[] out = (T[]) Array.newInstance(clazz, list.size());
+                    for (int i = 0; i < list.size(); ++i) {
+                        DataResult<Pair<T, D>> t = inner.decode(ops, list.get(i));
+                        if (t.isSuccess())
+                            out[i] = t.result().get().getFirst();
+                        else
+                            return DataResult.error(t.error().get().messageSupplier());
+                    }
+                    return DataResult.success(out);
+                });
+            }
+
+            @Override
+            public <D> D write(DynamicOps<D> ops, T[] value) {
+                return ops.createList(Arrays.stream(value).map(o->inner.encodeStart(ops, o).result().get()));
+            }
+        };
+    }
+
     public static <T> Codec<T> autoCodec() { return autoCodec(ReflectUtils.classOfGeneric()); }
     public static <T> Codec<T> autoCodec(Class<T> clazz) {
         if (Record.class.isAssignableFrom(clazz))
             return (Codec<T>)recordCodec((Class<Record>) clazz);
-        return Codecs.getCodec(clazz);
+        Codec<T> c = Codecs.getCodec(clazz);
+        if (c == null && clazz.isArray())
+            return (Codec<T>)arrayCodec();
+        return c;
     }
 
     public static <B extends RegistryFriendlyByteBuf, T> T read(B buf) { return read(buf, ReflectUtils.classOfGeneric()); }

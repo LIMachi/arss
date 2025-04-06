@@ -59,6 +59,8 @@ public class AllDiodeBlocks {
                 })
                 .overrideItemCrouch((s, e, b, p)->b.getBlock() instanceof BaseAnalogDiodeBlock)
                 .finish();
+
+//        DiodeBlockFactory.builder("resonant_gate", AllDiodeBlocks::resonant).blockEntityBuilder(ResonantGateBlockEntity::new).catchUse(AllDiodeBlocks::resonantUse).blockEventHandler(AllDiodeBlocks::resonantEvent).finish();
     }
 
     static protected int comparator(boolean test, Level level, BlockPos pos, BlockState state) {
@@ -200,6 +202,18 @@ public class AllDiodeBlocks {
         return 0;
     }
 
+//    static protected int resonant(boolean test, Level level, BlockPos pos, BlockState state) {
+//        if (level.getBlockEntity(pos) instanceof ResonantGateBlockEntity gate) {
+//            gate.updatePowerInput(sGetInputSignal(level, pos, state, true));
+//            return gate.getOutput();
+//        }
+//        return 0;
+//    }
+//
+//    static protected boolean resonantEvent(BlockState state, Level level, BlockPos pos, int var0, int var1) {
+//        return false;
+//    }
+
     static protected ItemInteractionResult sequencerUse(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (stack.getItem() instanceof SequencerMemoryDisc)
             return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
@@ -255,6 +269,10 @@ public class AllDiodeBlocks {
                 return ItemInteractionResult.sidedSuccess(level.isClientSide);
             }
         }
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    static protected ItemInteractionResult resonantUse(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 }

@@ -163,6 +163,8 @@ public class ArssBlockStateProperties {
         public boolean acceptLeft() { return this != LEFT_DISABLED && this != BOTH_SIDE_DISABLED; }
 
         public boolean acceptBelow() { return true; } //FIXME
+
+        public boolean acceptBack() { return this != INPUT_DISABLED; }
     }
 
     public static final IntegerProperty ENRICHED_RS_RANGE = IntegerProperty.create("range", 0, 4);

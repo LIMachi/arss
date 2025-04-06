@@ -38,7 +38,6 @@ public class KeyboardLectern extends BlockEntity {
     @RegisterEventListener(Events.PLAYER_QUIT)
     public static void onQuit(ServerPlayer player) {
         Level level = player.level();
-        ModBase.logger.error("player logging out: " + player + " -> " + level);
         var set = CONTROLLED_LECTERNS.get(player.getUUID());
         if (set != null) {
             for (BlockPos p : set)

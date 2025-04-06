@@ -7,6 +7,7 @@ import com.limachi.arss.common.block_entities.SequencerBlockEntity;
 import com.limachi.arss.utils.ModBase;
 import com.limachi.arss.utils.annotations.RegisterMsg;
 import com.limachi.arss.utils.client.GUI;
+import com.limachi.arss.utils.client.screens.SimpleScreen;
 import com.limachi.arss.utils.data.History;
 import com.limachi.arss.utils.network.IC2SMsg;
 
@@ -22,7 +23,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -72,7 +72,7 @@ import java.util.Optional;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
-public class SequencerScreen extends Screen {
+public class SequencerScreen extends SimpleScreen {
 
     public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(ModBase.registries.mod_id, "textures/screen/sequencer_screen.png");
     public static final int IMAGE_WIDTH = 196;
@@ -97,9 +97,6 @@ public class SequencerScreen extends Screen {
     private int section_offset = 0;
     protected int helpChapter = 0;
     protected int[] helpScroll = new int[7];
-
-    protected int top = 0;
-    protected int left = 0;
     protected int selection = -1; //head is always on the limits of the selection (start inclusive, end exclusive)
     protected ArrayList<Integer> clipBoard = null; //copy/cut/paste clipboard
     private final SequencerBlockEntity be;
@@ -112,9 +109,7 @@ public class SequencerScreen extends Screen {
         return new ArrayList<>(); //should not be called that often, since on next tick with invalid state, this screen should close itself
     }
 
-    protected boolean isHeadAutomatic() {
-        return stillValid() && (be.isPlaying() || be.isRecording());
-    }
+    protected boolean isHeadAutomatic() { return stillValid() && (be.isPlaying() || be.isRecording()); }
 
     protected int head() {
         if (stillValid())
@@ -204,12 +199,14 @@ public class SequencerScreen extends Screen {
     private final boolean boosted;
 
     public static void client_open(SequencerBlockEntity be) {
-        if (Minecraft.getInstance().isSameThread())
+        if (Minecraft.getInstance().isSameThread() && be != null)
             Minecraft.getInstance().setScreen(new SequencerScreen(be));
     }
 
     public SequencerScreen(SequencerBlockEntity be) {
         super(Component.empty());
+        imageHeight = IMAGE_HEIGHT;
+        imageWidth = SCREEN_WIDTH;
         this.be = be;
         boosted = be != null && be.getBlockState().getValue(ArssBlockStateProperties.BOOSTED);
     }
@@ -234,13 +231,12 @@ public class SequencerScreen extends Screen {
 
     @Override
     public boolean keyPressed(int key, int scancode, int modifiers) {
-        int rk = key;
         int head = head();
         int length = length();
         ArrayList<Integer> sections = sections();
         boolean ctrl = (modifiers & GLFW.GLFW_MOD_CONTROL) != 0;
         boolean shift = (modifiers & GLFW.GLFW_MOD_SHIFT) != 0;
-        switch (rk) {
+        switch (key) {
             case GLFW.GLFW_KEY_Z -> {
                 if (ctrl) {
                     historyLoad(false);
@@ -435,11 +431,8 @@ public class SequencerScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        left = (width - SCREEN_WIDTH) / 2;
-        top = (height - IMAGE_HEIGHT) / 2;
-        clearWidgets();
         if (stillValid()) {
-            addRenderableWidget(CycleButton.builder(t -> Component.translatable("screen.arss.sequencer.input_side." + t)).withValues(ImmutableList.of("back", "right", "left", "disabled")).withInitialValue(be.getMappings().get("record")).create(left + 10, top + IMAGE_HEIGHT - 45, SCREEN_WIDTH - 20, 16, Component.translatable("screen.arss.sequencer.input_mapping.record_pass_through"), (b, v) -> {
+            addRenderableWidget(CycleButton.builder(t -> Component.translatable("screen.arss.sequencer.input_side." + t)).withValues(ImmutableList.of("back", "right", "left", "disabled")).withInitialValue(be.getMappings().get("record")).create(leftPos + 10, topPos + IMAGE_HEIGHT - 45, SCREEN_WIDTH - 20, 16, Component.translatable("screen.arss.sequencer.input_mapping.record_pass_through"), (b, v) -> {
                 if (stillValid()) {
                     be.getMappings().put("record", (String)v);
                     new ChangeMappingMsg(be.getBlockPos(), "record", (String)v).sendToServer();
@@ -447,7 +440,7 @@ public class SequencerScreen extends Screen {
                 b.setFocused(false);
                 setFocused(null);
             }));
-            addRenderableWidget(CycleButton.builder(t -> Component.translatable("screen.arss.sequencer.input_side." + t)).withValues(ImmutableList.of("back", "right", "left", "disabled")).withInitialValue(be.getMappings().get("start")).create(left + 10, top + IMAGE_HEIGHT - 25, (SCREEN_WIDTH - 24) / 2, 16, Component.translatable("screen.arss.sequencer.input_mapping.start"), (b, v) -> {
+            addRenderableWidget(CycleButton.builder(t -> Component.translatable("screen.arss.sequencer.input_side." + t)).withValues(ImmutableList.of("back", "right", "left", "disabled")).withInitialValue(be.getMappings().get("start")).create(leftPos + 10, topPos + IMAGE_HEIGHT - 25, (SCREEN_WIDTH - 24) / 2, 16, Component.translatable("screen.arss.sequencer.input_mapping.start"), (b, v) -> {
                 if (stillValid()) {
                     be.getMappings().put("start", (String)v);
                     new ChangeMappingMsg(be.getBlockPos(), "start", (String)v).sendToServer();
@@ -455,7 +448,7 @@ public class SequencerScreen extends Screen {
                 b.setFocused(false);
                 setFocused(null);
             }));
-            addRenderableWidget(CycleButton.builder(t -> Component.translatable("screen.arss.sequencer.input_side." + t)).withValues(ImmutableList.of("back", "right", "left", "disabled")).withInitialValue(be.getMappings().get("finish")).create(left + SCREEN_WIDTH - (SCREEN_WIDTH - 24) / 2 - 12, top + IMAGE_HEIGHT - 25, (SCREEN_WIDTH - 20) / 2, 16, Component.translatable("screen.arss.sequencer.input_mapping.finish"), (b, v) -> {
+            addRenderableWidget(CycleButton.builder(t -> Component.translatable("screen.arss.sequencer.input_side." + t)).withValues(ImmutableList.of("back", "right", "left", "disabled")).withInitialValue(be.getMappings().get("finish")).create(leftPos + SCREEN_WIDTH - (SCREEN_WIDTH - 24) / 2 - 12, topPos + IMAGE_HEIGHT - 25, (SCREEN_WIDTH - 20) / 2, 16, Component.translatable("screen.arss.sequencer.input_mapping.finish"), (b, v) -> {
                 if (stillValid()) {
                     be.getMappings().put("finish", (String)v);
                     new ChangeMappingMsg(be.getBlockPos(), "finish", (String)v).sendToServer();
@@ -470,14 +463,14 @@ public class SequencerScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double x, double y, int button) {
-        int sx = (int)Math.round(x - SEQUENCER_WIDGET_X_OFFSET - left);
-        int sy = (int)Math.round(y - SEQUENCER_WIDGET_Y_OFFSET - top);
+        int sx = (int)Math.round(x - SEQUENCER_WIDGET_X_OFFSET - leftPos);
+        int sy = (int)Math.round(y - SEQUENCER_WIDGET_Y_OFFSET - topPos);
         if (sx >= 0 && sx < SEQUENCER_WIDGET_SIZE_X && sy >= 0 && sy < SEQUENCER_WIDGET_SIZE_Y) {
             clickTick = tick;
             return true;
         }
-        int mouseX = (int)Math.round(x - left);
-        int mouseY = (int)Math.round(y - top);
+        int mouseX = (int)Math.round(x - leftPos);
+        int mouseY = (int)Math.round(y - topPos);
         if (mouseX >= 172 && mouseX < 189 && mouseY >= 4 && mouseY < 20) {
             if (minecraft != null)
                 minecraft.setScreen(new SequencerHelpScreen(this));
@@ -488,8 +481,8 @@ public class SequencerScreen extends Screen {
 
     @Override
     public boolean mouseReleased(double x, double y, int button) {
-        int sx = (int)Math.round(x - SEQUENCER_WIDGET_X_OFFSET - left);
-        int sy = (int)Math.round(y - SEQUENCER_WIDGET_Y_OFFSET - top);
+        int sx = (int)Math.round(x - SEQUENCER_WIDGET_X_OFFSET - leftPos);
+        int sy = (int)Math.round(y - SEQUENCER_WIDGET_Y_OFFSET - topPos);
         if (sx >= 0 && sx < SEQUENCER_WIDGET_SIZE_X && sy >= 0 && sy < SEQUENCER_WIDGET_SIZE_Y) {
             int column = sx / 3 + section_offset;
             int row = 15 - (sy / 3);
@@ -506,9 +499,7 @@ public class SequencerScreen extends Screen {
                             setSection(head(), power);
                     }
                 }
-                case GLFW.GLFW_MOUSE_BUTTON_2 -> {
-                    setSection(column, row);
-                }
+                case GLFW.GLFW_MOUSE_BUTTON_2 -> setSection(column, row);
                 case GLFW.GLFW_MOUSE_BUTTON_3 -> {
                     if (Screen.hasControlDown()) {
                         if (stillValid())
@@ -525,8 +516,8 @@ public class SequencerScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double x, double y, double dx, double dy) {
-        int sx = (int)Math.round(x - SEQUENCER_WIDGET_X_OFFSET - left);
-        int sy = (int)Math.round(y - SEQUENCER_WIDGET_Y_OFFSET - top);
+        int sx = (int)Math.round(x - SEQUENCER_WIDGET_X_OFFSET - leftPos);
+        int sy = (int)Math.round(y - SEQUENCER_WIDGET_Y_OFFSET - topPos);
         if (sx >= 0 && sx < SEQUENCER_WIDGET_SIZE_X && sy >= 0 && sy < SEQUENCER_WIDGET_SIZE_Y) {
             section_offset += dy > 0 ? -SCROLL_JUMP : SCROLL_JUMP;
             ensureOffsetValid();
@@ -537,8 +528,8 @@ public class SequencerScreen extends Screen {
 
     @Override
     public boolean mouseDragged(double x, double y, int button, double px, double py) {
-        int sx = (int)Math.round(x - SEQUENCER_WIDGET_X_OFFSET - left);
-        int sy = (int)Math.round(y - SEQUENCER_WIDGET_Y_OFFSET - top);
+        int sx = (int)Math.round(x - SEQUENCER_WIDGET_X_OFFSET - leftPos);
+        int sy = (int)Math.round(y - SEQUENCER_WIDGET_Y_OFFSET - topPos);
         if (sx >= 0 && sx < SEQUENCER_WIDGET_SIZE_X && sy >= 0 && sy < SEQUENCER_WIDGET_SIZE_Y) {
             int column = sx / 3 + section_offset;
             switch (button) {
@@ -555,9 +546,7 @@ public class SequencerScreen extends Screen {
                         setHead(column);
                     }
                 }
-                case GLFW.GLFW_MOUSE_BUTTON_2 -> {
-                    setSection(column, 15 - (sy / 3));
-                }
+                case GLFW.GLFW_MOUSE_BUTTON_2 -> setSection(column, 15 - (sy / 3));
                 case GLFW.GLFW_MOUSE_BUTTON_3 -> {
                     if (!Screen.hasControlDown())
                         setLength(column);
@@ -569,8 +558,8 @@ public class SequencerScreen extends Screen {
     }
 
     protected void renderSections(GuiGraphics gui, int mouseX, int mouseY) {
-        gui.drawString(font, Component.translatable("screen.arss.sequencer.title", Component.translatable("display.arss.sequencer.mode." + be.getBlockState().getValue(ArssBlockStateProperties.SEQUENCER_MODE))), left + 8, top + 8, 4210752, false);
-        gui.drawString(font, Component.translatable("screen.arss.sequencer.help_button"), left + 179, top + 8, 0x99FF, false);
+        gui.drawString(font, Component.translatable("screen.arss.sequencer.title", Component.translatable("display.arss.sequencer.mode." + be.getBlockState().getValue(ArssBlockStateProperties.SEQUENCER_MODE))), leftPos + 8, topPos + 8, 4210752, false);
+        gui.drawString(font, Component.translatable("screen.arss.sequencer.help_button"), leftPos + 179, topPos + 8, 0x99FF, false);
         if (isHeadAutomatic())
             ensureHeadIsVisible();
         int head = head();
@@ -580,9 +569,9 @@ public class SequencerScreen extends Screen {
         for (int i = 0; i < limits.size(); ++i) {
             int l = limits.get(i);
             if (l > 0 && l >= section_offset && l < section_offset + MAXIMUM_VISIBLE_SECTIONS) {
-                int j = (l - section_offset) * 3 + SEQUENCER_WIDGET_X_OFFSET + left;
-                gui.blit(BACKGROUND, j - 1, top + SEQUENCER_WIDGET_Y_OFFSET, SCREEN_WIDTH, SEQUENCER_HEAD_Y_OFFSET, 3, SEQUENCER_WIDGET_SIZE_Y, IMAGE_WIDTH, IMAGE_HEIGHT);
-                gui.drawCenteredString(font, "" + (i + 2), j + 1, top + 18, -1);
+                int j = (l - section_offset) * 3 + SEQUENCER_WIDGET_X_OFFSET + leftPos;
+                gui.blit(BACKGROUND, j - 1, topPos + SEQUENCER_WIDGET_Y_OFFSET, SCREEN_WIDTH, SEQUENCER_HEAD_Y_OFFSET, 3, SEQUENCER_WIDGET_SIZE_Y, IMAGE_WIDTH, IMAGE_HEIGHT);
+                gui.drawCenteredString(font, "" + (i + 2), j + 1, topPos + 18, -1);
             }
         }
         RenderSystem.setShaderColor(1, 1, 1, 1);
@@ -590,17 +579,17 @@ public class SequencerScreen extends Screen {
         for (int i = 0; i < MAXIMUM_VISIBLE_SECTIONS; ++i) {
             if (length == i + section_offset) {
                 RenderSystem.setShaderColor(1f/3f, 1f/3f, 1f/3f, 1);
-                int j = left + SEQUENCER_WIDGET_X_OFFSET + i * 3;
-                gui.blit(BACKGROUND, j - 1, top + SEQUENCER_WIDGET_Y_OFFSET, SCREEN_WIDTH, SEQUENCER_HEAD_Y_OFFSET, 3, SEQUENCER_WIDGET_SIZE_Y, IMAGE_WIDTH, IMAGE_HEIGHT);
+                int j = leftPos + SEQUENCER_WIDGET_X_OFFSET + i * 3;
+                gui.blit(BACKGROUND, j - 1, topPos + SEQUENCER_WIDGET_Y_OFFSET, SCREEN_WIDTH, SEQUENCER_HEAD_Y_OFFSET, 3, SEQUENCER_WIDGET_SIZE_Y, IMAGE_WIDTH, IMAGE_HEIGHT);
                 RenderSystem.setShaderColor(0, 1, 0, 1);
-                gui.drawCenteredString(font, "15", j, top + 18, -1);
+                gui.drawCenteredString(font, "15", j, topPos + 18, -1);
             } else if (head == i + section_offset) {
                 RenderSystem.setShaderColor(0, 1, 1, 1);
-                gui.blit(BACKGROUND, left + SEQUENCER_WIDGET_X_OFFSET + i * 3, top + SEQUENCER_WIDGET_Y_OFFSET, SCREEN_WIDTH, SEQUENCER_HEAD_Y_OFFSET, 3, SEQUENCER_WIDGET_SIZE_Y, IMAGE_WIDTH, IMAGE_HEIGHT);
+                gui.blit(BACKGROUND, leftPos + SEQUENCER_WIDGET_X_OFFSET + i * 3, topPos + SEQUENCER_WIDGET_Y_OFFSET, SCREEN_WIDTH, SEQUENCER_HEAD_Y_OFFSET, 3, SEQUENCER_WIDGET_SIZE_Y, IMAGE_WIDTH, IMAGE_HEIGHT);
             }
             if (i + section_offset == 0 && length > 0) {
                 RenderSystem.setShaderColor(0, 1, 0, 1);
-                gui.drawCenteredString(font, "1", left + 21, top + 18, -1);
+                gui.drawCenteredString(font, "1", leftPos + 21, topPos + 18, -1);
             }
             int j = i + section_offset;
             if (j < sections.size()) {
@@ -608,10 +597,10 @@ public class SequencerScreen extends Screen {
                 int offset = j == 0 || j == sections.size() - 1 || sections.get(j - 1) != lp || sections.get(j + 1) != lp ? NODE_Y_OFFSET : LINE_Y_OFFSET;
                 Vector4f color = GUI.expandColor(RedStoneWireBlock.getColorForPower(lp), false);
                 RenderSystem.setShaderColor(color.x, color.y, color.z, 1);
-                gui.blit(BACKGROUND, left + SEQUENCER_WIDGET_X_OFFSET + i * 3, top + SEQUENCER_WIDGET_Y_OFFSET + 48 - lp * 3 - 3, SCREEN_WIDTH, offset, 3, 3, IMAGE_WIDTH, IMAGE_HEIGHT);
+                gui.blit(BACKGROUND, leftPos + SEQUENCER_WIDGET_X_OFFSET + i * 3, topPos + SEQUENCER_WIDGET_Y_OFFSET + 48 - lp * 3 - 3, SCREEN_WIDTH, offset, 3, 3, IMAGE_WIDTH, IMAGE_HEIGHT);
                 RenderSystem.setShaderColor(1, 1, 1, 1);
                 if (head == i + section_offset)
-                    gui.blit(BACKGROUND, left + SEQUENCER_WIDGET_X_OFFSET + i * 3, top + SEQUENCER_WIDGET_Y_OFFSET + 48 - lp * 3 - 3, SCREEN_WIDTH, SELECTED_NODE_Y_OFFSET, 3, 3, IMAGE_WIDTH, IMAGE_HEIGHT);
+                    gui.blit(BACKGROUND, leftPos + SEQUENCER_WIDGET_X_OFFSET + i * 3, topPos + SEQUENCER_WIDGET_Y_OFFSET + 48 - lp * 3 - 3, SCREEN_WIDTH, SELECTED_NODE_Y_OFFSET, 3, 3, IMAGE_WIDTH, IMAGE_HEIGHT);
             } else
                 RenderSystem.setShaderColor(1, 1, 1, 1);
         }
@@ -625,28 +614,28 @@ public class SequencerScreen extends Screen {
                 finish = Integer.max(0, selection - section_offset);
             }
             if (start < MAXIMUM_VISIBLE_SECTIONS && finish > 0)
-                gui.fill(start * 3 + left + SEQUENCER_WIDGET_X_OFFSET, top + SEQUENCER_WIDGET_Y_OFFSET, (finish + 1) * 3 + left + SEQUENCER_WIDGET_X_OFFSET, top + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y, 0x550000FF);
+                gui.fill(start * 3 + leftPos + SEQUENCER_WIDGET_X_OFFSET, topPos + SEQUENCER_WIDGET_Y_OFFSET, (finish + 1) * 3 + leftPos + SEQUENCER_WIDGET_X_OFFSET, topPos + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y, 0x550000FF);
         }
         for (int i = 0; i <= 5; ++i)
-            gui.drawCenteredString(font, "" + (i + section_offset / 10) * (boosted ? 5 : 10), (left + SEQUENCER_WIDGET_X_OFFSET + 2 + i * 30), (top + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y + 3), 0xFFFF);
+            gui.drawCenteredString(font, "" + (i + section_offset / 10) * (boosted ? 5 : 10), (leftPos + SEQUENCER_WIDGET_X_OFFSET + 2 + i * 30), (topPos + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y + 3), 0xFFFF);
         for (int i = 0; i < 4; ++i) {
-            gui.drawString(font, "" + i * 5, (left + (i < 2 ? 11 : 5)), (top + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y - 5 - i * 15), RedStoneWireBlock.getColorForPower(i * 5), false);
-            gui.drawString(font, "" + i * 5, (left + SCREEN_WIDTH - 16), (top + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y - 5 - i * 15), RedStoneWireBlock.getColorForPower(i * 5), false);
+            gui.drawString(font, "" + i * 5, (leftPos + (i < 2 ? 11 : 5)), (topPos + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y - 5 - i * 15), RedStoneWireBlock.getColorForPower(i * 5), false);
+            gui.drawString(font, "" + i * 5, (leftPos + SCREEN_WIDTH - 16), (topPos + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y - 5 - i * 15), RedStoneWireBlock.getColorForPower(i * 5), false);
         }
-        gui.drawString(font, Component.translatable("screen.arss.sequencer.head_info"), (left + 12), (top + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y + 14), 0xFFFF00);
-        gui.drawString(font, Component.translatable("screen.arss.sequencer.head_tick", head, head / (boosted ? 20. : 10.)), (left + 12), (top + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y + 23), 0xFFFF00);
-        gui.drawString(font, Component.translatable("screen.arss.sequencer.head_power", be != null ? be.readPower() : 0), (left + 12), (top + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y + 32), 0xFFFF00);
-        gui.drawString(font, Component.translatable("screen.arss.sequencer.cursor_info"), (left + 25 + SEQUENCER_WIDGET_SIZE_X / 2), (top + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y + 14), 0xFFFF00);
-        mouseX -= left;
-        mouseY -= top;
+        gui.drawString(font, Component.translatable("screen.arss.sequencer.head_info"), (leftPos + 12), (topPos + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y + 14), 0xFFFF00);
+        gui.drawString(font, Component.translatable("screen.arss.sequencer.head_tick", head, head / (boosted ? 20. : 10.)), (leftPos + 12), (topPos + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y + 23), 0xFFFF00);
+        gui.drawString(font, Component.translatable("screen.arss.sequencer.head_power", be.readPower()), (leftPos + 12), (topPos + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y + 32), 0xFFFF00);
+        gui.drawString(font, Component.translatable("screen.arss.sequencer.cursor_info"), (leftPos + 25 + SEQUENCER_WIDGET_SIZE_X / 2), (topPos + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y + 14), 0xFFFF00);
+        mouseX -= leftPos;
+        mouseY -= topPos;
         if (mouseX >= SEQUENCER_WIDGET_X_OFFSET && mouseX < SEQUENCER_WIDGET_X_OFFSET + SEQUENCER_WIDGET_SIZE_X && mouseY >= SEQUENCER_WIDGET_Y_OFFSET && mouseY < SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y) {
             int column = (mouseX - SEQUENCER_WIDGET_X_OFFSET) / 3 + section_offset;
             int row = 15 - ((mouseY - SEQUENCER_WIDGET_Y_OFFSET) / 3);
-            gui.drawString(font, Component.translatable("screen.arss.sequencer.cursor_tick", column, column / (boosted ? 20. : 10.)), (left + 25 + SEQUENCER_WIDGET_SIZE_X / 2), (top + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y + 23), 0xFFFF00);
-            gui.drawString(font, Component.translatable("screen.arss.sequencer.cursor_power", row), (left + 25 + SEQUENCER_WIDGET_SIZE_X / 2), (top + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y + 32), 0xFFFF00);
+            gui.drawString(font, Component.translatable("screen.arss.sequencer.cursor_tick", column, column / (boosted ? 20. : 10.)), (leftPos + 25 + SEQUENCER_WIDGET_SIZE_X / 2), (topPos + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y + 23), 0xFFFF00);
+            gui.drawString(font, Component.translatable("screen.arss.sequencer.cursor_power", row), (leftPos + 25 + SEQUENCER_WIDGET_SIZE_X / 2), (topPos + SEQUENCER_WIDGET_Y_OFFSET + SEQUENCER_WIDGET_SIZE_Y + 32), 0xFFFF00);
         }
         if (mouseX >= 172 && mouseX < 189 && mouseY >= 4 && mouseY < 20) {
-            gui.renderTooltip(font, Collections.singletonList(Component.translatable("screen.arss.sequencer.show_help")), Optional.empty(), mouseX + left, mouseY + top);
+            gui.renderTooltip(font, Collections.singletonList(Component.translatable("screen.arss.sequencer.show_help")), Optional.empty(), mouseX + leftPos, mouseY + topPos);
         }
     }
 
@@ -654,23 +643,18 @@ public class SequencerScreen extends Screen {
     protected int tick = 0;
 
     @Override
-    public void renderBackground(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        if (Minecraft.getInstance().screen == this)
-            super.renderBackground(gui, mouseX, mouseY, partialTick);
-        gui.blit(BACKGROUND, left, top, 0, 0, SCREEN_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_HEIGHT);
-    }
-
-    @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+    public void renderFg(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         apt += partialTick;
         while (apt > 1f) {
             apt -= 1f;
             ++tick;
         }
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        super.render(gui, mouseX, mouseY, partialTick);
-        renderSections(gui, mouseX, mouseY);
+        renderSections(guiGraphics, mouseX, mouseY);
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+        guiGraphics.blit(BACKGROUND, leftPos, topPos, 0, 0, SCREEN_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_HEIGHT);
     }
 
     public void resyncServer() {
@@ -680,15 +664,12 @@ public class SequencerScreen extends Screen {
     }
 
     @Override
-    public void onClose() {
-        super.onClose();
+    public void closing() {
         resyncServer();
     }
 
     @Override
-    public boolean shouldCloseOnEsc() {
-        return selection == -1;
-    }
+    public boolean shouldCloseOnEsc() { return selection == -1; }
 
     public boolean stillValid() {
         return player != null && be != null && player.level().getBlockEntity(be.getBlockPos()) == be && player.blockPosition().distSqr(be.getBlockPos()) <= 36;
@@ -701,7 +682,5 @@ public class SequencerScreen extends Screen {
     }
 
     @Override
-    public boolean isPauseScreen() {
-        return false;
-    }
+    public boolean isPauseScreen() { return false; }
 }

@@ -2,18 +2,17 @@ package com.limachi.arss.client;
 
 import com.limachi.arss.utils.client.annotations.RegisterKeyBinding;
 
-import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
-import dev.architectury.utils.GameInstance;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;

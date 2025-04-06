@@ -1,9 +1,9 @@
 package com.limachi.arss.client.screen;
 
 import com.limachi.arss.utils.ModBase;
-import com.limachi.arss.utils.client.BlockingPopupScreen;
 
-import com.limachi.arss.utils.math.Size2d;
+import com.limachi.arss.utils.client.screens.SimpleBackgroundScreen;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -17,7 +17,7 @@ import net.minecraft.util.Mth;
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
-public class SequencerHelpScreen extends BlockingPopupScreen {
+public class SequencerHelpScreen extends SimpleBackgroundScreen {
     public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(ModBase.registries.mod_id, "textures/screen/sequencer_help_screen.png");
     public static final int WIDTH  = 350;
     public static final int HEIGHT = 200;
@@ -30,10 +30,10 @@ public class SequencerHelpScreen extends BlockingPopupScreen {
     public static final int TEXT_WIDTH = 197;
     public static final int TEXT_HEIGHT = 188;
     public static final int TEXT_BORDER = 2;
-    public SequencerScreen parent;
     public SequencerHelpScreen(SequencerScreen parent) {
-        super(Component.empty(), parent, new Size2d(WIDTH, HEIGHT));
-        this.parent = parent;
+        super(parent);
+        imageWidth = WIDTH;
+        imageHeight = HEIGHT;
     }
     final Button[] buttons = new Button[7];
 
@@ -46,9 +46,14 @@ public class SequencerHelpScreen extends BlockingPopupScreen {
     }
 
     @Override
+    public SequencerScreen parent() {
+        return super.parent();
+    }
+
+    @Override
     protected void init() {
         super.init();
-        if (parent.stillValid()) {
+        if (parent().stillValid()) {
             int bq = Mth.clamp(parseIntOrDefault(Component.translatable("screen.arss.sequencer_help.chapter_count_between_2_and_7").getString(), 2), 2, 7);
             int h = (TEXT_HEIGHT - (bq - 1) * BUTTON_SPACING) / bq;
             for (int bi = 0; bi < bq; ++bi) {
@@ -56,10 +61,10 @@ public class SequencerHelpScreen extends BlockingPopupScreen {
                 buttons[bi] = Button.builder(Component.translatable("screen.arss.sequencer_help.chapter_button." + bi), b->{
                     for (int i = 0; i < bq; ++i)
                         buttons[i].setFocused(i == finalBi);
-                    parent.helpChapter = finalBi;
-                }).bounds(left + BUTTON_X, top + BUTTON_Y + (h + BUTTON_SPACING) * bi, BUTTON_WIDTH, h).build();
-                buttons[bi].setFocused(bi == parent.helpChapter);
-                if (bi == parent.helpChapter)
+                    parent().helpChapter = finalBi;
+                }).bounds(leftPos + BUTTON_X, topPos + BUTTON_Y + (h + BUTTON_SPACING) * bi, BUTTON_WIDTH, h).build();
+                buttons[bi].setFocused(bi == parent().helpChapter);
+                if (bi == parent().helpChapter)
                     setFocused(buttons[bi]);
                 addRenderableWidget(buttons[bi]);
             }
@@ -69,36 +74,31 @@ public class SequencerHelpScreen extends BlockingPopupScreen {
     public int lines() { return (TEXT_HEIGHT - TEXT_BORDER * 2) / font.lineHeight; }
 
     @Override
-    public void background(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        gui.blit(BACKGROUND, left, top, 0, 0, WIDTH, HEIGHT, WIDTH, HEIGHT);
-    }
-
-    @Override
-    public void foreground(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        super.foreground(gui, mouseX, mouseY, partialTick);
-        List<FormattedCharSequence> lines = font.split(Component.translatable("screen.arss.sequencer_help.chapter." + parent.helpChapter), TEXT_WIDTH - TEXT_BORDER * 2);
-        int scroll = parent.helpScroll[parent.helpChapter];
+    public void renderFg(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+        super.renderFg(gui, mouseX, mouseY, partialTick);
+        List<FormattedCharSequence> lines = font.split(Component.translatable("screen.arss.sequencer_help.chapter." + parent().helpChapter), TEXT_WIDTH - TEXT_BORDER * 2);
+        int scroll = parent().helpScroll[parent().helpChapter];
         int l = lines();
         for (int i = 0; i + scroll < lines.size() && i < l; ++i)
-            gui.drawString(font, lines.get(i + scroll), left + TEXT_X + TEXT_BORDER, top + TEXT_Y + TEXT_BORDER + font.lineHeight * i, -1, false);
+            gui.drawString(font, lines.get(i + scroll), leftPos + TEXT_X + TEXT_BORDER, topPos + TEXT_Y + TEXT_BORDER + font.lineHeight * i, -1, false);
     }
 
     @Override
     public boolean mouseScrolled(double x, double y, double xd, double dy) {
         if (dy != 0) {
-            int lines = font.split(Component.translatable("screen.arss.sequencer_help.chapter." + parent.helpChapter), TEXT_WIDTH - TEXT_BORDER * 2).size();
+            int lines = font.split(Component.translatable("screen.arss.sequencer_help.chapter." + parent().helpChapter), TEXT_WIDTH - TEXT_BORDER * 2).size();
             int l = lines();
             if (lines > l) {
-                parent.helpScroll[parent.helpChapter] = Mth.clamp(parent.helpScroll[parent.helpChapter] + (dy > 0 ? -1 : 1), 0, lines - l);
+                parent().helpScroll[parent().helpChapter] = Mth.clamp(parent().helpScroll[parent().helpChapter] + (dy > 0 ? -1 : 1), 0, lines - l);
             } else
-                parent.helpScroll[parent.helpChapter] = 0;
+                parent().helpScroll[parent().helpChapter] = 0;
         }
         return true;
     }
 
     @Override
     public boolean mouseClicked(double x, double y, int button) {
-        if (x < left || x > left + WIDTH || y < top || y > top + HEIGHT) {
+        if (x < leftPos || x > leftPos + imageWidth || y < topPos || y > topPos + imageHeight) {
             onClose();
             return true;
         }
@@ -108,7 +108,12 @@ public class SequencerHelpScreen extends BlockingPopupScreen {
     @Override
     public void tick() {
         super.tick();
-        if (!parent.stillValid())
+        if (!parent().stillValid())
             onClose();
+    }
+
+    @Override
+    protected ResourceLocation backgroundLocation() {
+        return BACKGROUND;
     }
 }
