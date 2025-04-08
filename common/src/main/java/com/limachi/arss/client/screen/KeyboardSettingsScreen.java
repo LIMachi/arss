@@ -2,11 +2,16 @@ package com.limachi.arss.client.screen;
 
 import com.limachi.arss.utils.client.MidiHandler;
 import com.limachi.arss.utils.client.screens.SimpleScreen;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.FittingMultiLineTextWidget;
 import net.minecraft.network.chat.Component;
 
+@Environment(EnvType.CLIENT)
 public class KeyboardSettingsScreen extends SimpleScreen {
     public KeyboardSettingsScreen(NewKeyboardScreen parent) {
         super(parent);

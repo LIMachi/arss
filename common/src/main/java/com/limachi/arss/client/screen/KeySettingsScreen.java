@@ -18,6 +18,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.HashSet;
 
+@Environment(EnvType.CLIENT)
 public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatchMIDI {
     final int index;
     final NewKeyboardScreen.Binding binding;

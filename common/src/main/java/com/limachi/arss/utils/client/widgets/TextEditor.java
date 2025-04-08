@@ -1,16 +1,24 @@
 package com.limachi.arss.utils.client.widgets;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
+
 import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;
 
+@Environment(EnvType.CLIENT)
 public class TextEditor extends EditBox {
+
+    @Environment(EnvType.CLIENT)
     public static class Builder {
         protected int x, y, widthInChars;
         protected TextEditor prev;

@@ -1,5 +1,8 @@
 package com.limachi.arss.client.widgets;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -9,8 +12,10 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.RedStoneWireBlock;
+
 import org.lwjgl.glfw.GLFW;
 
+@Environment(EnvType.CLIENT)
 public class PowerSelector extends AbstractWidget {
     public boolean negative;
     public boolean unknown;

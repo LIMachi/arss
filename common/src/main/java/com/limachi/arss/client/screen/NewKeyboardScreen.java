@@ -1,18 +1,18 @@
 package com.limachi.arss.client.screen;
 
-import com.limachi.arss.Arss;
 import com.limachi.arss.common.ArssItemStackComponents;
 import com.limachi.arss.common.items.Keyboard;
 import com.limachi.arss.utils.annotations.RegisterMsg;
 import com.limachi.arss.utils.client.screens.SimpleScreen;
-
 import com.limachi.arss.utils.network.IC2SMsg;
+
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import dev.architectury.networking.NetworkManager;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -23,9 +23,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.network.ClientboundPacketListener;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ServerboundRenameItemPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -121,6 +119,7 @@ public class NewKeyboardScreen extends SimpleScreen {
     protected TransparentButton hoveredButton = null;
     float scale = 0.75f;
 
+    @Environment(EnvType.CLIENT)
     protected abstract class TransparentButton extends AbstractButton {
         protected int color;
 
@@ -163,6 +162,7 @@ public class NewKeyboardScreen extends SimpleScreen {
         }
     }
 
+    @Environment(EnvType.CLIENT)
     protected class KeyButton extends TransparentButton {
         int key;
         public KeyButton(float x, float y, float width, float height, int key) {
@@ -188,6 +188,7 @@ public class NewKeyboardScreen extends SimpleScreen {
         }
     }
 
+    @Environment(EnvType.CLIENT)
     protected class RedstoneButton extends TransparentButton {
         public RedstoneButton(float x, float y, float width, float height) {
             super(x, y, width, height, 0xFF0000);
