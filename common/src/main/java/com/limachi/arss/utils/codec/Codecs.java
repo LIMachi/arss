@@ -21,6 +21,9 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -509,6 +512,19 @@ public class Codecs {
     };
     public static final Codec<Tag> TAG = Codec.PASSTHROUGH.comapFlatMap((dynamic) -> DataResult.success(dynamic.convert(NbtOps.INSTANCE).getValue().copy()), (tag) -> new Dynamic<>(NbtOps.INSTANCE, tag.copy()));
     public static final Codec<CompoundTag> COMPOUND_TAG = CompoundTag.CODEC;
+    public static final Codec<ItemStack> STACK = ItemStack.CODEC;
+    public static final Codec<InteractionHand> HAND = new PrimitiveCodec<InteractionHand>() {
+        @Override
+        public <T> DataResult<InteractionHand> read(DynamicOps<T> ops, T input) {
+            return ops.getBooleanValue(input).map(r->r ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+        }
+
+        @Override
+        public <T> T write(DynamicOps<T> ops, InteractionHand value) {
+            return ops.createBoolean(value == InteractionHand.OFF_HAND);
+        }
+    };
+
     private static final HashMap<Class<?>, Codec<?>> CODECS = new HashMap<>();
 
     static {
@@ -566,8 +582,11 @@ public class Codecs {
         CODECS.put(Vec3[].class, VEC3_ARRAY);
 
         CODECS.put(Tag.class, TAG);
-
         CODECS.put(CompoundTag.class, COMPOUND_TAG);
+
+        CODECS.put(ItemStack.class, STACK);
+
+        CODECS.put(InteractionHand.class, HAND);
     }
 
     public static <T> Codec<T> getCodec(Class<T> clazz) {

@@ -13,6 +13,7 @@ import net.minecraft.network.codec.StreamCodec;
 
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Base64;
 
 public class ArssItemStackComponents {
@@ -21,12 +22,31 @@ public class ArssItemStackComponents {
     public static RegistrySupplier<DataComponentType<Bindings>> BINDINGS;
     public static RegistrySupplier<DataComponentType<SequencerData>> SEQUENCER_DATA;
 
-    public record Bindings(String[] freq, byte[] power, int[] key) {
+    public record Bindings(String[] freq, byte[] power, int[] key) implements Cloneable {
         public static Bindings empty() {
             return new Bindings(Util.make(new String[15], a->{
                 for (int i = 0; i < 15; ++i)
                     a[i] = "";
-            }), new byte[15], new int[15]);
+            }), new byte[15], Util.make(new int[15], a->{
+                for (int i = 0; i < 15; ++i)
+                    a[i] = -1;
+            }));
+        }
+
+        @Override
+        public Bindings clone() {
+            return new Bindings(Arrays.copyOf(this.freq, 15), Arrays.copyOf(this.power, 15), Arrays.copyOf(this.key, 15));
+        }
+
+        public Bindings setBinding(int index, String freq, byte power, int key) {
+            Bindings o = clone();
+            if (index >=0 || index < 15) {
+                if (freq != null && !freq.equals(o.freq[index]))
+                    o.freq[index] = freq;
+                o.power[index] = power;
+                o.key[index] = key;
+            }
+            return o;
         }
     }
 

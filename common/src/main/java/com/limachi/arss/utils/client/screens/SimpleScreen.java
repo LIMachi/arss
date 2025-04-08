@@ -73,6 +73,11 @@ public class SimpleScreen extends Screen implements IParentedScreen {
     }
 
     @Override
+    public void renderTransparentBackground(GuiGraphics guiGraphics) {
+        guiGraphics.fillGradient(0, 0, this.width, this.height, -500, -1072689136, -804253680);
+    }
+
+    @Override
     public final void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (shouldRenderBlur())
             renderTransparentBackground(guiGraphics);
@@ -132,5 +137,13 @@ public class SimpleScreen extends Screen implements IParentedScreen {
     @Override
     public <T extends Screen & IParentedScreen> T parent() {
         return (T)parent;
+    }
+
+    public boolean isOutsideScreen(int x, int y) {
+        return x < leftPos || x > leftPos + imageWidth || y < topPos || y > topPos + imageHeight;
+    }
+
+    public boolean isOutsideScreen(double mouseX, double mouseY) {
+        return isOutsideScreen((int)mouseX, (int)mouseY);
     }
 }

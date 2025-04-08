@@ -1,36 +1,49 @@
 package com.limachi.arss.client.screen;
 
+import com.limachi.arss.client.widgets.PowerSelector;
+import com.limachi.arss.common.block_entities.ResonantGateBlockEntity;
 import com.limachi.arss.utils.client.MidiHandler;
 import com.limachi.arss.utils.client.screens.SimpleScreen;
 import com.limachi.arss.utils.client.widgets.TextEditor;
 import com.limachi.arss.utils.client.widgets.TextSuggestions;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.Util;
+
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+
 import org.lwjgl.glfw.GLFW;
 
-import java.util.Objects;
+import java.util.HashSet;
 
 public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatchMIDI {
     final int index;
+    final NewKeyboardScreen.Binding binding;
+
+    protected TextEditor namer;
+    protected TextSuggestions suggestions;
+    protected PowerSelector powerSelector;
+    protected BindingButton bindingButton;
+
+    HashSet<String> previousSuggestions;
 
     public KeySettingsScreen(NewKeyboardScreen parent, int key) {
         super(parent);
         index = key;
+        imageWidth = 170;
+        imageHeight = 90;
+        binding = parent.getBinding(index);
+        previousSuggestions = (HashSet<String>)ResonantGateBlockEntity.clientNames.clone();
+        MidiHandler.KEY_CATCHER = this;
+        new ResonantGateBlockEntity.RequestNames().sendToServer();
     }
 
     @Override
     public NewKeyboardScreen parent() {
         return super.parent();
     }
-
-    protected TextEditor namer;
-    protected TextSuggestions suggestions;
-    protected int key;
-    protected int power;
 
     //layout:
     //top left key button
@@ -40,10 +53,30 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
     @Override
     protected void init() {
         super.init();
+        boolean first = namer == null;
+        addRenderableWidget(bindingButton = new BindingButton(leftPos + 10, topPos + 10, bindingButton));
+        addRenderableWidget(powerSelector = new PowerSelector(leftPos + 150, topPos + 12, Component.literal("Power output:"), powerSelector));
+        addRenderableWidget(namer = new TextEditor.Builder(leftPos + 10, topPos + 30, namer).width(150).build());
+        if (first && binding != null) {
+            namer.setValue(binding.freq);
+            powerSelector.value = binding.power;
+            bindingButton.setMessage(binding.getReadableBinding(false));
+            powerSelector.unknown = true;
+        }
+        addRenderableWidget(suggestions = new TextSuggestions(namer, 4, ResonantGateBlockEntity.clientNames));
     }
 
     @Override
-    public boolean keyState(int channel, int key, boolean state) {
+    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+        super.renderBg(guiGraphics, partialTick, mouseX, mouseY);
+        if (!ResonantGateBlockEntity.clientNames.equals(previousSuggestions)) {
+            previousSuggestions = (HashSet<String>)ResonantGateBlockEntity.clientNames.clone();
+            suggestions.updateSuggestions(previousSuggestions);
+        }
+    }
+
+    @Override
+    public boolean keyState(int channel, int key, byte state) {
         if (getFocused() instanceof BindingButton button) {
             if (channel < 16 && key >= 0 && key < 128)
                 button.setKeyBind((channel << 8) | key);
@@ -56,11 +89,9 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
 
     @Environment(EnvType.CLIENT)
     class BindingButton extends Button {
-        boolean selected = false;
-        int compactBinding = -1;
-        int power;
+        boolean selected;
 
-        public BindingButton(int x, int y, int power) {
+        public BindingButton(int x, int y, BindingButton prev) {
             super(x, y, 50, 16, Component.empty(), s->{
                 BindingButton b = (BindingButton)s;
                 b.selected = !b.selected;
@@ -69,25 +100,14 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
                     screen().setFocused(null);
                 }
             }, s->Component.empty());
-            this.power = power;
+            selected = prev != null && prev.selected;
         }
 
         public BindingButton setKeyBind(int compactBinding) {
-            this.compactBinding = compactBinding;
-            CompoundTag packet = Util.make(new CompoundTag(), t->t.putInt("binding", compactBinding));
-            //TODO: update here
-            if (compactBinding != -1) {
-                if (compactBinding < -1)
-                    setMessage(Component.literal(Objects.requireNonNullElseGet(GLFW.glfwGetKeyName(-compactBinding, -compactBinding), () -> "" + compactBinding)));
-                else {
-                    int note = compactBinding & 0x7F;
-                    int channel = (compactBinding >> 8) & 0xF;
-                    int octave = note / 12;
-                    note = note % 12;
-                    setMessage(Component.translatable("screen.button.midi_keyboard_binding", channel, octave, Component.translatable("display.arss.keyboard_item.semitone." + note)));
-                }
-            } else
-                setMessage(Component.empty());
+            if (compactBinding != binding.key) {
+                binding.key = compactBinding;
+                setMessage(binding.getReadableBinding(false));
+            }
             selected = false;
             screen().setFocused(null);
             setFocused(false);
@@ -98,7 +118,7 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
         public boolean keyPressed(int key, int scancode, int modifiers) {
             if (isFocused()) {
                 if ((key == GLFW.GLFW_KEY_DELETE || key == GLFW.GLFW_KEY_ESCAPE) && selected) {
-                    keyState(-1, -1, false);
+                    keyState(-1, -1, (byte)0);
                     return true;
                 }
                 setKeyBind(-key);
@@ -106,5 +126,23 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
             }
             return super.keyPressed(key, scancode, modifiers);
         }
+    }
+
+    @Override
+    public void closing() {
+        if (MidiHandler.KEY_CATCHER == this)
+            MidiHandler.KEY_CATCHER = null;
+        binding.freq = namer.getValue();
+        binding.power = (byte)powerSelector.value;
+        parent().setBinding(index, binding);
+    }
+
+    @Override
+    public boolean mouseClicked(double d, double e, int i) {
+        if (isOutsideScreen(d, e)) {
+            onClose();
+            return false;
+        }
+        return super.mouseClicked(d, e, i);
     }
 }

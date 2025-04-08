@@ -16,7 +16,7 @@ import java.util.List;
 @Environment(EnvType.CLIENT)
 public class MidiHandler {
     public interface ICatchMIDI {
-        boolean keyState(int channel, int key, boolean state);
+        boolean keyState(int channel, int key, byte state);
     }
 
     public static final int MSG_TYPE_MASK = 0b11110000;
@@ -27,27 +27,25 @@ public class MidiHandler {
 
     private static MidiDevice inputDevice = null;
 
-    @Config(cmt = "name of the bound MIDI device", path = "MIDI", name = "Device", client = true)
+    @Config(cmt = "name of the bound MIDI device", path = "MIDI", name = "Device", client = true, reload = true)
     public static String deviceName = "";
 
     private static final TestReceiver RECEIVER_INSTANCE = new TestReceiver();
 
-    private static final short[] states = new short[128];
+    private static final byte[][] states = new byte[128][16];
 
     public static ICatchMIDI KEY_CATCHER = null;
 
-    public static boolean keyState(int channel, int key) {
-        if (key >= 128 || channel >= 16) return false;
-        return (states[key] & (1 << channel)) != 0;
+    public static byte keyState(int channel, int key) {
+        if (key >= 128 || key < 0 || channel >= 16 || channel < 0) return 0;
+        return states[key][channel];
     }
 
-    public static void setKeyState(int channel, int key, boolean state) {
+    public static void setKeyState(int channel, int key, byte state) {
+        if (key >= 128 || key < 0 || channel >= 16 || channel < 0) return;
         if (KEY_CATCHER != null && KEY_CATCHER.keyState(channel, key, state))
             return;
-        if (state)
-            states[key] |= (short)(1 << channel);
-        else
-            states[key] &= (short)~(1 << channel);
+        states[key][channel] = state;
     }
 
     /**
@@ -76,6 +74,7 @@ public class MidiHandler {
     @StaticInitClient
     public static void init() {
         ModBase.configs.addReloadListener(MidiHandler::rebind);
+        bindDevice(deviceName);
     }
 
     public static void rebind() {
@@ -121,16 +120,17 @@ public class MidiHandler {
                 int type = msg[0] & MSG_TYPE_MASK;
                 int channel = msg[0] & CHANNEL_MASK;
                 if (type == NOTE_ON)
-                    setKeyState(channel, msg[1], true);
+                    setKeyState(channel, msg[1], msg[2]);
                 if (type == NOTE_OFF)
-                    setKeyState(channel, msg[1], false);
+                    setKeyState(channel, msg[1], (byte)0);
             }
         }
 
         @Override
         public void close() {
             for (int i = 0; i < 128; ++i)
-                states[i] = 0;
+                for (int j = 0; j < 16; ++j)
+                    states[i][j] = 0;
         }
     }
 }

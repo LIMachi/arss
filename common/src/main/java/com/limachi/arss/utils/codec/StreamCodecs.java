@@ -3,24 +3,18 @@ package com.limachi.arss.utils.codec;
 import com.limachi.arss.utils.Game;
 import com.limachi.arss.utils.ModBase;
 
-import dev.architectury.utils.EnvExecutor;
-import dev.architectury.utils.GameInstance;
-
 import io.netty.handler.codec.DecoderException;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -283,6 +277,10 @@ public class StreamCodecs {
         throw new DecoderException("Expected compound tag");
     });
 
+    public static final StreamCodec<RegistryFriendlyByteBuf, ItemStack> STACK = ItemStack.OPTIONAL_STREAM_CODEC;
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, InteractionHand> HAND = StreamCodec.of((b, l)->b.writeBoolean(l == InteractionHand.OFF_HAND), b-> b.readBoolean() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+
     private static final HashMap<Class<?>, StreamCodec<RegistryFriendlyByteBuf, ?>> CODECS = new HashMap<>();
 
     static {
@@ -340,8 +338,11 @@ public class StreamCodecs {
         CODECS.put(Vec3[].class, VEC3_ARRAY);
 
         CODECS.put(Tag.class, TAG);
-
         CODECS.put(CompoundTag.class, COMPOUND_TAG);
+
+        CODECS.put(ItemStack.class, STACK);
+
+        CODECS.put(InteractionHand.class, HAND);
     }
 
     public static <T> StreamCodec<RegistryFriendlyByteBuf, T> getCodec(Class<T> clazz) {

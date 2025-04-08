@@ -13,7 +13,8 @@ import java.util.function.Function;
 public interface IParentedScreen {
     default <T extends Screen & IParentedScreen> T screen() { return (T)this; }
     <T extends Screen & IParentedScreen> T parent();
-    default boolean shouldRenderBlur() { return Minecraft.getInstance().screen == this; }
+    default boolean isActive() { return Minecraft.getInstance().screen == this; }
+    default boolean shouldRenderBlur() { return isActive(); }
     default <T1 extends Screen & IParentedScreen, T2 extends Screen & IParentedScreen> void openChildScreen(Function<T1, T2> screenBuilder) {
         Minecraft.getInstance().setScreen(screenBuilder.apply(screen()));
     }

@@ -1,13 +1,18 @@
 package com.limachi.arss.client.screen;
 
+import com.limachi.arss.Arss;
 import com.limachi.arss.common.ArssItemStackComponents;
 import com.limachi.arss.common.items.Keyboard;
+import com.limachi.arss.utils.annotations.RegisterMsg;
 import com.limachi.arss.utils.client.screens.SimpleScreen;
 
+import com.limachi.arss.utils.network.IC2SMsg;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import dev.architectury.networking.NetworkManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -18,13 +23,18 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.network.ClientboundPacketListener;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ServerboundRenameItemPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 import org.lwjgl.glfw.GLFW;
+
+import java.util.Objects;
 
 /**
  * new system:
@@ -53,6 +63,50 @@ public class NewKeyboardScreen extends SimpleScreen {
         this.player = player;
         this.hand = hand;
         model = Minecraft.getInstance().getItemRenderer().getModel(player.getItemInHand(hand), player.level(), player, 0);
+    }
+
+    public static class Binding {
+        String freq;
+        byte power;
+        int key;
+
+        public Binding(String freq, byte power, int key) {
+            this.freq = freq;
+            this.power = power;
+            this.key = key;
+        }
+
+        public Component getReadableBinding(boolean reduced) {
+            if (key == -1)
+                return Component.empty();
+            if (key < -1) {
+                if (GLFW.glfwGetKeyName(-key, 0) instanceof String name)
+                    return Component.literal(name);
+                return Component.keybind(InputConstants.Type.KEYSYM.getOrCreate(-key).getName());
+            }
+            else {
+                int note = key & 0x7F;
+                int channel = (key >> 8) & 0xF;
+                int octave = note / 12;
+                note = note % 12;
+                return Component.translatable(reduced ? "screen.button.midi_keyboard_binding_compact" : "screen.button.midi_keyboard_binding", channel, octave, Component.translatable("display.arss.keyboard_item.semitone." + note));
+            }
+        }
+    }
+
+    Binding getBinding(int key) {
+        if (key >= 0 && key < 15 && player.getItemInHand(hand).has(ArssItemStackComponents.BINDINGS.get())) {
+            var bindings = player.getItemInHand(hand).get(ArssItemStackComponents.BINDINGS.get());
+            return new Binding(bindings.freq()[key], bindings.power()[key], bindings.key()[key]);
+        }
+        return null;
+    }
+
+    void setBinding(int key, Binding binding) {
+        if (key >= 0 && key < 15 && binding != null && player.getItemInHand(hand).has(ArssItemStackComponents.BINDINGS.get())) {
+            var bindings = player.getItemInHand(hand).get(ArssItemStackComponents.BINDINGS.get());
+            player.getItemInHand(hand).set(ArssItemStackComponents.BINDINGS.get(), bindings.setBinding(key, binding.freq, binding.power, binding.key));
+        }
     }
 
     private final NewKeyboardScreen SCREEN = this;
@@ -102,6 +156,11 @@ public class NewKeyboardScreen extends SimpleScreen {
 
         @Override
         protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {}
+
+        @Override
+        public boolean isMouseOver(double d, double e) {
+            return screen().isActive() && super.isMouseOver(d, e);
+        }
     }
 
     protected class KeyButton extends TransparentButton {
@@ -115,9 +174,9 @@ public class NewKeyboardScreen extends SimpleScreen {
         protected void renderWidget(GuiGraphics guiGraphics, int i, int j, float f) {
             super.renderWidget(guiGraphics, i, j, f);
             guiGraphics.pose().pushPose();
-            int len =  1 + (i / 20) % 5;
-            String text = "space".substring(0, len);
-            float scale = text.length() > 0 ? Float.max(2f / (float) text.length(), 0.01f) : 1f;
+            Component text = getBinding(key).getReadableBinding(true);
+            int length = text.getString().length();
+            float scale = length > 0 ? Float.max(2f / (float) length, 0.01f) : 1f;
             guiGraphics.pose().scale(scale, scale, scale);
             guiGraphics.drawCenteredString(minecraft.font, text, Math.round((getX() + 1 + width / 2) * (1 / scale)), Math.round((getY() + height - 9) * (1 / scale) - 5), -1);
             guiGraphics.pose().popPose();
@@ -181,14 +240,16 @@ public class NewKeyboardScreen extends SimpleScreen {
             RenderSystem.disableDepthTest();
             PoseStack pose = guiGraphics.pose();
             pose.pushPose();
-            pose.translate(0, 0, -150);
-            renderTransparentBackground(guiGraphics);
+            if (Minecraft.getInstance().screen == this) {
+                pose.translate(0, 0, -150);
+                renderTransparentBackground(guiGraphics);
+            }
+            else
+                pose.translate(0, 0, -50);
             pose.translate(centerX, centerY, 0);
             pose.scale(-320 * scale, -320 * scale, -1);
             renderer.render(ref, ItemDisplayContext.FIXED, false, pose, guiGraphics.bufferSource(), 15728880, OverlayTexture.NO_OVERLAY, model);
             guiGraphics.flush();
-            Lighting.setupFor3DItems();
-            RenderSystem.enableDepthTest();
             pose.popPose();
         } else
             onClose();
@@ -201,4 +262,20 @@ public class NewKeyboardScreen extends SimpleScreen {
 
     @Override
     public boolean isPauseScreen() { return false; } //TODO: thanks to this we could also allow the testing of the keyboard while in the menu
+
+    @RegisterMsg
+    public record UpdateBindings(InteractionHand hand, ItemStack keyboard) implements IC2SMsg<UpdateBindings> {
+        @Override
+        public void run(NetworkManager.PacketContext ctx) {
+            if (ctx.getPlayer() instanceof ServerPlayer player) {
+                if (player.getItemInHand(hand).getItem() == keyboard.getItem() && player.getItemInHand(hand).has(ArssItemStackComponents.BINDINGS.get()))
+                    player.getItemInHand(hand).set(ArssItemStackComponents.BINDINGS.get(), keyboard.get(ArssItemStackComponents.BINDINGS.get()));
+            }
+        }
+    }
+
+    @Override
+    public void closing() {
+        new UpdateBindings(hand, player.getItemInHand(hand)).sendToServer();
+    }
 }

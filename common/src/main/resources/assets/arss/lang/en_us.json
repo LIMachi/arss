@@ -220,6 +220,7 @@
   "screen.title.instrument_swapper": "Instrument Swapper",
 
   "screen.button.midi_keyboard_binding": "%s %s %s",
+  "screen.button.midi_keyboard_binding_compact": "%2$s%3$s",
   "screen.button.bind_midi": "Bind MIDI device",
   "screen.button.hide": "Hide screen",
 

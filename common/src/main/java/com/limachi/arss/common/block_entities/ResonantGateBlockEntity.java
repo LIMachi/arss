@@ -37,7 +37,7 @@ import java.util.function.Consumer;
 
 public class ResonantGateBlockEntity extends BlockEntity {
     private static int lastId = 0;
-    private static final HashMap<String, Network> networks = new HashMap<>(); //server only
+    private static final HashMap<String, HashSet<ResonantGateBlockEntity>> networks = new HashMap<>(); //server only
     public static final HashSet<String> clientNames = new HashSet<>(); //client only
 
     @RegisterMsg
@@ -58,54 +58,46 @@ public class ResonantGateBlockEntity extends BlockEntity {
         }
     }
 
-    protected static void runOnNetwork(String frequency, Consumer<Network> run) {
+    protected static void syncPowers(HashSet<ResonantGateBlockEntity> listeners, int direct) {
+        if (direct < 15)
+            for (ResonantGateBlockEntity b : listeners) {
+                int t = b.getReceivedPower();
+                if (t > direct) {
+                    if (t >= 15) {
+                        direct = 15;
+                        break;
+                    }
+                    direct = t;
+                }
+            }
+        for (ResonantGateBlockEntity b : listeners)
+            b.setOutput(direct);
+    }
+
+    protected static void syncPowers(HashSet<ResonantGateBlockEntity> listeners) { syncPowers(listeners, 0); }
+
+    protected static void runOnNetwork(String frequency, Consumer<HashSet<ResonantGateBlockEntity>> run) {
         if (Game.isLogicalServer() && networks.containsKey(frequency)) {
-            Network network = networks.get(frequency);
+            var network = networks.get(frequency);
             run.accept(network);
-            if (network.connections.isEmpty())
+            if (network.isEmpty())
                 networks.remove(frequency);
         }
     }
 
     protected static void newNetwork(String frequency) {
-       networks.put(frequency, new Network());
+        if (networks.containsKey(frequency))
+            networks.get(frequency).clear();
+        else
+            networks.put(frequency, new HashSet<>());
     }
 
     public static void setDirect(String frequency, int power) {
-        runOnNetwork(frequency, n->n.setDirect(power));
+        runOnNetwork(frequency, n->syncPowers(n, power));
     }
 
     public static List<String> getAllNetworkNames() {
         return new ArrayList<>(networks.keySet());
-    }
-
-    public static class Network {
-        HashSet<ResonantGateBlockEntity> connections = new HashSet<>();
-        int direct = 0;
-
-        public void syncPowers() {
-            int best = direct;
-            if (best < 15)
-                for (ResonantGateBlockEntity b : connections) {
-                    int t = b.getReceivedPower();
-                    if (t > best) {
-                        if (t >= 15) {
-                            best = 15;
-                            break;
-                        }
-                        best = t;
-                    }
-                }
-            for (ResonantGateBlockEntity b : connections)
-                b.setOutput(best);
-        }
-
-        public void setDirect(int direct) {
-            int prev = this.direct;
-            this.direct = direct;
-            if (prev != direct)
-                syncPowers();
-        }
     }
 
     private String frequency = "";
@@ -121,7 +113,7 @@ public class ResonantGateBlockEntity extends BlockEntity {
     public void updatePowerInput(int power) {
         if (Game.isLogicalServer() && power != receivedPower && power >= 0 && power <= 15) {
             receivedPower = power;
-            runOnNetwork(frequency, Network::syncPowers);
+            runOnNetwork(frequency, ResonantGateBlockEntity::syncPowers);
             setChanged();
         }
     }
@@ -132,7 +124,7 @@ public class ResonantGateBlockEntity extends BlockEntity {
     }
 
     public void updateOutputs() {
-        runOnNetwork(frequency, Network::syncPowers);
+        runOnNetwork(frequency, ResonantGateBlockEntity::syncPowers);
     }
 
     public String getFrequency() { return frequency; }
@@ -140,15 +132,15 @@ public class ResonantGateBlockEntity extends BlockEntity {
 
     public void disconnect() {
         runOnNetwork(frequency, n->{
-            n.connections.remove(this);
-            n.syncPowers();
+            n.remove(ResonantGateBlockEntity.this);
+            syncPowers(n);
         });
     }
 
     public void connect() {
         runOnNetwork(frequency, n->{
-            n.connections.add(this);
-            n.syncPowers();
+            n.add(ResonantGateBlockEntity.this);
+            syncPowers(n);
         });
     }
 
@@ -162,7 +154,10 @@ public class ResonantGateBlockEntity extends BlockEntity {
                 connect();
             }
             setChanged();
-        }
+            if (level != null)
+                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+        } else
+            frequency = value;
     }
 
     @Override

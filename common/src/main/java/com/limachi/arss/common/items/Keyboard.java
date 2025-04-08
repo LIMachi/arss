@@ -2,6 +2,9 @@ package com.limachi.arss.common.items;
 
 import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.client.screen.NewKeyboardScreen;
+import com.limachi.arss.common.ArssItemStackComponents;
+import com.limachi.arss.common.block_entities.ResonantGateBlockEntity;
+import com.limachi.arss.common.blocks.KeyboardLectern;
 import com.limachi.arss.utils.Game;
 import com.limachi.arss.utils.IItemMixin;
 import com.limachi.arss.utils.network.IC2SMsg;
@@ -21,7 +24,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.RedStoneWireBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 import static com.limachi.arss.common.ArssItemStackComponents.*;
 
@@ -37,19 +43,19 @@ public class Keyboard extends Item implements IItemMixin {
     public static RegistrySupplier<Item> R_ITEM;
 
     @RegisterMsg
-    public record KeyPressVisualFeedbackSlotMsg(int slot, int power) implements IC2SMsg<KeyPressVisualFeedbackSlotMsg> {
+    public record KeyPressVisualFeedbackSlotMsg(int slot, int keyStates) implements IC2SMsg<KeyPressVisualFeedbackSlotMsg> {
         @Override
         public void run(NetworkManager.PacketContext ctx) {
             ItemStack stack = ctx.getPlayer().getInventory().getItem(slot);
             if (stack.getItem() instanceof Keyboard)
-                stack.set(OUTPUT.get(), power);
+                stack.set(OUTPUT.get(), keyStates);
         }
     }
 
-    public static int getTint(int index, int power, boolean recording) {
+    public static int getTint(int index, int states, boolean recording) {
         if (index == 15)
             return 0xFF000000 | RedStoneWireBlock.getColorForPower(recording ? 15 : 0);
-        if (index == power - 1)
+        if (index >= 0 && index < 15 && (states & (1 << index)) != 0)
             return 0xFF00FFFF;
         return -1;
     }
@@ -60,6 +66,38 @@ public class Keyboard extends Item implements IItemMixin {
     }
 
     public Keyboard(Properties props) { super(props.stacksTo(1).component(OUTPUT.get(), 0).component(CATCH.get(), false).component(BINDINGS.get(), Bindings.empty())); }
+
+    public static boolean isListening(ItemStack stack) {
+        if (stack.has(CATCH.get()))
+            return stack.get(CATCH.get());
+        return false;
+    }
+
+    public static boolean setKeyStates(ItemStack stack, long mask, boolean andUpdate) {
+        if (stack.has(ArssItemStackComponents.OUTPUT.get()) && stack.has(ArssItemStackComponents.BINDINGS.get())) {
+            int prev = stack.get(ArssItemStackComponents.OUTPUT.get());
+            var bindings = stack.get(ArssItemStackComponents.BINDINGS.get());
+            int pressedMask = 0;
+            for (int i = 0; i < 15; ++i) {
+                long power = ((mask >> (i * 4)) & 0xF);
+                boolean pressed = power > 0;
+                if (pressed == ((prev & (1 << i)) == 0)) {
+                    if (pressed) {
+                        if (bindings.power()[i] == 16)
+                            ResonantGateBlockEntity.setDirect(bindings.freq()[i], (int)power);
+                        else
+                            ResonantGateBlockEntity.setDirect(bindings.freq()[i], bindings.power()[i]);
+                    } else
+                        ResonantGateBlockEntity.setDirect(bindings.freq()[i], 0);
+                }
+                if (pressed)
+                    pressedMask |= 1 << i;
+            }
+            stack.set(ArssItemStackComponents.OUTPUT.get(), pressedMask);
+            return true;
+        }
+        return false;
+    }
 
     @RegisterMsg
     public record KeyboardKeypressMsg(byte key) implements IC2SMsg<KeyboardKeypressMsg> {
@@ -106,7 +144,15 @@ public class Keyboard extends Item implements IItemMixin {
 
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
-        return use(ctx.getLevel(), ctx.getPlayer(), ctx.getHand()).getResult();
+        BlockState state = ctx.getLevel().getBlockState(ctx.getClickedPos());
+        if (state.is(Blocks.LECTERN) && !state.getValue(LecternBlock.HAS_BOOK)) {
+            KeyboardLectern.replaceLectern(ctx.getLevel(), ctx.getClickedPos(), state, ctx.getItemInHand().copy());
+            if (!(ctx.getPlayer() instanceof Player player && player.isCreative()))
+                ctx.getItemInHand().setCount(0);
+        }
+        if (ctx.getPlayer() instanceof Player player)
+            return use(ctx.getLevel(), player, ctx.getHand()).getResult();
+        return InteractionResult.PASS;
     }
 
     @Override

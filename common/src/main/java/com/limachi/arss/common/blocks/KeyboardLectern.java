@@ -1,6 +1,9 @@
 package com.limachi.arss.common.blocks;
 
+import com.limachi.arss.client.keyboardSystem.KeyboardHandler;
+import com.limachi.arss.common.ArssItemStackComponents;
 import com.limachi.arss.common.items.Keyboard;
+import com.limachi.arss.utils.Game;
 import com.limachi.arss.utils.network.IC2SMsg;
 import com.limachi.arss.utils.annotations.RegisterBlock;
 import com.limachi.arss.utils.annotations.RegisterMsg;
@@ -12,6 +15,7 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -39,19 +43,26 @@ public class KeyboardLectern extends LecternBlock implements EntityBlock {
     public static RegistrySupplier<Block> R_BLOCK;
 
     @RegisterMsg
-    public record KeyPressVisualFeedbackLecternMsg(BlockPos lectern, int power) implements IC2SMsg<KeyPressVisualFeedbackLecternMsg> {
+    public record KeyPressVisualFeedbackLecternMsg(BlockPos lectern, int mask) implements IC2SMsg<KeyPressVisualFeedbackLecternMsg> {
         @Override
         public void run(NetworkManager.PacketContext ctx) {
-            Player player = ctx.getPlayer();
-            BlockState state = player.level().getBlockState(lectern);
-            if (state.getBlock() instanceof KeyboardLectern && state.getValue(BlockStateProperties.POWER) != power)
-                player.level().setBlockAndUpdate(lectern, state.setValue(BlockStateProperties.POWER, power));
+            if (ctx.getPlayer() instanceof ServerPlayer player) {
+                if (player.level().getBlockEntity(lectern) instanceof com.limachi.arss.common.block_entities.KeyboardLectern be) {
+                    be.getKeyboard().set(ArssItemStackComponents.OUTPUT.get(), mask);
+                }
+            }
+//            Player player = ctx.getPlayer();
+//            BlockState state = player.level().getBlockState(lectern);
+//            if (state.getBlock() instanceof KeyboardLectern && state.getValue(BlockStateProperties.POWER) != power)
+//                player.level().setBlockAndUpdate(lectern, state.setValue(BlockStateProperties.POWER, power));
         }
     }
 
     @BlockTinter
     public static int getTint(BlockState state, BlockAndTintGetter getter, BlockPos pos, int index) {
-        return Keyboard.getTint(index, state.getValue(BlockStateProperties.POWER), state.getValue(POWERED));
+        if (getter.getBlockEntity(pos) instanceof com.limachi.arss.common.block_entities.KeyboardLectern be)
+            return Keyboard.getTint(be.getKeyboard(), index);
+        return -1;
     }
 
     public static void replaceLectern(Level level, BlockPos pos, BlockState lectern, ItemStack stack) {
@@ -72,10 +83,10 @@ public class KeyboardLectern extends LecternBlock implements EntityBlock {
 
     public KeyboardLectern() { super(Properties.ofFullCopy(Blocks.LECTERN).dropsLike(Blocks.LECTERN)); }
 
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder);
-        builder.add(BlockStateProperties.POWER);
-    }
+//    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+//        super.createBlockStateDefinition(builder);
+//        builder.add(BlockStateProperties.POWER);
+//    }
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
@@ -89,7 +100,11 @@ public class KeyboardLectern extends LecternBlock implements EntityBlock {
 
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.isClientSide) return InteractionResult.SUCCESS_NO_ITEM_USED;
+        if (level.isClientSide) {
+            if (level.getBlockEntity(pos) instanceof com.limachi.arss.common.block_entities.KeyboardLectern be)
+                Game.runLogical(()->()->KeyboardHandler.useLectern(be, Keyboard.isListening(be.getKeyboard())), null);
+            return InteractionResult.SUCCESS_NO_ITEM_USED;
+        }
         if (player.isShiftKeyDown())
             restoreLectern(level, pos, state, player);
         else if (level.getBlockEntity(pos) instanceof com.limachi.arss.common.block_entities.KeyboardLectern be)
@@ -115,10 +130,10 @@ public class KeyboardLectern extends LecternBlock implements EntityBlock {
     @Override
     public int getDirectSignal(BlockState p_54566_, BlockGetter p_54567_, BlockPos p_54568_, Direction p_54569_) { return 0; }
 
-    @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
-        return state.getValue(BlockStateProperties.POWER);
-    }
+//    @Override
+//    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+//        return state.getValue(BlockStateProperties.POWER);
+//    }
 
     @Override
     public ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {

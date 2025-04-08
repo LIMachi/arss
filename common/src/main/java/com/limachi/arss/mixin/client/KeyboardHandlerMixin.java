@@ -20,9 +20,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class KeyboardHandlerMixin {
     @Shadow @Final private Minecraft minecraft;
 
-//    @Inject(method = "keyPress", at = @At("HEAD"), cancellable = true)
-//    public void keyPress(long window, int key, int scancode, int action, int mods, CallbackInfo ci) {
-//        if (window == minecraft.getWindow().getWindow() && minecraft.player != null && (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT) && KeyboardTicker.consumeKeyPress(key))
-//            ci.cancel();
-//    }
+    @Inject(method = "keyPress", at = @At("HEAD"), cancellable = true)
+    public void keyPress(long window, int key, int scancode, int action, int mods, CallbackInfo ci) {
+        if (window == minecraft.getWindow().getWindow() && minecraft.player != null && (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT) && com.limachi.arss.client.keyboardSystem.KeyboardHandler.stopKeyPress(key))
+            ci.cancel();
+    }
 }
