@@ -2,6 +2,12 @@ architectury {
     common rootProject.enabled_platforms.split(',')
 }
 
+repositories {
+    flatDir {
+        dirs '../../LimLibArch/common/build/devlibs'
+    }
+}
+
 dependencies {
     // We depend on Fabric Loader here to use the Fabric @Environment annotations,
     // which get remapped to the correct annotations on each platform.
@@ -10,8 +16,10 @@ dependencies {
 
     // Architectury API. This is optional, and you can comment it out if you don't need it.
     modImplementation "dev.architectury:architectury:$rootProject.architectury_api_version"
+
+    modImplementation "com.limachi.lim_lib:lim_lib-common:${rootProject.lim_lib_version}-dev"
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/arss.accesswidener")
+    accessWidenerPath = file("src/main/resources/${archives_name}.accesswidener")
 }

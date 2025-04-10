@@ -1,7 +1,8 @@
 package com.limachi.arss.common.menus;
 
 import com.limachi.arss.common.block_entities.InstrumentSwapper;
-import com.limachi.arss.utils.annotations.RegisterMenu;
+
+import com.limachi.lim_lib.common.annotations.RegisterMenu;
 
 import dev.architectury.registry.menu.MenuRegistry;
 import dev.architectury.registry.registries.RegistrySupplier;
@@ -19,7 +20,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 
 @SuppressWarnings("unused")

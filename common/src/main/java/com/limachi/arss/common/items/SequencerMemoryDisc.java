@@ -1,12 +1,13 @@
 package com.limachi.arss.common.items;
 
+import com.limachi.arss.Arss;
 import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.common.ArssItemStackComponents;
 import com.limachi.arss.common.block_entities.SequencerBlockEntity;
 import com.limachi.arss.common.blocks.AnalogJukebox;
-import com.limachi.arss.utils.Game;
-import com.limachi.arss.utils.ModBase;
-import com.limachi.arss.utils.annotations.RegisterItem;
+
+import com.limachi.lim_lib.common.annotations.RegisterItem;
+import com.limachi.lim_lib.common.utils.Game;
 
 import dev.architectury.registry.registries.RegistrySupplier;
 
@@ -35,7 +36,7 @@ import java.util.List;
 
 public class SequencerMemoryDisc extends Item {
 
-    public static final ResourceLocation SOUND_LOCATION = ResourceLocation.fromNamespaceAndPath(ModBase.registries.mod_id, "static_10min");
+    public static final ResourceLocation SOUND_LOCATION = ResourceLocation.fromNamespaceAndPath(Arss.registries.mod_id, "static_10min");
     public static final ResourceKey<JukeboxSong> SONG = ResourceKey.create(Registries.JUKEBOX_SONG, SOUND_LOCATION);
     public static final SoundEvent SOUND = SoundEvent.createVariableRangeEvent(SOUND_LOCATION);
 

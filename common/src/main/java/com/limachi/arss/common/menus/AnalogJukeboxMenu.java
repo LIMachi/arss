@@ -1,7 +1,8 @@
 package com.limachi.arss.common.menus;
 
 import com.limachi.arss.common.block_entities.AnalogJukebox;
-import com.limachi.arss.utils.annotations.RegisterMenu;
+
+import com.limachi.lim_lib.common.annotations.RegisterMenu;
 
 import dev.architectury.registry.menu.MenuRegistry;
 import dev.architectury.registry.registries.RegistrySupplier;

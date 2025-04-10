@@ -1,6 +1,6 @@
 package com.limachi.arss.common.block_entities;
 
-import com.limachi.arss.utils.annotations.RegisterBlockEntity;
+import com.limachi.lim_lib.common.annotations.RegisterBlockEntity;
 
 import dev.architectury.registry.registries.RegistrySupplier;
 

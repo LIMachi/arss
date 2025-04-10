@@ -7,3 +7,10 @@
 ?6: sequencer buttons (for input) are not working
 ?7: noteblock firing on block update instead of signal change
 ?8: changing the content of a crafter near a diode does not update it
+
+
+
+scroll bugged network selection
+MIDI does not work (multiplayer? caused by power 16? other?)
+add validation button
+disconnect

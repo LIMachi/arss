@@ -1,12 +1,14 @@
 package com.limachi.arss.common.blocks.diodes;
 
 import com.limachi.arss.Arss;
-import com.limachi.arss.common.ArssBlockBehaviors;
 import com.limachi.arss.common.block_entities.BaseAnalogDiodeBlockEntity;
 import com.limachi.arss.common.block_entities.IOnUseBlockListener;
-import com.limachi.arss.utils.IAcceptCrouchInteractWithItem;
-import com.limachi.arss.utils.annotations.Config;
+
+import com.limachi.lim_lib.common.annotations.Config;
+import com.limachi.lim_lib.common.blocks.IAcceptCrouchInteractWithItem;
+
 import com.mojang.datafixers.util.Pair;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -27,7 +29,6 @@ import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;

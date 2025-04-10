@@ -1,14 +1,13 @@
 package com.limachi.arss.common.blocks.diodes;
 
-import com.limachi.arss.client.screen.NewKeyboardScreen;
 import com.limachi.arss.client.screen.ResonantGateScreen;
 import com.limachi.arss.common.ArssBlockStateProperties;
 import com.limachi.arss.common.block_entities.ResonantGateBlockEntity;
-import com.limachi.arss.utils.Game;
-import com.limachi.arss.utils.annotations.RegisterBlock;
-import com.limachi.arss.utils.annotations.RegisterBlockItem;
-import com.limachi.arss.utils.client.annotations.FabricLayer;
 
+import com.limachi.lim_lib.client.annotations.FabricLayer;
+import com.limachi.lim_lib.common.annotations.RegisterBlock;
+import com.limachi.lim_lib.common.annotations.RegisterBlockItem;
+import com.limachi.lim_lib.common.utils.Game;
 import com.mojang.serialization.MapCodec;
 
 import dev.architectury.registry.registries.RegistrySupplier;

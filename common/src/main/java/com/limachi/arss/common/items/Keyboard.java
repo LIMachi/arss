@@ -5,11 +5,15 @@ import com.limachi.arss.client.screen.NewKeyboardScreen;
 import com.limachi.arss.common.ArssItemStackComponents;
 import com.limachi.arss.common.block_entities.ResonantGateBlockEntity;
 import com.limachi.arss.common.blocks.KeyboardLectern;
-import com.limachi.arss.utils.Game;
-import com.limachi.arss.utils.IItemMixin;
-import com.limachi.arss.utils.network.IC2SMsg;
-import com.limachi.arss.utils.annotations.*;
-import com.limachi.arss.utils.client.annotations.ItemTinter;
+
+import com.limachi.lim_lib.client.annotations.ItemTinter;
+
+import com.limachi.lim_lib.common.annotations.Config;
+import com.limachi.lim_lib.common.annotations.RegisterItem;
+import com.limachi.lim_lib.common.annotations.RegisterMsg;
+import com.limachi.lim_lib.common.items.IItemMixin;
+import com.limachi.lim_lib.common.network.IC2SMsg;
+import com.limachi.lim_lib.common.utils.Game;
 
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.registries.RegistrySupplier;

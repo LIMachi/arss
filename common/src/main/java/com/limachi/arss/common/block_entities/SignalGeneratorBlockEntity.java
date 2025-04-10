@@ -4,8 +4,9 @@ import com.limachi.arss.Arss;
 
 import com.limachi.arss.common.blocks.diodes.DiodeBlockFactory;
 
-import com.limachi.arss.utils.Stage;
-import com.limachi.arss.utils.annotations.StaticInit;
+import com.limachi.lim_lib.common.annotations.StaticInit;
+import com.limachi.lim_lib.common.mod_creation.Stage;
+
 import com.mojang.datafixers.util.Pair;
 
 import dev.architectury.registry.registries.RegistrySupplier;

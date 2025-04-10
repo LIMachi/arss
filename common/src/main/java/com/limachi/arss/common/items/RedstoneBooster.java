@@ -2,7 +2,8 @@ package com.limachi.arss.common.items;
 
 import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.common.ArssBlockStateProperties;
-import com.limachi.arss.utils.annotations.RegisterItem;
+
+import com.limachi.lim_lib.common.annotations.RegisterItem;
 
 import dev.architectury.registry.registries.RegistrySupplier;
 
@@ -26,11 +27,6 @@ public class RedstoneBooster extends Item {
 
     @RegisterItem
     public static RegistrySupplier<Item> R_ITEM;
-
-//    @SubscribeEvent
-//    public static void registerRecipe(FMLCommonSetupEvent event) {
-//        event.enqueueWork(()->BrewingRecipeRegistry.addRecipe(Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.STRONG_SWIFTNESS)), Ingredient.of(Items.REDSTONE_BLOCK), new ItemStack(R_ITEM.get())));
-//    }
 
     public RedstoneBooster(Properties props) { super(props.durability(16)); }
 

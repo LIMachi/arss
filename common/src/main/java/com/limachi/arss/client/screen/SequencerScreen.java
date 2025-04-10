@@ -2,15 +2,14 @@ package com.limachi.arss.client.screen;
 
 import com.google.common.collect.ImmutableList;
 
+import com.limachi.arss.Arss;
 import com.limachi.arss.common.ArssBlockStateProperties;
 import com.limachi.arss.common.block_entities.SequencerBlockEntity;
-import com.limachi.arss.utils.ModBase;
-import com.limachi.arss.utils.annotations.RegisterMsg;
-import com.limachi.arss.utils.client.GUI;
-import com.limachi.arss.utils.client.screens.SimpleScreen;
-import com.limachi.arss.utils.data.History;
-import com.limachi.arss.utils.network.IC2SMsg;
 
+import com.limachi.lim_lib.client.screens.SimpleScreen;
+import com.limachi.lim_lib.client.utils.GUI;
+import com.limachi.lim_lib.common.annotations.RegisterMsg;
+import com.limachi.lim_lib.common.network.IC2SMsg;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 
@@ -74,7 +73,7 @@ import java.util.Optional;
 @Environment(EnvType.CLIENT)
 public class SequencerScreen extends SimpleScreen {
 
-    public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(ModBase.registries.mod_id, "textures/screen/sequencer_screen.png");
+    public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Arss.registries.mod_id, "textures/screen/sequencer_screen.png");
     public static final int IMAGE_WIDTH = 196;
     public static final int SCREEN_WIDTH = 193;
     public static final int IMAGE_HEIGHT = 166;

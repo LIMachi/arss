@@ -1,11 +1,13 @@
 package com.limachi.arss.client.screen;
 
 import com.limachi.arss.client.widgets.PowerSelector;
+
 import com.limachi.arss.common.block_entities.ResonantGateBlockEntity;
-import com.limachi.arss.utils.client.MidiHandler;
-import com.limachi.arss.utils.client.screens.SimpleScreen;
-import com.limachi.arss.utils.client.widgets.TextEditor;
-import com.limachi.arss.utils.client.widgets.TextSuggestions;
+
+import com.limachi.lim_lib.client.screens.SimpleScreen;
+import com.limachi.lim_lib.client.utils.MidiHandler;
+import com.limachi.lim_lib.client.widgets.TextEditor;
+import com.limachi.lim_lib.client.widgets.TextSuggestions;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

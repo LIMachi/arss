@@ -2,9 +2,11 @@ package com.limachi.arss.client.screen;
 
 import com.limachi.arss.common.ArssItemStackComponents;
 import com.limachi.arss.common.items.Keyboard;
-import com.limachi.arss.utils.annotations.RegisterMsg;
-import com.limachi.arss.utils.client.screens.SimpleScreen;
-import com.limachi.arss.utils.network.IC2SMsg;
+
+import com.limachi.lim_lib.client.screens.SimpleScreen;
+
+import com.limachi.lim_lib.common.annotations.RegisterMsg;
+import com.limachi.lim_lib.common.network.IC2SMsg;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Lighting;
@@ -276,7 +278,5 @@ public class NewKeyboardScreen extends SimpleScreen {
     }
 
     @Override
-    public void closing() {
-        new UpdateBindings(hand, player.getItemInHand(hand)).sendToServer();
-    }
+    public void closing() { new UpdateBindings(hand, player.getItemInHand(hand)).sendToServer(); }
 }

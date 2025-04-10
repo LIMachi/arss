@@ -9,7 +9,7 @@ architectury {
 
 processResources {
     from(rootProject.file("common/src/main/resources")) {
-        include("arss.accesswidener")
+        include("${archives_name}.accesswidener")
     }
 }
 
@@ -30,6 +30,12 @@ configurations {
     }
 }
 
+repositories {
+    flatDir {
+        dirs '../../LimLibArch/fabric/build/libs'
+    }
+}
+
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
@@ -41,6 +47,8 @@ dependencies {
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
+
+    modImplementation "com.limachi.lim_lib:lim_lib-fabric:$rootProject.lim_lib_version"
 }
 
 processResources {
@@ -53,7 +61,19 @@ processResources {
                 description: project.description,
                 author: project.author,
                 license: project.license,
-                minecraft_version: project.minecraft_version
+                minecraft_version: project.minecraft_version,
+                maven_group: project.maven_group
+    }
+
+    filesMatching('${project.archives_name}-fabric.mixins.json') {
+        expand  version: project.version,
+                archives_name: project.archives_name,
+                readable_name: project.readable_name,
+                description: project.description,
+                author: project.author,
+                license: project.license,
+                minecraft_version: project.minecraft_version,
+                maven_group: project.maven_group
     }
 }
 

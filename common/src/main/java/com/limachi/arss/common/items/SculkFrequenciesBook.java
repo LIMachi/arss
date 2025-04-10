@@ -1,10 +1,11 @@
 package com.limachi.arss.common.items;
 
-import com.limachi.arss.utils.Events;
-import com.limachi.arss.utils.ModBase;
-import com.limachi.arss.utils.Stage;
-import com.limachi.arss.utils.annotations.RegisterEventListener;
-import com.limachi.arss.utils.annotations.StaticInit;
+import com.limachi.arss.Arss;
+
+import com.limachi.lim_lib.common.annotations.RegisterEventListener;
+import com.limachi.lim_lib.common.annotations.StaticInit;
+import com.limachi.lim_lib.common.mod_creation.Events;
+import com.limachi.lim_lib.common.mod_creation.Stage;
 
 import dev.architectury.event.EventResult;
 import dev.architectury.registry.CreativeTabRegistry;
@@ -61,6 +62,6 @@ public class SculkFrequenciesBook {
 
     @StaticInit(Stage.ITEM) //FIXME: seem to fail on servers (but does not cause a crash, and the item is visible in the creative tab)
     public static void putBookInCreativeTab() {
-        CreativeTabRegistry.appendStack(ModBase.registries.default_tab, createBook());
+        CreativeTabRegistry.appendStack(Arss.registries.default_tab, createBook());
     }
 }

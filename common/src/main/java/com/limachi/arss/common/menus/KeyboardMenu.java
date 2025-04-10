@@ -1,8 +1,6 @@
 package com.limachi.arss.common.menus;
 
 import com.limachi.arss.common.items.Keyboard;
-import com.limachi.arss.utils.annotations.RegisterMenu;
-import com.limachi.arss.utils.menu.IAcceptUpStreamNBT;
 
 import dev.architectury.registry.menu.MenuRegistry;
 import dev.architectury.registry.registries.RegistrySupplier;

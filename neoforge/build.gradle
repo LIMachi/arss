@@ -9,7 +9,7 @@ architectury {
 
 processResources {
     from(rootProject.file("common/src/main/resources")) {
-        include("arss.accesswidener")
+        include("${archives_name}.accesswidener")
     }
 }
 
@@ -35,6 +35,10 @@ repositories {
         name = 'NeoForged'
         url = 'https://maven.neoforged.net/releases'
     }
+
+    flatDir {
+        dirs '../../LimLibArch/neoforge/build/libs'
+    }
 }
 
 dependencies {
@@ -45,6 +49,8 @@ dependencies {
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
+
+    implementation "com.limachi.lim_lib:lim_lib-neoforge:$rootProject.lim_lib_version"
 }
 
 processResources {
@@ -57,7 +63,19 @@ processResources {
                 description: project.description,
                 author: project.author,
                 license: project.license,
-                minecraft_version: project.minecraft_version
+                minecraft_version: project.minecraft_version,
+                maven_group: project.maven_group
+    }
+
+    filesMatching('${project.archives_name}-neo.mixins.json') {
+        expand  version: project.version,
+                archives_name: project.archives_name,
+                readable_name: project.readable_name,
+                description: project.description,
+                author: project.author,
+                license: project.license,
+                minecraft_version: project.minecraft_version,
+                maven_group: project.maven_group
     }
 }
 

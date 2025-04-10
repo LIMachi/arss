@@ -1,14 +1,6 @@
 package com.limachi.arss.fabric;
 
-import com.limachi.arss.fabric.utils.CheckEnvironmentVisitor;
-import com.limachi.arss.utils.ModBase;
-import com.limachi.arss.utils.reflect.AnnotationExtractor;
+import com.limachi.lim_lib.fabric.FabricCommonEntryPoint;
 
-import net.fabricmc.api.ModInitializer;
-
-public final class MainFabric implements ModInitializer {
-    @Override
-    public void onInitialize() {
-        ModBase.init(new AnnotationExtractor(ModBase.class, CheckEnvironmentVisitor::skipInvalidEnv));
-    }
+public final class MainFabric extends FabricCommonEntryPoint {
 }

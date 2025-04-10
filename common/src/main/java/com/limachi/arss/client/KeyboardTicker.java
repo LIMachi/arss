@@ -6,10 +6,6 @@ import com.google.common.collect.Multimap;
 import com.limachi.arss.common.ArssItemStackComponents;
 import com.limachi.arss.common.block_entities.KeyboardLectern;
 import com.limachi.arss.common.items.Keyboard;
-import com.limachi.arss.utils.client.ClientEvents;
-import com.limachi.arss.utils.client.MidiHandler;
-
-import com.limachi.arss.utils.client.annotations.RegisterClientEventListener;
 
 import dev.architectury.event.EventResult;
 import net.fabricmc.api.EnvType;

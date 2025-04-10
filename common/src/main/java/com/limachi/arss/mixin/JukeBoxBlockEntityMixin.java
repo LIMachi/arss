@@ -25,7 +25,6 @@ public class JukeBoxBlockEntityMixin {
         Level level = self.getLevel();
         if (level != null && jukeboxSongPlayer.isPlaying() && item.is(SequencerMemoryDisc.R_ITEM.get())) {
             cir.setReturnValue(level.getRandom().nextInt(1, 15));
-//            level.sendBlockUpdated(self.getBlockPos(), self.getBlockState(), self.getBlockState(), 2); //might cause an infinite loop, maybe we need to queue a delayed update instead
             cir.cancel();
         }
     }

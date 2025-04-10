@@ -3,14 +3,16 @@ package com.limachi.arss.common.block_entities;
 import com.limachi.arss.Arss;
 
 import com.limachi.arss.client.screen.SequencerScreen;
+
 import com.limachi.arss.common.ArssBlockStateProperties;
 import com.limachi.arss.common.blocks.diodes.DiodeBlockFactory;
-import com.limachi.arss.utils.Stage;
-import com.limachi.arss.utils.annotations.Config;
-import com.limachi.arss.utils.annotations.RegisterMsg;
-import com.limachi.arss.utils.annotations.StaticInit;
-import com.limachi.arss.utils.network.IC2SMsg;
-import com.limachi.arss.utils.network.IS2CMsg;
+
+import com.limachi.lim_lib.common.annotations.Config;
+import com.limachi.lim_lib.common.annotations.RegisterMsg;
+import com.limachi.lim_lib.common.annotations.StaticInit;
+import com.limachi.lim_lib.common.mod_creation.Stage;
+import com.limachi.lim_lib.common.network.IC2SMsg;
+import com.limachi.lim_lib.common.network.IS2CMsg;
 
 import com.mojang.datafixers.util.Pair;
 

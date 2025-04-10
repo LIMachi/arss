@@ -1,12 +1,14 @@
 package com.limachi.arss.client.screen;
 
 import com.limachi.arss.common.block_entities.ResonantGateBlockEntity;
-import com.limachi.arss.utils.annotations.RegisterMsg;
-import com.limachi.arss.utils.client.screens.SimpleScreen;
-import com.limachi.arss.utils.client.widgets.TextEditor;
-import com.limachi.arss.utils.client.widgets.TextSuggestions;
 
-import com.limachi.arss.utils.network.IC2SMsg;
+import com.limachi.lim_lib.client.screens.SimpleScreen;
+
+import com.limachi.lim_lib.client.widgets.TextEditor;
+import com.limachi.lim_lib.client.widgets.TextSuggestions;
+
+import com.limachi.lim_lib.common.annotations.RegisterMsg;
+import com.limachi.lim_lib.common.network.IC2SMsg;
 
 import dev.architectury.networking.NetworkManager;
 
@@ -76,12 +78,8 @@ public class ResonantGateScreen extends SimpleScreen {
     }
 
     @Override
-    public boolean stillValid() {
-        return getBlockEntity() != null;
-    }
+    public boolean stillValid() { return getBlockEntity() != null; }
 
     @Override
-    public void closing() {
-        new SetNetworkFromScreen(namer.getValue(), target).sendToServer();
-    }
+    public void closing() { new SetNetworkFromScreen(namer.getValue(), target).sendToServer(); }
 }

@@ -1,11 +1,11 @@
 package com.limachi.arss.common.block_entities;
 
-import com.limachi.arss.utils.Game;
-import com.limachi.arss.utils.annotations.RegisterBlockEntity;
+import com.limachi.lim_lib.common.annotations.RegisterBlockEntity;
+import com.limachi.lim_lib.common.annotations.RegisterMsg;
+import com.limachi.lim_lib.common.network.IC2SMsg;
+import com.limachi.lim_lib.common.network.IS2CMsg;
+import com.limachi.lim_lib.common.utils.Game;
 
-import com.limachi.arss.utils.annotations.RegisterMsg;
-import com.limachi.arss.utils.network.IC2SMsg;
-import com.limachi.arss.utils.network.IS2CMsg;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.registries.RegistrySupplier;
 

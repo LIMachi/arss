@@ -1,11 +1,10 @@
 package com.limachi.arss.client.screen;
 
+import com.limachi.arss.Arss;
 import com.limachi.arss.common.menus.AnalogJukeboxMenu;
-import com.limachi.arss.utils.ModBase;
-import com.limachi.arss.utils.client.annotations.RegisterMenuScreen;
 
-import com.limachi.arss.utils.client.screens.SimpleBackgroundContainerScreen;
-
+import com.limachi.lim_lib.client.annotations.RegisterMenuScreen;
+import com.limachi.lim_lib.client.screens.SimpleBackgroundContainerScreen;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -18,7 +17,7 @@ import net.minecraft.world.entity.player.Inventory;
 @Environment(EnvType.CLIENT)
 public class AnalogJukeboxScreen extends SimpleBackgroundContainerScreen<AnalogJukeboxMenu> {
 
-    public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(ModBase.registries.mod_id, "textures/screen/analog_jukebox.png");
+    public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Arss.registries.mod_id, "textures/screen/analog_jukebox.png");
 
     public AnalogJukeboxScreen(AnalogJukeboxMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);

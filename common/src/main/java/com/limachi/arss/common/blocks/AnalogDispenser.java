@@ -1,13 +1,16 @@
 package com.limachi.arss.common.blocks;
 
 import com.limachi.arss.client.ClientDef;
-import com.limachi.arss.common.ArssBlockBehaviors;
-import com.limachi.arss.utils.annotations.RegisterBlock;
-import com.limachi.arss.utils.annotations.RegisterBlockItem;
-import com.limachi.arss.utils.annotations.RegisterMsg;
-import com.limachi.arss.utils.client.annotations.FabricLayer;
-import com.limachi.arss.utils.network.IS2CMsg;
 
+import com.limachi.arss.common.ArssBlockBehaviors;
+
+import com.limachi.lim_lib.client.annotations.FabricLayer;
+
+import com.limachi.lim_lib.common.annotations.RegisterBlock;
+import com.limachi.lim_lib.common.annotations.RegisterBlockItem;
+
+import com.limachi.lim_lib.common.annotations.RegisterMsg;
+import com.limachi.lim_lib.common.network.IS2CMsg;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.registries.RegistrySupplier;
 

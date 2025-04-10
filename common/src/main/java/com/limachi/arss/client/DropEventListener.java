@@ -1,7 +1,6 @@
 package com.limachi.arss.client;
 
 import com.limachi.arss.Arss;
-import com.limachi.arss.utils.client.annotations.StaticInitClient;
 
 import dev.architectury.event.events.client.ClientTickEvent;
 

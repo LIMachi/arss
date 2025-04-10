@@ -1,15 +1,14 @@
 package com.limachi.arss.common.blocks;
 
+import com.limachi.arss.Arss;
 import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.common.ArssBlockBehaviors;
 import com.limachi.arss.common.ArssBlockStateProperties;
-import com.limachi.arss.utils.ModBase;
-import com.limachi.arss.utils.Stage;
-import com.limachi.arss.utils.annotations.RegisterBlockItem;
-import com.limachi.arss.utils.client.annotations.FabricLayer;
-import com.limachi.arss.utils.client.annotations.HasRedstoneTint;
-import com.limachi.arss.utils.annotations.StaticInit;
 
+import com.limachi.lim_lib.client.annotations.FabricLayer;
+import com.limachi.lim_lib.common.annotations.RegisterBlockItem;
+import com.limachi.lim_lib.common.annotations.StaticInit;
+import com.limachi.lim_lib.common.mod_creation.Stage;
 import dev.architectury.registry.registries.RegistrySupplier;
 
 import net.minecraft.core.BlockPos;
@@ -46,8 +45,8 @@ public class AnalogRedstoneTorch extends RedstoneTorchBlock implements IScrollAn
 
     @StaticInit(Stage.BLOCK)
     public static void generateWallVariantAndSetTint() {
-        R_BLOCK = ModBase.registries.block("analog_redstone_torch", AnalogRedstoneTorch::new);
-        AnalogRedstoneWallTorch.R_BLOCK = ModBase.registries.block("analog_redstone_wall_torch", AnalogRedstoneWallTorch::new);
+        R_BLOCK = Arss.registries.block("analog_redstone_torch", AnalogRedstoneTorch::new);
+        AnalogRedstoneWallTorch.R_BLOCK = Arss.registries.block("analog_redstone_wall_torch", AnalogRedstoneWallTorch::new);
     }
 
     @Override

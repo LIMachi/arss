@@ -1,8 +1,11 @@
 package com.limachi.arss.common.blocks.redstone_wires;
 
+import com.limachi.arss.Arss;
+
 import com.limachi.arss.client.ClientDef;
-import com.limachi.arss.utils.ModBase;
-import com.limachi.arss.utils.client.annotations.FabricLayer;
+
+import com.limachi.lim_lib.client.annotations.FabricLayer;
+
 import com.mojang.datafixers.util.Pair;
 
 import dev.architectury.registry.registries.RegistrySupplier;
@@ -100,11 +103,11 @@ public abstract class RedstoneWireFactory {
                 builder.add(fRange);
             }
         }
-        RegistrySupplier<Block> R_BLOCK = ModBase.registries.block(fName, Product::new);
-        RegistrySupplier<Item> R_ITEM = ModBase.registries.item(fName, p->new BlockItem(R_BLOCK.get(), p));
+        RegistrySupplier<Block> R_BLOCK = Arss.registries.block(fName, Product::new);
+        RegistrySupplier<Item> R_ITEM = Arss.registries.item(fName, p->new BlockItem(R_BLOCK.get(), p));
         REDSTONE_WIRES.put(fName, new Pair<>(R_ITEM, R_BLOCK));
         EnvExecutor.runInEnv(Env.CLIENT, ()->()->{
-            ModBase.ClientModBase.registries.registerBlockTint((s, g, p, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getValue(BlockStateProperties.POWER)), R_BLOCK.getId());
+            Arss.ClientModBase.registries.registerBlockTint((s, g, p, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getValue(BlockStateProperties.POWER)), R_BLOCK.getId());
         });
     }
 

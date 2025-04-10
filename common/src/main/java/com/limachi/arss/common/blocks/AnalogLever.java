@@ -1,11 +1,13 @@
 package com.limachi.arss.common.blocks;
 
 import com.limachi.arss.client.ClientDef;
+
 import com.limachi.arss.common.ArssBlockBehaviors;
-import com.limachi.arss.utils.annotations.RegisterBlock;
-import com.limachi.arss.utils.annotations.RegisterBlockItem;
-import com.limachi.arss.utils.client.annotations.FabricLayer;
-import com.limachi.arss.utils.client.annotations.HasRedstoneTint;
+
+import com.limachi.lim_lib.client.annotations.FabricLayer;
+
+import com.limachi.lim_lib.common.annotations.RegisterBlock;
+import com.limachi.lim_lib.common.annotations.RegisterBlockItem;
 
 import dev.architectury.registry.registries.RegistrySupplier;
 

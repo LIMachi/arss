@@ -1,8 +1,8 @@
 package com.limachi.arss.client.screen;
 
-import com.limachi.arss.utils.ModBase;
+import com.limachi.arss.Arss;
 
-import com.limachi.arss.utils.client.screens.SimpleBackgroundScreen;
+import com.limachi.lim_lib.client.screens.SimpleBackgroundScreen;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -18,7 +18,7 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class SequencerHelpScreen extends SimpleBackgroundScreen {
-    public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(ModBase.registries.mod_id, "textures/screen/sequencer_help_screen.png");
+    public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Arss.registries.mod_id, "textures/screen/sequencer_help_screen.png");
     public static final int WIDTH  = 350;
     public static final int HEIGHT = 200;
     public static final int BUTTON_X = 5;

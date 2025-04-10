@@ -3,12 +3,12 @@ package com.limachi.arss.client.keyboardSystem;
 import com.limachi.arss.common.ArssItemStackComponents;
 import com.limachi.arss.common.block_entities.KeyboardLectern;
 import com.limachi.arss.common.items.Keyboard;
-import com.limachi.arss.utils.annotations.RegisterMsg;
-import com.limachi.arss.utils.client.ClientEvents;
-import com.limachi.arss.utils.client.MidiHandler;
-import com.limachi.arss.utils.client.annotations.RegisterClientEventListener;
-import com.limachi.arss.utils.network.IC2SMsg;
 
+import com.limachi.lim_lib.client.annotations.RegisterClientEventListener;
+import com.limachi.lim_lib.client.mod_creation.ClientEvents;
+import com.limachi.lim_lib.client.utils.MidiHandler;
+import com.limachi.lim_lib.common.annotations.RegisterMsg;
+import com.limachi.lim_lib.common.network.IC2SMsg;
 import dev.architectury.networking.NetworkManager;
 
 import net.fabricmc.api.EnvType;

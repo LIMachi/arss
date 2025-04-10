@@ -5,9 +5,9 @@ import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.common.ArssBlockStateProperties;
 
 import com.limachi.arss.common.block_entities.BaseAnalogDiodeBlockEntity;
-import com.limachi.arss.utils.IAcceptCrouchInteractWithItem;
-import com.limachi.arss.utils.ModBase;
-import com.limachi.arss.utils.client.annotations.FabricLayer;
+
+import com.limachi.lim_lib.client.annotations.FabricLayer;
+import com.limachi.lim_lib.common.blocks.IAcceptCrouchInteractWithItem;
 import com.mojang.datafixers.util.Pair;
 
 import com.mojang.serialization.MapCodec;
@@ -236,7 +236,7 @@ public class DiodeBlockFactory {
         DIODE_BLOCKS.put(fName, new Pair<>(R_ITEM, R_BLOCK));
         if (hasPowerTint)
             EnvExecutor.runInEnv(Env.CLIENT, ()->()->{
-                ModBase.ClientModBase.registries.registerBlockTint((s, g, p, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getValue(BlockStateProperties.POWER)), R_BLOCK.getId());
+                Arss.ClientModBase.registries.registerBlockTint((s, g, p, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getValue(BlockStateProperties.POWER)), R_BLOCK.getId());
             });
     }
 

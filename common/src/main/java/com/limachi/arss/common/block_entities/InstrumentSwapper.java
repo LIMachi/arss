@@ -1,10 +1,9 @@
 package com.limachi.arss.common.block_entities;
 
-import com.limachi.arss.utils.MinimalListInventory;
-import com.limachi.arss.utils.Stage;
-import com.limachi.arss.utils.annotations.RegisterBlockEntity;
-import com.limachi.arss.utils.annotations.StaticInit;
-import com.mojang.datafixers.util.Pair;
+import com.limachi.lim_lib.common.annotations.RegisterBlockEntity;
+import com.limachi.lim_lib.common.annotations.StaticInit;
+import com.limachi.lim_lib.common.containers.MinimalListInventory;
+import com.limachi.lim_lib.common.mod_creation.Stage;
 
 import dev.architectury.registry.registries.RegistrySupplier;
 

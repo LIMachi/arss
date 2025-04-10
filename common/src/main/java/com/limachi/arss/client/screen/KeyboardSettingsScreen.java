@@ -1,8 +1,8 @@
 package com.limachi.arss.client.screen;
 
-import com.limachi.arss.utils.client.MidiHandler;
-import com.limachi.arss.utils.client.screens.SimpleScreen;
+import com.limachi.lim_lib.client.screens.SimpleScreen;
 
+import com.limachi.lim_lib.client.utils.MidiHandler;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 

@@ -1,9 +1,11 @@
 package com.limachi.arss.client.screen;
 
 import com.limachi.arss.common.block_entities.ProgrammableGateBlockEntity;
-import com.limachi.arss.utils.client.screens.SimpleScreen;
-import com.limachi.arss.utils.network.IC2SMsg;
-import com.limachi.arss.utils.annotations.RegisterMsg;
+
+import com.limachi.lim_lib.client.screens.SimpleScreen;
+
+import com.limachi.lim_lib.common.annotations.RegisterMsg;
+import com.limachi.lim_lib.common.network.IC2SMsg;
 
 import dev.architectury.networking.NetworkManager;
 
@@ -138,7 +140,5 @@ public class ProgrammableGateScreen extends SimpleScreen {
     }
 
     @Override
-    public void closing() {
-        new NewLayoutMsg(be.getBlockPos(), layout).sendToServer();
-    }
+    public void closing() { new NewLayoutMsg(be.getBlockPos(), layout).sendToServer(); }
 }

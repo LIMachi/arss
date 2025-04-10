@@ -1,11 +1,15 @@
 package com.limachi.arss.common;
 
-import com.limachi.arss.utils.ModBase;
-import com.limachi.arss.utils.annotations.StaticInit;
-import com.limachi.arss.utils.codec.Codecs;
-import com.limachi.arss.utils.codec.StreamCodecs;
+import com.limachi.arss.Arss;
+
+import com.limachi.lim_lib.common.annotations.StaticInit;
+import com.limachi.lim_lib.common.codec.Codecs;
+import com.limachi.lim_lib.common.codec.StreamCodecs;
+
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import dev.architectury.registry.registries.RegistrySupplier;
+
 import net.minecraft.Util;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.nbt.CompoundTag;
@@ -106,9 +110,9 @@ public class ArssItemStackComponents {
 
     @StaticInit
     public static void registerComponent() {
-        OUTPUT = ModBase.registries.component("output", Codecs.INT, StreamCodecs.INT);
-        CATCH = ModBase.registries.component("catch", Codecs.BOOL, StreamCodecs.BOOL);
-        BINDINGS = ModBase.registries.component("bindings",
+        OUTPUT = Arss.registries.component("output", Codecs.INT, StreamCodecs.INT);
+        CATCH = Arss.registries.component("catch", Codecs.BOOL, StreamCodecs.BOOL);
+        BINDINGS = Arss.registries.component("bindings",
                 RecordCodecBuilder.create(b->b.group(
                         Codecs.STR_ARRAY.fieldOf("freq").forGetter(Bindings::freq),
                         Codecs.PRIM_BYTE_ARRAY.fieldOf("power").forGetter(Bindings::power),
@@ -125,7 +129,7 @@ public class ArssItemStackComponents {
                         freq[i] = b.readUtf();
                     return new Bindings(freq, b.readByteArray(), b.readVarIntArray());
                 }));
-        SEQUENCER_DATA = ModBase.registries.component("sequencer_data",
+        SEQUENCER_DATA = Arss.registries.component("sequencer_data",
                 RecordCodecBuilder.create(b->
                         b.group(
                                 Codecs.PRIM_BYTE_ARRAY.fieldOf("ticks").forGetter(SequencerData::ticks),

@@ -16,15 +16,15 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.limachi.arss.fabric.MainFabric"
+      "${maven_group}.fabric.MainFabric"
     ],
     "client": [
-      "com.limachi.arss.fabric.client.MainFabricClient"
+      "${maven_group}.fabric.client.MainFabricClient"
     ]
   },
   "mixins": [
-    "arss.mixins.json",
-    "arss-fabric.mixins.json"
+    "${archives_name}.mixins.json",
+    "${archives_name}-fabric.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.16.0",
@@ -36,5 +36,5 @@
   "suggests": {
     "another-mod": "*"
   },
-  "__accessWidener": "arss.accesswidener"
+  "__accessWidener": "${archives_name}.accesswidener"
 }

@@ -1,15 +1,8 @@
 package com.limachi.arss;
 
-import com.limachi.arss.utils.client.ClientEvents;
-import com.limachi.arss.utils.ModBase;
-import com.limachi.arss.utils.annotations.Mod;
-import com.limachi.arss.utils.annotations.RegisterTab;
-import com.limachi.arss.utils.client.annotations.RegisterClientEventListener;
-
-import dev.architectury.event.EventResult;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import com.limachi.lim_lib.common.annotations.Mod;
+import com.limachi.lim_lib.common.annotations.RegisterTab;
+import com.limachi.lim_lib.common.mod_creation.ModBase;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -34,13 +27,4 @@ public final class Arss extends ModBase {
     }
 
     public Arss() {}
-
-    @Environment(EnvType.CLIENT)
-    @RegisterClientEventListener(ClientEvents.CHAT_SEND)
-    public static EventResult test(String msg, Component cmp) {
-        logger.error("test: intercepted '" + msg + "'");
-        if (msg.contains("hide"))
-            return EventResult.interruptFalse();
-        return EventResult.pass();
-    }
 }

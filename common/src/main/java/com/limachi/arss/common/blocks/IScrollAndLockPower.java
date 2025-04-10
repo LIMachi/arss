@@ -2,8 +2,9 @@ package com.limachi.arss.common.blocks;
 
 import com.limachi.arss.Arss;
 import com.limachi.arss.client.ClientDef;
-import com.limachi.arss.utils.IAcceptCrouchInteractWithItem;
-import com.limachi.arss.utils.scrollSystem.IScrollBlock;
+
+import com.limachi.lim_lib.common.blocks.IAcceptCrouchInteractWithItem;
+import com.limachi.lim_lib.common.scrollSystem.IScrollBlock;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

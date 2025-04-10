@@ -3,11 +3,13 @@ package com.limachi.arss.common.blocks;
 import com.limachi.arss.client.keyboardSystem.KeyboardHandler;
 import com.limachi.arss.common.ArssItemStackComponents;
 import com.limachi.arss.common.items.Keyboard;
-import com.limachi.arss.utils.Game;
-import com.limachi.arss.utils.network.IC2SMsg;
-import com.limachi.arss.utils.annotations.RegisterBlock;
-import com.limachi.arss.utils.annotations.RegisterMsg;
-import com.limachi.arss.utils.client.annotations.BlockTinter;
+
+import com.limachi.lim_lib.client.annotations.BlockTinter;
+
+import com.limachi.lim_lib.common.annotations.RegisterBlock;
+import com.limachi.lim_lib.common.annotations.RegisterMsg;
+import com.limachi.lim_lib.common.network.IC2SMsg;
+import com.limachi.lim_lib.common.utils.Game;
 
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.registries.RegistrySupplier;
@@ -32,8 +34,6 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 
 @SuppressWarnings("unused")
@@ -51,10 +51,6 @@ public class KeyboardLectern extends LecternBlock implements EntityBlock {
                     be.getKeyboard().set(ArssItemStackComponents.OUTPUT.get(), mask);
                 }
             }
-//            Player player = ctx.getPlayer();
-//            BlockState state = player.level().getBlockState(lectern);
-//            if (state.getBlock() instanceof KeyboardLectern && state.getValue(BlockStateProperties.POWER) != power)
-//                player.level().setBlockAndUpdate(lectern, state.setValue(BlockStateProperties.POWER, power));
         }
     }
 
