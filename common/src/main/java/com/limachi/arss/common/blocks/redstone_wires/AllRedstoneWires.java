@@ -3,7 +3,7 @@ package com.limachi.arss.common.blocks.redstone_wires;
 import com.limachi.arss.common.ArssBlockStateProperties;
 
 import com.limachi.lim_lib.common.annotations.StaticInit;
-import com.limachi.lim_lib.common.mod_creation.Stage;
+import com.limachi.lim_lib.common.modCreation.Stage;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Blocks;
@@ -18,5 +18,8 @@ public class AllRedstoneWires {
     public static void registerWires() {
         RedstoneWireFactory.create("enriched_redstone", B_PROPS, I_PROPS, ArssBlockStateProperties.ENRICHED_RS_RANGE, 4, 1);
         RedstoneWireFactory.create("perfected_redstone", B_PROPS, I_PROPS, ArssBlockStateProperties.PERFECTED_RS_RANGE, 32, 15);
+        RedstoneWireFactory.createFramed("framed_redstone", B_PROPS, I_PROPS, null, 1, 1);
+        RedstoneWireFactory.createFramed("framed_enriched_redstone", B_PROPS, I_PROPS, ArssBlockStateProperties.ENRICHED_RS_RANGE, 4, 1);
+        RedstoneWireFactory.createFramed("framed_perfected_redstone", B_PROPS, I_PROPS, ArssBlockStateProperties.PERFECTED_RS_RANGE, 32, 15);
     }
 }

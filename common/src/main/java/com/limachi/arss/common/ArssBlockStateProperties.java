@@ -167,8 +167,8 @@ public class ArssBlockStateProperties {
         public boolean acceptBack() { return this != INPUT_DISABLED; }
     }
 
-    public static final IntegerProperty ENRICHED_RS_RANGE = IntegerProperty.create("range", 0, 4);
-    public static final IntegerProperty PERFECTED_RS_RANGE = IntegerProperty.create("range", 0, 32);
+    public static final IntegerProperty ENRICHED_RS_RANGE = IntegerProperty.create("range", 0, 3);
+    public static final IntegerProperty PERFECTED_RS_RANGE = IntegerProperty.create("range", 0, 31);
     public static final EnumProperty<MemoryMode> MEMORY_MODE = EnumProperty.create("mode", MemoryMode.class);
     public static final EnumProperty<AdderMode> ADDER_MODE = EnumProperty.create("mode", AdderMode.class);
     public static final EnumProperty<CheckerMode> CHECKER_MODE = EnumProperty.create("mode", CheckerMode.class);

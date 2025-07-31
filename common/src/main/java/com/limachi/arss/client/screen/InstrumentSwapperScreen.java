@@ -18,7 +18,7 @@ import net.minecraft.world.entity.player.Inventory;
 @Environment(EnvType.CLIENT)
 public class InstrumentSwapperScreen extends SimpleBackgroundContainerScreen<InstrumentSwapperMenu> {
 
-    public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Arss.registries.mod_id, "textures/screen/instrument_swapper.png");
+    public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Arss.INSTANCE.registries.mod_id, "textures/screen/instrument_swapper.png");
 
     public InstrumentSwapperScreen(InstrumentSwapperMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);

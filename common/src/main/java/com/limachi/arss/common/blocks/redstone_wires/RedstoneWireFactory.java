@@ -100,14 +100,42 @@ public abstract class RedstoneWireFactory {
             @Override
             protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
                 super.createBlockStateDefinition(builder);
-                builder.add(fRange);
+                if (fRange != null)
+                    builder.add(fRange);
             }
         }
-        RegistrySupplier<Block> R_BLOCK = Arss.registries.block(fName, Product::new);
-        RegistrySupplier<Item> R_ITEM = Arss.registries.item(fName, p->new BlockItem(R_BLOCK.get(), p));
+        RegistrySupplier<Block> R_BLOCK = Arss.INSTANCE.registries.block(fName, Product::new);
+        RegistrySupplier<Item> R_ITEM = Arss.INSTANCE.registries.item(fName, p->new BlockItem(R_BLOCK.get(), p));
         REDSTONE_WIRES.put(fName, new Pair<>(R_ITEM, R_BLOCK));
         EnvExecutor.runInEnv(Env.CLIENT, ()->()->{
-            Arss.ClientModBase.registries.registerBlockTint((s, g, p, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getValue(BlockStateProperties.POWER)), R_BLOCK.getId());
+            Arss.INSTANCE.clientRegistries().registerBlockTint((s, g, p, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getValue(BlockStateProperties.POWER)), R_BLOCK.getId());
+        });
+    }
+
+    public static void createFramed(String fName, BlockBehaviour.Properties bProps, Item.Properties iProps, IntegerProperty fRange, int fMaxRange, int fRangeFalloff) {
+        class Product extends BaseFramedRedstoneWire {
+            protected Product() {
+                super(bProps, fRange, fMaxRange, fRangeFalloff);
+            }
+
+            @Override
+            public void appendHoverText(ItemStack stack, Item.TooltipContext ctx, List<Component> components, TooltipFlag flags) {
+                super.appendHoverText(stack, ctx, components, flags);
+                ClientDef.commonHoverText(fName, components);
+            }
+
+            @Override
+            protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+                super.createBlockStateDefinition(builder);
+                if (fRange != null)
+                    builder.add(fRange);
+            }
+        }
+        RegistrySupplier<Block> R_BLOCK = Arss.INSTANCE.registries.block(fName, Product::new);
+        RegistrySupplier<Item> R_ITEM = Arss.INSTANCE.registries.item(fName, p->new BlockItem(R_BLOCK.get(), p));
+        REDSTONE_WIRES.put(fName, new Pair<>(R_ITEM, R_BLOCK));
+        EnvExecutor.runInEnv(Env.CLIENT, ()->()->{
+            Arss.INSTANCE.clientRegistries().registerBlockTint((s, g, p, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getValue(BlockStateProperties.POWER)), R_BLOCK.getId());
         });
     }
 

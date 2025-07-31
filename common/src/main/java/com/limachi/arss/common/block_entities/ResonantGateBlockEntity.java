@@ -120,7 +120,7 @@ public class ResonantGateBlockEntity extends BlockEntity {
 
     public void setOutput(int power) {
         if (getLevel() instanceof ServerLevel && power != getBlockState().getValue(BlockStateProperties.POWER) && power >= 0 && power <= 15)
-            level.setBlock(worldPosition, getBlockState().setValue(BlockStateProperties.POWER, power), 3);
+            level.setBlock(worldPosition, getBlockState().setValue(BlockStateProperties.POWER, power).setValue(BlockStateProperties.POWERED, power != 0), 3);
     }
 
     public void updateOutputs() {

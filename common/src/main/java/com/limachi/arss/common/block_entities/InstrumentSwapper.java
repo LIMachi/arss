@@ -3,7 +3,7 @@ package com.limachi.arss.common.block_entities;
 import com.limachi.lim_lib.common.annotations.RegisterBlockEntity;
 import com.limachi.lim_lib.common.annotations.StaticInit;
 import com.limachi.lim_lib.common.containers.MinimalListInventory;
-import com.limachi.lim_lib.common.mod_creation.Stage;
+import com.limachi.lim_lib.common.modCreation.Stage;
 
 import dev.architectury.registry.registries.RegistrySupplier;
 

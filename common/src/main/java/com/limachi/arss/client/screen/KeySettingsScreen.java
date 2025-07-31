@@ -26,9 +26,10 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
     final NewKeyboardScreen.Binding binding;
 
     protected TextEditor namer;
-    protected TextSuggestions suggestions;
     protected PowerSelector powerSelector;
     protected BindingButton bindingButton;
+    protected Button cancelButton;
+    protected Button okButton;
 
     HashSet<String> previousSuggestions;
 
@@ -36,8 +37,8 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
         super(parent);
         index = key;
         imageWidth = 170;
-        imageHeight = 90;
-        binding = parent.getBinding(index);
+        imageHeight = 105;
+        binding = parent.getBinding(index).clone();
         previousSuggestions = (HashSet<String>)ResonantGateBlockEntity.clientNames.clone();
         MidiHandler.KEY_CATCHER = this;
         new ResonantGateBlockEntity.RequestNames().sendToServer();
@@ -58,15 +59,21 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
         super.init();
         boolean first = namer == null;
         addRenderableWidget(bindingButton = new BindingButton(leftPos + 10, topPos + 10, bindingButton));
-        addRenderableWidget(powerSelector = new PowerSelector(leftPos + 150, topPos + 12, Component.literal("Power output:"), powerSelector));
-        addRenderableWidget(namer = new TextEditor.Builder(leftPos + 10, topPos + 30, namer).width(150).build());
+        addRenderableWidget(powerSelector = new PowerSelector(leftPos + 150, topPos + 12, Component.translatable("screen.arss.key_setting.power"), powerSelector));
+        addRenderableWidget(namer = TextEditor.builder(leftPos + 10, topPos + 30, namer)
+                .width(150)
+                .suggestions(ResonantGateBlockEntity.clientNames)
+                .maxSuggestions(3)
+                .suggestionsBelow(true)
+                .build());
         if (first && binding != null) {
             namer.setValue(binding.freq);
             powerSelector.value = binding.power;
             bindingButton.setMessage(binding.getReadableBinding(false));
             powerSelector.unknown = true;
         }
-        addRenderableWidget(suggestions = new TextSuggestions(namer, 4, ResonantGateBlockEntity.clientNames));
+        addRenderableWidget(okButton = Button.builder(Component.translatable("screen.arss.key_setting.validate"), b->finish(true)).bounds(leftPos + 10, topPos + 85, 70, 15).build());
+        addRenderableWidget(cancelButton = Button.builder(Component.translatable("screen.arss.key_setting.cancel"), b->finish(false)).bounds(leftPos + 85, topPos + 85, 70, 15).build());
     }
 
     @Override
@@ -74,7 +81,7 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
         super.renderBg(guiGraphics, partialTick, mouseX, mouseY);
         if (!ResonantGateBlockEntity.clientNames.equals(previousSuggestions)) {
             previousSuggestions = (HashSet<String>)ResonantGateBlockEntity.clientNames.clone();
-            suggestions.updateSuggestions(previousSuggestions);
+            namer.updateSuggestions(previousSuggestions);
         }
     }
 
@@ -135,15 +142,21 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
     public void closing() {
         if (MidiHandler.KEY_CATCHER == this)
             MidiHandler.KEY_CATCHER = null;
-        binding.freq = namer.getValue();
-        binding.power = (byte)powerSelector.value;
-        parent().setBinding(index, binding);
+    }
+
+    protected void finish(boolean andSet) {
+        if (andSet) {
+            binding.freq = namer.getValue();
+            binding.power = (byte)powerSelector.value;
+            parent().setBinding(index, binding);
+        }
+        onClose();
     }
 
     @Override
     public boolean mouseClicked(double d, double e, int i) {
         if (isOutsideScreen(d, e)) {
-            onClose();
+            finish(false);
             return false;
         }
         return super.mouseClicked(d, e, i);

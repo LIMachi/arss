@@ -36,7 +36,7 @@ import java.util.List;
 
 public class SequencerMemoryDisc extends Item {
 
-    public static final ResourceLocation SOUND_LOCATION = ResourceLocation.fromNamespaceAndPath(Arss.registries.mod_id, "static_10min");
+    public static final ResourceLocation SOUND_LOCATION = ResourceLocation.fromNamespaceAndPath(Arss.INSTANCE.registries.mod_id, "static_10min");
     public static final ResourceKey<JukeboxSong> SONG = ResourceKey.create(Registries.JUKEBOX_SONG, SOUND_LOCATION);
     public static final SoundEvent SOUND = SoundEvent.createVariableRangeEvent(SOUND_LOCATION);
 

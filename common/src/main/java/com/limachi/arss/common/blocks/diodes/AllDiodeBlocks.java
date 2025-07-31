@@ -4,7 +4,7 @@ import com.limachi.arss.common.block_entities.*;
 import com.limachi.arss.common.items.SequencerMemoryDisc;
 
 import com.limachi.lim_lib.common.annotations.StaticInit;
-import com.limachi.lim_lib.common.mod_creation.Stage;
+import com.limachi.lim_lib.common.modCreation.Stage;
 import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.core.BlockPos;

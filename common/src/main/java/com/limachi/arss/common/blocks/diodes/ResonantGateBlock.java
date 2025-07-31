@@ -43,6 +43,7 @@ public class ResonantGateBlock extends DiodeBlock implements EntityBlock {
 
     public ResonantGateBlock(Properties unused) {
         super(Properties.ofFullCopy(Blocks.COMPARATOR));
+        registerDefaultState(defaultBlockState().setValue(POWERED, false).setValue(BlockStateProperties.POWER, 0).setValue(ArssBlockStateProperties.SIDES, ArssBlockStateProperties.SideToggling.ALL_ACTIVE));
     }
 
     public ResonantGateBlock() {

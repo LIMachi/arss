@@ -10,7 +10,7 @@ import com.limachi.arss.common.blocks.diodes.DiodeBlockFactory;
 import com.limachi.lim_lib.common.annotations.Config;
 import com.limachi.lim_lib.common.annotations.RegisterMsg;
 import com.limachi.lim_lib.common.annotations.StaticInit;
-import com.limachi.lim_lib.common.mod_creation.Stage;
+import com.limachi.lim_lib.common.modCreation.Stage;
 import com.limachi.lim_lib.common.network.IC2SMsg;
 import com.limachi.lim_lib.common.network.IS2CMsg;
 
@@ -52,7 +52,7 @@ public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
 
     @StaticInit(Stage.BLOCK_ENTITY)
     public static void registerType() {
-        TYPE = Arss.registries.blockEntity("sequencer", SequencerBlockEntity::new, DiodeBlockFactory.getBlockRegister("sequencer"));
+        TYPE = Arss.INSTANCE.registries.blockEntity("sequencer", SequencerBlockEntity::new, DiodeBlockFactory.getBlockRegister("sequencer"));
     }
 
     @Config(min = "60", max = "30000", cmt = "Number of redstone ticks that can be stored in sequencer memory (the default is 600, aka 1 minute).", path = "Sequencer", name = "MaximumSequenceLength")

@@ -5,7 +5,7 @@ import com.limachi.arss.Arss;
 import com.limachi.arss.common.blocks.diodes.DiodeBlockFactory;
 
 import com.limachi.lim_lib.common.annotations.StaticInit;
-import com.limachi.lim_lib.common.mod_creation.Stage;
+import com.limachi.lim_lib.common.modCreation.Stage;
 
 import dev.architectury.registry.registries.RegistrySupplier;
 
@@ -25,7 +25,7 @@ public class DelayerBlockEntity extends BaseAnalogDiodeBlockEntity {
 
     @StaticInit(Stage.BLOCK_ENTITY)
     public static void registerType() {
-        TYPE = Arss.registries.blockEntity("delayer", DelayerBlockEntity::new, DiodeBlockFactory.getBlockRegister("delayer"));
+        TYPE = Arss.INSTANCE.registries.blockEntity("delayer", DelayerBlockEntity::new, DiodeBlockFactory.getBlockRegister("delayer"));
     }
 
     public DelayerBlockEntity(BlockPos pos, BlockState state) { super(TYPE.get(), pos, state); }

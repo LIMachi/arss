@@ -5,7 +5,7 @@ import com.limachi.arss.Arss;
 import com.limachi.arss.common.blocks.diodes.DiodeBlockFactory;
 
 import com.limachi.lim_lib.common.annotations.StaticInit;
-import com.limachi.lim_lib.common.mod_creation.Stage;
+import com.limachi.lim_lib.common.modCreation.Stage;
 
 import com.mojang.datafixers.util.Pair;
 
@@ -36,7 +36,7 @@ public class SignalGeneratorBlockEntity extends BaseAnalogDiodeBlockEntity {
 
     @StaticInit(Stage.BLOCK_ENTITY)
     public static void registerType() {
-        TYPE = Arss.registries.blockEntity("signal_generator", SignalGeneratorBlockEntity::new, DiodeBlockFactory.getBlockRegister("signal_generator"));
+        TYPE = Arss.INSTANCE.registries.blockEntity("signal_generator", SignalGeneratorBlockEntity::new, DiodeBlockFactory.getBlockRegister("signal_generator"));
     }
 
     public SignalGeneratorBlockEntity(BlockPos pos, BlockState state) { super(TYPE.get(), pos, state); }

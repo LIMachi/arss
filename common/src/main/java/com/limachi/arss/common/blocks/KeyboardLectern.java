@@ -33,6 +33,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
@@ -98,7 +100,7 @@ public class KeyboardLectern extends LecternBlock implements EntityBlock {
     public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (level.isClientSide) {
             if (level.getBlockEntity(pos) instanceof com.limachi.arss.common.block_entities.KeyboardLectern be)
-                Game.runLogical(()->()->KeyboardHandler.useLectern(be, Keyboard.isListening(be.getKeyboard())), null);
+                Game.runLogical(()->()->KeyboardHandler.useLectern(be, !Keyboard.isListening(be.getKeyboard())), null);
             return InteractionResult.SUCCESS_NO_ITEM_USED;
         }
         if (player.isShiftKeyDown())
@@ -134,5 +136,13 @@ public class KeyboardLectern extends LecternBlock implements EntityBlock {
     @Override
     public ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
         return Blocks.LECTERN.getCloneItemStack(levelReader, blockPos, blockState);
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level unusedLevel, BlockState unusedState, BlockEntityType<T> type) {
+        return (level, pos, state, be)->{
+            if (be instanceof com.limachi.arss.common.block_entities.KeyboardLectern o)
+                o.tick();
+        };
     }
 }

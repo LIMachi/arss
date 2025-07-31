@@ -5,6 +5,7 @@ import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.common.ArssBlockBehaviors;
 
 import com.limachi.lim_lib.client.annotations.FabricLayer;
+import com.limachi.lim_lib.client.annotations.HasRedstoneTint;
 
 import com.limachi.lim_lib.common.annotations.RegisterBlock;
 import com.limachi.lim_lib.common.annotations.RegisterBlockItem;

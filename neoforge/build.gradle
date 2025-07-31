@@ -86,7 +86,7 @@ shadowJar {
 
 remapJar {
     input.set shadowJar.archiveFile
-    atAccessWideners.add("arss.accesswidener")
+    atAccessWideners.add("${archives_name}.accesswidener")
 }
 
 loom {

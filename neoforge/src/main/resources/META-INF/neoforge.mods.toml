@@ -32,6 +32,13 @@ versionRange = "[13.0.2,)"
 ordering = "AFTER"
 side = "BOTH"
 
+[[dependencies.${archives_name}]]
+modId = "lim_lib"
+type = "required"
+versionRange = "[1.0.0,)"
+ordering = "NONE"
+side = "BOTH"
+
 [[mixins]]
 config = "${archives_name}.mixins.json"
 

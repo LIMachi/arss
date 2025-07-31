@@ -7,11 +7,11 @@ import com.limachi.arss.common.block_entities.ResonantGateBlockEntity;
 import com.limachi.arss.common.blocks.KeyboardLectern;
 
 import com.limachi.lim_lib.client.annotations.ItemTinter;
-
-import com.limachi.lim_lib.common.annotations.Config;
+import com.limachi.lim_lib.common.annotations.RegisterEventListener;
 import com.limachi.lim_lib.common.annotations.RegisterItem;
 import com.limachi.lim_lib.common.annotations.RegisterMsg;
 import com.limachi.lim_lib.common.items.IItemMixin;
+import com.limachi.lim_lib.common.modCreation.Events;
 import com.limachi.lim_lib.common.network.IC2SMsg;
 import com.limachi.lim_lib.common.utils.Game;
 
@@ -19,6 +19,7 @@ import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.registries.RegistrySupplier;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -39,10 +40,6 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 public class Keyboard extends Item implements IItemMixin {
-
-    @Config(min = "2", max = "32", cmt = "how far a keyboard item can transmit redstone signal", reload = true, path = "RemoteKeyboard", name = "MaximumReach")
-    public static int KEYBOARD_REACH = 6;
-
     @RegisterItem
     public static RegistrySupplier<Item> R_ITEM;
 
@@ -70,6 +67,11 @@ public class Keyboard extends Item implements IItemMixin {
     }
 
     public Keyboard(Properties props) { super(props.stacksTo(1).component(OUTPUT.get(), 0).component(CATCH.get(), false).component(BINDINGS.get(), Bindings.empty())); }
+
+    public static void setListening(ItemStack stack, boolean listening) {
+        if (stack.has(CATCH.get()))
+            stack.set(CATCH.get(), listening);
+    }
 
     public static boolean isListening(ItemStack stack) {
         if (stack.has(CATCH.get()))
@@ -149,11 +151,11 @@ public class Keyboard extends Item implements IItemMixin {
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         BlockState state = ctx.getLevel().getBlockState(ctx.getClickedPos());
-        if (state.is(Blocks.LECTERN) && !state.getValue(LecternBlock.HAS_BOOK)) {
-            KeyboardLectern.replaceLectern(ctx.getLevel(), ctx.getClickedPos(), state, ctx.getItemInHand().copy());
-            if (!(ctx.getPlayer() instanceof Player player && player.isCreative()))
-                ctx.getItemInHand().setCount(0);
-        }
+//        if (state.is(Blocks.LECTERN) && !state.getValue(LecternBlock.HAS_BOOK)) {
+//            KeyboardLectern.replaceLectern(ctx.getLevel(), ctx.getClickedPos(), state, ctx.getItemInHand().copy());
+//            if (!(ctx.getPlayer() instanceof Player player && player.isCreative()))
+//                ctx.getItemInHand().setCount(0);
+//        }
         if (ctx.getPlayer() instanceof Player player)
             return use(ctx.getLevel(), player, ctx.getHand()).getResult();
         return InteractionResult.PASS;
@@ -171,5 +173,15 @@ public class Keyboard extends Item implements IItemMixin {
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack newStack, ItemStack oldStack, int slot) {
         return !(newStack.is(R_ITEM.get()) && oldStack.is(R_ITEM.get()));
+    }
+
+    @RegisterEventListener(Events.PLAYER_QUIT)
+    public static void onPlayerQuitWhileUsingKeyboard(ServerPlayer player) {
+        var inv = player.getInventory();
+        for (int i = 0; i < inv.getContainerSize(); ++i) {
+            ItemStack stack = inv.getItem(i);
+            if (stack.has(CATCH.get()) && stack.get(CATCH.get()) == true)
+                stack.set(CATCH.get(), false);
+        }
     }
 }

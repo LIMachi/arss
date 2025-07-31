@@ -267,6 +267,10 @@
   "screen.arss.sequencer_help.chapter_button.6": "Play",
   "screen.arss.sequencer_help.chapter.6": "You can test a sequence by pressing Space to toggle play mode (as if it was powered).\nIf you have defined limits (see 'Length' chapter), and set the inputs (bottom buttons named 'start' and 'finish'), then the sequence played will be between the start limit and finish limit. Example: 'start' is 1 and 'finish' is 2, we set a limit on tick 10, the sequence played will be between tick 0 and tick 10. If we power 'start' with a signal of 2 and end with 15 or 0, then every ticks from 10 to length will be played.",
 
+  "screen.arss.key_setting.power": "Power output:",
+  "screen.arss.key_setting.validate": "Ok",
+  "screen.arss.key_setting.cancel": "Cancel",
+
   "book.sculk_vibrations.creative_tab_help": "Created by using a book on a sculk sensor",
   "book.sculk_vibrations.page_1": "Step\nSwim\nFlap",
   "book.sculk_vibrations.page_2": "Projectile land\nHit ground\nSplash",

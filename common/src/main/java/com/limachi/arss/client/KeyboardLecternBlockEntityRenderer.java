@@ -3,7 +3,7 @@ package com.limachi.arss.client;
 import com.limachi.arss.common.block_entities.KeyboardLectern;
 
 import com.limachi.lim_lib.client.annotations.StaticInitClient;
-import com.limachi.lim_lib.client.mod_creation.ClientStage;
+import com.limachi.lim_lib.client.modCreation.ClientStage;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 

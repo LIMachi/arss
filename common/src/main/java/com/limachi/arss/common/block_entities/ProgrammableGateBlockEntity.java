@@ -7,7 +7,7 @@ import com.limachi.arss.client.screen.ProgrammableGateScreen;
 import com.limachi.arss.common.blocks.diodes.DiodeBlockFactory;
 
 import com.limachi.lim_lib.common.annotations.StaticInit;
-import com.limachi.lim_lib.common.mod_creation.Stage;
+import com.limachi.lim_lib.common.modCreation.Stage;
 
 import dev.architectury.registry.registries.RegistrySupplier;
 import dev.architectury.utils.Env;
@@ -38,7 +38,7 @@ public class ProgrammableGateBlockEntity extends BaseAnalogDiodeBlockEntity {
 
     @StaticInit(Stage.BLOCK_ENTITY)
     public static void registerType() {
-        TYPE = Arss.registries.blockEntity("programmable_gate", ProgrammableGateBlockEntity::new, DiodeBlockFactory.getBlockRegister("programmable_gate"));
+        TYPE = Arss.INSTANCE.registries.blockEntity("programmable_gate", ProgrammableGateBlockEntity::new, DiodeBlockFactory.getBlockRegister("programmable_gate"));
     }
 
     public final byte[] layout = new byte[256];

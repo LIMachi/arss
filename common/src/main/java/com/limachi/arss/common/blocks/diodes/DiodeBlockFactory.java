@@ -7,6 +7,7 @@ import com.limachi.arss.common.ArssBlockStateProperties;
 import com.limachi.arss.common.block_entities.BaseAnalogDiodeBlockEntity;
 
 import com.limachi.lim_lib.client.annotations.FabricLayer;
+import com.limachi.lim_lib.client.modCreation.ClientRegistries;
 import com.limachi.lim_lib.common.blocks.IAcceptCrouchInteractWithItem;
 import com.mojang.datafixers.util.Pair;
 
@@ -90,7 +91,7 @@ public class DiodeBlockFactory {
         private String name = "Must be a valid registry key";
         private EnumProperty<?> mode = null;
         private SignalGenerator generator = (b, l, p, s)->{
-            Arss.logger.error("Invalid gate generator for: " + name);
+            Arss.INSTANCE.logger.error("Invalid gate generator for: " + name);
             return 0;
         };
         private BlockBehaviour.Properties blockProperties = PROPS;
@@ -231,12 +232,12 @@ public class DiodeBlockFactory {
 
             gBlock = Product2::new;
         }
-        RegistrySupplier<Block> R_BLOCK = Arss.registries.block(fName, gBlock);
-        RegistrySupplier<Item> R_ITEM = Arss.registries.item(fName, p->itemBuilder.apply(R_BLOCK.get(), iProps.apply(p)));
+        RegistrySupplier<Block> R_BLOCK = Arss.INSTANCE.registries.block(fName, gBlock);
+        RegistrySupplier<Item> R_ITEM = Arss.INSTANCE.registries.item(fName, p->itemBuilder.apply(R_BLOCK.get(), iProps.apply(p)));
         DIODE_BLOCKS.put(fName, new Pair<>(R_ITEM, R_BLOCK));
         if (hasPowerTint)
             EnvExecutor.runInEnv(Env.CLIENT, ()->()->{
-                Arss.ClientModBase.registries.registerBlockTint((s, g, p, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getValue(BlockStateProperties.POWER)), R_BLOCK.getId());
+                Arss.INSTANCE.clientRegistries().registerBlockTint((s, g, p, i) -> 0xFF000000 | RedStoneWireBlock.getColorForPower(s.getValue(BlockStateProperties.POWER)), R_BLOCK.getId());
             });
     }
 

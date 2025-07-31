@@ -5,7 +5,6 @@ import com.limachi.arss.common.block_entities.ResonantGateBlockEntity;
 import com.limachi.lim_lib.client.screens.SimpleScreen;
 
 import com.limachi.lim_lib.client.widgets.TextEditor;
-import com.limachi.lim_lib.client.widgets.TextSuggestions;
 
 import com.limachi.lim_lib.common.annotations.RegisterMsg;
 import com.limachi.lim_lib.common.network.IC2SMsg;
@@ -30,7 +29,6 @@ public class ResonantGateScreen extends SimpleScreen {
     }
 
     protected TextEditor namer;
-    protected TextSuggestions suggestions;
     protected final BlockPos target;
 
     int prevSuggestionLength;
@@ -62,7 +60,7 @@ public class ResonantGateScreen extends SimpleScreen {
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         if (prevSuggestionLength != ResonantGateBlockEntity.clientNames.size())
-            suggestions.updateSuggestions(ResonantGateBlockEntity.clientNames);
+            namer.updateSuggestions(ResonantGateBlockEntity.clientNames);
         super.renderBg(guiGraphics, partialTick, mouseX, mouseY);
     }
 
@@ -71,10 +69,14 @@ public class ResonantGateScreen extends SimpleScreen {
         super.init();
         boolean first = namer == null;
         var be = getBlockEntity();
-        addRenderableWidget(namer = new TextEditor.Builder(leftPos + 10, topPos + 10, namer).width(180).build());
+        addRenderableWidget(namer = TextEditor.builder(leftPos + 10, topPos + 10, namer)
+                .width(180)
+                .suggestions(ResonantGateBlockEntity.clientNames)
+                .maxSuggestions(7)
+                .suggestionsBelow(true)
+                .build());
         if (first && be != null)
             namer.setValue(be.getFrequency());
-        addRenderableWidget(suggestions = new TextSuggestions(namer, 7, ResonantGateBlockEntity.clientNames));
     }
 
     @Override

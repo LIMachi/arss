@@ -17,7 +17,7 @@ import net.minecraft.world.entity.player.Inventory;
 @Environment(EnvType.CLIENT)
 public class AnalogJukeboxScreen extends SimpleBackgroundContainerScreen<AnalogJukeboxMenu> {
 
-    public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Arss.registries.mod_id, "textures/screen/analog_jukebox.png");
+    public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Arss.INSTANCE.registries.mod_id, "textures/screen/analog_jukebox.png");
 
     public AnalogJukeboxScreen(AnalogJukeboxMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);

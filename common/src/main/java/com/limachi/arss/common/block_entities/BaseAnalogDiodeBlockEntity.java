@@ -4,7 +4,7 @@ import com.limachi.arss.Arss;
 import com.limachi.arss.common.blocks.diodes.DiodeBlockFactory;
 
 import com.limachi.lim_lib.common.annotations.StaticInit;
-import com.limachi.lim_lib.common.mod_creation.Stage;
+import com.limachi.lim_lib.common.modCreation.Stage;
 
 import dev.architectury.registry.registries.RegistrySupplier;
 
@@ -47,7 +47,7 @@ public class BaseAnalogDiodeBlockEntity extends BlockEntity {
         Supplier<Block>[] diodes = new Supplier[diodeNames.length];
         for (int i = 0; i < diodes.length; ++i)
             diodes[i] = DiodeBlockFactory.getBlockRegister(diodeNames[i]);
-        TYPE = Arss.registries.blockEntity("generic_diode", BaseAnalogDiodeBlockEntity::new, diodes);
+        TYPE = Arss.INSTANCE.registries.blockEntity("generic_diode", BaseAnalogDiodeBlockEntity::new, diodes);
     }
 
     public BaseAnalogDiodeBlockEntity(BlockPos pos, BlockState state) { this(TYPE.get(), pos, state); }

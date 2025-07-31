@@ -18,7 +18,7 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class SequencerHelpScreen extends SimpleBackgroundScreen {
-    public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Arss.registries.mod_id, "textures/screen/sequencer_help_screen.png");
+    public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Arss.INSTANCE.registries.mod_id, "textures/screen/sequencer_help_screen.png");
     public static final int WIDTH  = 350;
     public static final int HEIGHT = 200;
     public static final int BUTTON_X = 5;

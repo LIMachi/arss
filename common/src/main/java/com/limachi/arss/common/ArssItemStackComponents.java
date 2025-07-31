@@ -110,9 +110,9 @@ public class ArssItemStackComponents {
 
     @StaticInit
     public static void registerComponent() {
-        OUTPUT = Arss.registries.component("output", Codecs.INT, StreamCodecs.INT);
-        CATCH = Arss.registries.component("catch", Codecs.BOOL, StreamCodecs.BOOL);
-        BINDINGS = Arss.registries.component("bindings",
+        OUTPUT = Arss.INSTANCE.registries.component("output", Codecs.INT, StreamCodecs.INT);
+        CATCH = Arss.INSTANCE.registries.component("catch", Codecs.BOOL, StreamCodecs.BOOL);
+        BINDINGS = Arss.INSTANCE.registries.component("bindings",
                 RecordCodecBuilder.create(b->b.group(
                         Codecs.STR_ARRAY.fieldOf("freq").forGetter(Bindings::freq),
                         Codecs.PRIM_BYTE_ARRAY.fieldOf("power").forGetter(Bindings::power),
@@ -129,7 +129,7 @@ public class ArssItemStackComponents {
                         freq[i] = b.readUtf();
                     return new Bindings(freq, b.readByteArray(), b.readVarIntArray());
                 }));
-        SEQUENCER_DATA = Arss.registries.component("sequencer_data",
+        SEQUENCER_DATA = Arss.INSTANCE.registries.component("sequencer_data",
                 RecordCodecBuilder.create(b->
                         b.group(
                                 Codecs.PRIM_BYTE_ARRAY.fieldOf("ticks").forGetter(SequencerData::ticks),

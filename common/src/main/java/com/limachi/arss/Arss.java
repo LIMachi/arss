@@ -1,8 +1,8 @@
 package com.limachi.arss;
 
-import com.limachi.lim_lib.common.annotations.Mod;
+import com.limachi.lim_lib.InstancedMod;
+import com.limachi.lim_lib.common.annotations.ModInstance;
 import com.limachi.lim_lib.common.annotations.RegisterTab;
-import com.limachi.lim_lib.common.mod_creation.ModBase;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -13,8 +13,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-@Mod("arss")
-public final class Arss extends ModBase {
+public final class Arss {
+    @ModInstance
+    public static InstancedMod INSTANCE;
 
     public static TagKey<Item> WRENCH = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("arss", "arss_wrench"));
 
@@ -25,6 +26,4 @@ public final class Arss extends ModBase {
         builder.title(Component.translatable("arss.tab.title"));
         builder.icon(()->new ItemStack(Items.COMPARATOR));
     }
-
-    public Arss() {}
 }

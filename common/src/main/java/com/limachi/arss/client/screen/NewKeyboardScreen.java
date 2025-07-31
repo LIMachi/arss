@@ -65,7 +65,7 @@ public class NewKeyboardScreen extends SimpleScreen {
         model = Minecraft.getInstance().getItemRenderer().getModel(player.getItemInHand(hand), player.level(), player, 0);
     }
 
-    public static class Binding {
+    public static class Binding implements Cloneable {
         String freq;
         byte power;
         int key;
@@ -91,6 +91,11 @@ public class NewKeyboardScreen extends SimpleScreen {
                 note = note % 12;
                 return Component.translatable(reduced ? "screen.button.midi_keyboard_binding_compact" : "screen.button.midi_keyboard_binding", channel, octave, Component.translatable("display.arss.keyboard_item.semitone." + note));
             }
+        }
+
+        @Override
+        protected Binding clone() {
+            return new Binding(freq, power, key);
         }
     }
 

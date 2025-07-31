@@ -5,7 +5,7 @@ import com.limachi.arss.common.block_entities.KeyboardLectern;
 import com.limachi.arss.common.items.Keyboard;
 
 import com.limachi.lim_lib.client.annotations.RegisterClientEventListener;
-import com.limachi.lim_lib.client.mod_creation.ClientEvents;
+import com.limachi.lim_lib.client.modCreation.ClientEvents;
 import com.limachi.lim_lib.client.utils.MidiHandler;
 import com.limachi.lim_lib.common.annotations.RegisterMsg;
 import com.limachi.lim_lib.common.network.IC2SMsg;
@@ -26,8 +26,6 @@ import java.util.HashMap;
 
 @Environment(EnvType.CLIENT)
 public class KeyboardHandler {
-    public static double LECTERN_REACH = 8.;
-
     protected static final HashMap<Integer, ArssItemStackComponents.Bindings> knownKeyboards = new HashMap<>();
     protected static final HashMap<KeyboardLectern, ArssItemStackComponents.Bindings> knownLecterns = new HashMap<>();
 
@@ -64,10 +62,11 @@ public class KeyboardHandler {
                     power = 15;
             } else {
                 power = MidiHandler.keyState(compact >> 8, compact & 0xFF);
-                if (power > 0)
-                    power = ((long)Math.floor(((double)power / 127.) * 14.) & 0xF);
-                if (power < 0xF)
-                    ++power;
+                if (power > 0) {
+                    power = ((long) Math.floor(((double) power / 127.) * 14.) & 0xF);
+                    if (power < 0xF)
+                        ++power;
+                }
             }
             mask |= power << (i * 4);
         }
@@ -87,8 +86,13 @@ public class KeyboardHandler {
     public record LecternStateMask(BlockPos pos, long mask) implements IC2SMsg<LecternStateMask> {
         @Override
         public void run(NetworkManager.PacketContext ctx) {
-            if (ctx.getPlayer() instanceof ServerPlayer player && player.level().getBlockEntity(pos) instanceof KeyboardLectern lectern && Keyboard.setKeyStates(lectern.getKeyboard(), mask, true))
-                lectern.setChanged();
+            if (ctx.getPlayer() instanceof ServerPlayer player && player.level().getBlockEntity(pos) instanceof KeyboardLectern lectern) {
+                if (lectern.getCurrentUser() != player) {
+                    //FIXME: send a disconnect message (the user changed but the client missed the last message somehow)
+                }
+                else if (Keyboard.setKeyStates(lectern.getKeyboard(), mask, true))
+                    lectern.setChanged();
+            }
         }
     }
 
@@ -110,7 +114,7 @@ public class KeyboardHandler {
         long window = Minecraft.getInstance().getWindow().getWindow();
         keyboardInInventory(mc.player.getInventory(), window);
         knownLecterns.entrySet().removeIf(e -> {
-            if (e.getValue() == null || !mc.player.position().closerThan(e.getKey().getBlockPos().getCenter(), LECTERN_REACH) || !Keyboard.isListening(e.getKey().getKeyboard()))
+            if (e.getValue() == null || !mc.player.position().closerThan(e.getKey().getBlockPos().getCenter(), KeyboardLectern.LECTERN_REACH) || !Keyboard.isListening(e.getKey().getKeyboard()))
                 return true;
             new LecternStateMask(e.getKey().getBlockPos(), applyBinding(e.getValue(), window)).sendToServer();
             return false;
