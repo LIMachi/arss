@@ -1,10 +1,9 @@
 package com.limachi.arss.common.items;
 
 import com.limachi.arss.client.ClientDef;
-import com.limachi.arss.client.screen.NewKeyboardScreen;
+import com.limachi.arss.client.screen.KeyboardScreen;
 import com.limachi.arss.common.ArssItemStackComponents;
 import com.limachi.arss.common.block_entities.ResonantGateBlockEntity;
-import com.limachi.arss.common.blocks.KeyboardLectern;
 
 import com.limachi.lim_lib.client.annotations.ItemTinter;
 import com.limachi.lim_lib.common.annotations.RegisterEventListener;
@@ -29,8 +28,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -164,7 +161,7 @@ public class Keyboard extends Item implements IItemMixin {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (player.isShiftKeyDown())
-            Game.runLogical(()->()->NewKeyboardScreen.client_open(player, hand), null);
+            Game.runLogical(()->()-> KeyboardScreen.client_open(player, hand), null);
         else
             player.displayClientMessage(Component.translatable("display.arss.keyboard_item.toggle_keyboard." + toggleInputState(player.getItemInHand(hand))), true);
         return InteractionResultHolder.success(player.getItemInHand(hand));

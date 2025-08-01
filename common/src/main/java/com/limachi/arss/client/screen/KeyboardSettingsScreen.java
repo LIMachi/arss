@@ -13,7 +13,7 @@ import net.minecraft.network.chat.Component;
 
 @Environment(EnvType.CLIENT)
 public class KeyboardSettingsScreen extends SimpleScreen {
-    public KeyboardSettingsScreen(NewKeyboardScreen parent) {
+    public KeyboardSettingsScreen(KeyboardScreen parent) {
         super(parent);
         imageWidth = 170;
         imageHeight = 70;

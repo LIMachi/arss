@@ -15,6 +15,8 @@ import net.minecraft.world.level.block.RedStoneWireBlock;
 
 import org.lwjgl.glfw.GLFW;
 
+import java.util.function.Consumer;
+
 @Environment(EnvType.CLIENT)
 public class PowerSelector extends AbstractWidget {
     public boolean negative;
@@ -22,6 +24,7 @@ public class PowerSelector extends AbstractWidget {
     public boolean active;
     public boolean hexadecimal;
     public int value;
+    public Consumer<PowerSelector> onChange;
 
     public PowerSelector(int x, int y, Component title, PowerSelector prev) {
         super(x, y, prev != null ? prev.getWidth() : 11, prev != null ? prev.getHeight() : 11, title);
@@ -68,7 +71,10 @@ public class PowerSelector extends AbstractWidget {
     }
 
     public void applyOffset(int offset) {
+        int prev = value;
         value = Mth.clamp(value + offset, 0, 15 + (unknown ? 1 : 0));
+        if (prev != value && onChange != null)
+            onChange.accept(this);
     }
 
     @Override

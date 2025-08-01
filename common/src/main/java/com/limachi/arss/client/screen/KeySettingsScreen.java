@@ -7,7 +7,6 @@ import com.limachi.arss.common.block_entities.ResonantGateBlockEntity;
 import com.limachi.lim_lib.client.screens.SimpleScreen;
 import com.limachi.lim_lib.client.utils.MidiHandler;
 import com.limachi.lim_lib.client.widgets.TextEditor;
-import com.limachi.lim_lib.client.widgets.TextSuggestions;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -23,7 +22,7 @@ import java.util.HashSet;
 @Environment(EnvType.CLIENT)
 public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatchMIDI {
     final int index;
-    final NewKeyboardScreen.Binding binding;
+    final KeyboardScreen.Binding binding;
 
     protected TextEditor namer;
     protected PowerSelector powerSelector;
@@ -33,7 +32,7 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
 
     HashSet<String> previousSuggestions;
 
-    public KeySettingsScreen(NewKeyboardScreen parent, int key) {
+    public KeySettingsScreen(KeyboardScreen parent, int key) {
         super(parent);
         index = key;
         imageWidth = 170;
@@ -45,7 +44,7 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
     }
 
     @Override
-    public NewKeyboardScreen parent() {
+    public KeyboardScreen parent() {
         return super.parent();
     }
 

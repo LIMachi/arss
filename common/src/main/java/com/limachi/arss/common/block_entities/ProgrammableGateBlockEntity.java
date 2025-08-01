@@ -42,6 +42,7 @@ public class ProgrammableGateBlockEntity extends BaseAnalogDiodeBlockEntity {
     }
 
     public final byte[] layout = new byte[256];
+    public int mode = 0;
 
     private final HashSet<Player> editing = new HashSet<>();
 
@@ -76,6 +77,7 @@ public class ProgrammableGateBlockEntity extends BaseAnalogDiodeBlockEntity {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
         tag.putByteArray("layout", this.layout);
+        tag.putInt("mode", this.mode);
     }
 
     @Override
@@ -86,6 +88,7 @@ public class ProgrammableGateBlockEntity extends BaseAnalogDiodeBlockEntity {
             if (t.length == 256)
                 System.arraycopy(t, 0, this.layout, 0, 256);
         }
+        mode = tag.getInt("mode");
     }
 
     @Override

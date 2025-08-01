@@ -168,11 +168,11 @@ public class ClientDef {
             SUB_SEQUENCES_UNBOUND = null;
         }
         if (SUB_SEQUENCES_BOUND == null) {
-            SUB_SEQUENCES_BOUND = new Component[5];
-            SUB_SEQUENCES_UNBOUND = new Component[5];
+            SUB_SEQUENCES_BOUND = new Component[6];
+            SUB_SEQUENCES_UNBOUND = new Component[6];
             KeyMapping sneak = Minecraft.getInstance().options.keyShift;
             KeyMapping use = Minecraft.getInstance().options.keyUse;
-            for (int i = 1; i <= 5; ++i) {
+            for (int i = 1; i <= 6; ++i) {
                 SUB_SEQUENCES_BOUND[i - 1] = Component.translatable("tooltip.help.general." + i, Component.keybind(SCROLL_KEY.getName()), Component.keybind(sneak.getName()), Component.keybind(use.getName()));
                 if (i == 3)
                     SUB_SEQUENCES_UNBOUND[2] = Component.translatable("tooltip.help.general.3_alternate", Component.keybind(SCROLL_KEY.getName()), Component.keybind(sneak.getName()), Component.keybind(use.getName()));
