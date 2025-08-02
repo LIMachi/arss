@@ -16,6 +16,7 @@ import net.fabricmc.api.Environment;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -102,7 +103,7 @@ public class ProgrammableGateScreen extends SimpleScreen {
         for (int y = 0; y < 16; ++y) {
             for (int x = 0; x < 16; ++x) {
                 int i = y * 16 + x;
-                layout[i] = new PowerSelector(leftPos + GRID_LEFT - 2 + x * 11, topPos + GRID_TOP - 1 + y * 11, Component.empty(), layout[i]);
+                layout[i] = new PowerSelector(leftPos + GRID_LEFT - 2 + x * 11, topPos + GRID_TOP - 1 + y * 11, Component.empty(), layout[i]).setUnknownTooltip(Tooltip.create(Component.translatable("screen.arss.programmable_gate.unknown_tooltip")));
                 if (first) {
                     layout[i].setWidth(10);
                     layout[i].setHeight(10);

@@ -3,16 +3,19 @@ package com.limachi.arss.client.widgets;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.RedStoneWireBlock;
 
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;
@@ -104,6 +107,28 @@ public class PowerSelector extends AbstractWidget {
             }
         }
         return super.mouseClicked(d, e, i);
+    }
+
+    protected Tooltip unknownTooltip = null;
+
+    protected static final Tooltip[] decimals = Util.make(new Tooltip[16], t->{
+        for (int i = 0; i < 16; ++i)
+            t[i] = Tooltip.create(Component.translatable("values.decimal." + i));
+    });
+    protected static final Tooltip[] hexa = Util.make(new Tooltip[16], t->{
+        for (int i = 0; i < 16; ++i)
+            t[i] = Tooltip.create(Component.translatable("values.hexa." + i));
+    });
+
+    public PowerSelector setUnknownTooltip(Tooltip tooltip) {
+        unknownTooltip = tooltip;
+        return this;
+    }
+
+    @Override
+    public @Nullable Tooltip getTooltip() {
+//        return value < 16 ? hexadecimal ? hexa[value] : decimals[value] : unknownTooltip;
+        return null;
     }
 
     @Override

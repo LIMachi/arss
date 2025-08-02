@@ -1,5 +1,6 @@
 package com.limachi.arss.common.blocks.diodes;
 
+import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.client.screen.ResonantGateScreen;
 import com.limachi.arss.common.ArssBlockStateProperties;
 import com.limachi.arss.common.block_entities.ResonantGateBlockEntity;
@@ -13,12 +14,15 @@ import com.mojang.serialization.MapCodec;
 import dev.architectury.registry.registries.RegistrySupplier;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -30,6 +34,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
+
+import java.util.List;
 
 public class ResonantGateBlock extends DiodeBlock implements EntityBlock {
     @FabricLayer("cutout")
@@ -96,5 +102,11 @@ public class ResonantGateBlock extends DiodeBlock implements EntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext ctx, List<Component> components, TooltipFlag flags) {
+        super.appendHoverText(stack, ctx, components, flags);
+        ClientDef.commonHoverText("resonant_gate", components);
     }
 }

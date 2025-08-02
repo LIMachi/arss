@@ -32,7 +32,7 @@
     "java": ">=21",
     "architectury": ">=13.0.2",
     "fabric-api": "*",
-    "lim_lib": ">=1.0.0"
+    "lim_lib": ">=${lim_lib_version}"
   },
   "suggests": {
     "another-mod": "*"

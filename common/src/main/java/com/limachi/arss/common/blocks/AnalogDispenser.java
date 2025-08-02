@@ -4,6 +4,7 @@ import com.limachi.arss.client.ClientDef;
 
 import com.limachi.arss.common.ArssBlockBehaviors;
 
+import com.limachi.arss.common.block_entities.AnalogDispenserBlockEntity;
 import com.limachi.lim_lib.client.annotations.FabricLayer;
 
 import com.limachi.lim_lib.common.annotations.RegisterBlock;
@@ -16,6 +17,8 @@ import dev.architectury.registry.registries.RegistrySupplier;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.dispenser.BlockSource;
+import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -28,8 +31,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -46,6 +53,10 @@ public class AnalogDispenser extends DispenserBlock {
 
     @RegisterBlockItem
     public static RegistrySupplier<BlockItem> R_ITEM;
+
+    public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+        return new AnalogDispenserBlockEntity(blockPos, blockState);
+    }
 
     public AnalogDispenser() {
         super(Properties.ofFullCopy(Blocks.DISPENSER).isRedstoneConductor((s, l, p) -> false));
@@ -88,13 +99,32 @@ public class AnalogDispenser extends DispenserBlock {
         return out.normalize().scale(power);
     }
 
+    protected void vdispenseFrom(ServerLevel serverLevel, BlockState blockState, BlockPos blockPos) {
+        DispenserBlockEntity dispenserBlockEntity = (DispenserBlockEntity)serverLevel.getBlockEntity(blockPos, AnalogDispenserBlockEntity.TYPE.get()).orElse(null);
+        if (dispenserBlockEntity != null) {
+            BlockSource blockSource = new BlockSource(serverLevel, blockPos, blockState, dispenserBlockEntity);
+            int i = dispenserBlockEntity.getRandomSlot(serverLevel.random);
+            if (i < 0) {
+                serverLevel.levelEvent(1001, blockPos, 0);
+                serverLevel.gameEvent(GameEvent.BLOCK_ACTIVATE, blockPos, GameEvent.Context.of(dispenserBlockEntity.getBlockState()));
+            } else {
+                ItemStack itemStack = dispenserBlockEntity.getItem(i);
+                DispenseItemBehavior dispenseItemBehavior = this.getDispenseMethod(serverLevel, itemStack);
+                if (dispenseItemBehavior != DispenseItemBehavior.NOOP) {
+                    dispenserBlockEntity.setItem(i, dispenseItemBehavior.dispense(blockSource, itemStack));
+                }
+
+            }
+        }
+    }
+
     @Override
     protected void dispenseFrom(ServerLevel level, BlockState state, BlockPos pos) {
         Direction dir = level.getBlockState(pos).getValue(FACING);
         BlockPos lookPos = pos.relative(dir);
         AABB detectionArea = new AABB(lookPos.offset(-1, -1, -1).getCenter(), lookPos.offset(1, 1, 1).getCenter());
         List<Entity> before = level.getEntities(null, detectionArea);
-        super.dispenseFrom(level, state, pos);
+        vdispenseFrom(level, state, pos); //FIXME: used to call super dispenser behavior, but in 1.21 the dispenser checks both checks block and block entity
         List<Entity> after = level.getEntities(null, detectionArea);
         for (Entity test : after)
             if (!before.contains(test)) {

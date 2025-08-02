@@ -16,6 +16,7 @@ allprojects {
     description = rootProject.description
     author = rootProject.author
     license = rootProject.license
+    lim_lib_version = rootProject.lim_lib_version
 }
 
 subprojects {
@@ -70,6 +71,14 @@ subprojects {
             // Notice: This block does NOT have the same function as the block in the top level.
             // The repositories here will be used for publishing your artifact, not for
             // retrieving dependencies.
+        }
+    }
+
+    afterEvaluate {
+        tasks.matching { it.name.startsWith("remap") }.configureEach { remapTask ->
+            if (remapTask.name == "remapJar") {
+                remapTask.dependsOn gradle.includedBuild("LimLibArch").task(":common:jar")
+            }
         }
     }
 }

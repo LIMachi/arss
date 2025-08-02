@@ -30,12 +30,6 @@ configurations {
     }
 }
 
-repositories {
-    flatDir {
-        dirs '../../LimLibArch/fabric/build/libs'
-    }
-}
-
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
@@ -48,7 +42,7 @@ dependencies {
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 
-    modImplementation "com.limachi.lim_lib:lim_lib-fabric:$rootProject.lim_lib_version"
+    modImplementation "com.limachi.lim_lib:lim_lib-fabric:${rootProject.lim_lib_version}-dev"
 }
 
 processResources {
@@ -62,7 +56,8 @@ processResources {
                 author: project.author,
                 license: project.license,
                 minecraft_version: project.minecraft_version,
-                maven_group: project.maven_group
+                maven_group: project.maven_group,
+                lim_lib_version: project.lim_lib_version
     }
 
     filesMatching('${project.archives_name}-fabric.mixins.json') {
@@ -73,7 +68,8 @@ processResources {
                 author: project.author,
                 license: project.license,
                 minecraft_version: project.minecraft_version,
-                maven_group: project.maven_group
+                maven_group: project.maven_group,
+                lim_lib_version: project.lim_lib_version
     }
 }
 

@@ -13,6 +13,7 @@ import net.fabricmc.api.Environment;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 
 import org.lwjgl.glfw.GLFW;
@@ -58,7 +59,7 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
         super.init();
         boolean first = namer == null;
         addRenderableWidget(bindingButton = new BindingButton(leftPos + 10, topPos + 10, bindingButton));
-        addRenderableWidget(powerSelector = new PowerSelector(leftPos + 150, topPos + 12, Component.translatable("screen.arss.key_setting.power"), powerSelector));
+        addRenderableWidget(powerSelector = new PowerSelector(leftPos + 150, topPos + 12, Component.translatable("screen.arss.key_setting.power"), powerSelector).setUnknownTooltip(Tooltip.create(Component.translatable("screen.arss.key_setting.unknown_tooltip"))));
         addRenderableWidget(namer = TextEditor.builder(leftPos + 10, topPos + 30, namer)
                 .width(150)
                 .suggestions(ResonantGateBlockEntity.clientNames)

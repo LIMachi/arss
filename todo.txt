@@ -1,20 +1,22 @@
 status|action
-      |sequencer tooltips
-      |programmable gate tooltips
-      |precise dispenser tooltips
-      |pixel tooltips
-      |resonant gate name + tooltips
-      |keyboard tooltips
-      |redstone booster tooltips + craft
-      |sequencer record tooltips
+oops  |broke tooltips system (might have to simplify and accept to just copy paste at some point)
       |
-      |color coding of sequencer help chapters
+ok?   |sequencer tooltips
+ok    |programmable gate tooltips
+ok    |precise dispenser tooltips
+ok    |pixel tooltips
+ok    |resonant gate name + tooltips
+todo  |keyboard tooltips
+todo  |redstone booster tooltips + craft
+ok?   |sequencer record tooltips
       |
-      |add explanation via hover on menus
+todo  |color coding of sequencer help chapters
       |
-      |check ALL recipes and drop tables
+todo  |add explanation via hover on menus
       |
-      |check everything on server and client, neoforge and fabric
+todo  |check ALL recipes and drop tables
+      |
+todo  |check everything on server and client, neoforge and fabric
       |
       |compare with previous released version to list all the new features/blocks
       |make explanations on the mod page clearer
@@ -25,3 +27,56 @@ status|action
       |improve channel system of resonant gates/keyboards (add option to switch between player networks and global networks)
       |add back the keyboard on lectern feature
       |add framed redstone variants (redstone wire in block form, can move in any of the 6 directions, but can't do diagonals)
+
+
+§bThe Sequencer is a diode capable of emitting §9sequences§b of §credstone pulse/signals§b with 3 §6modes§b:
+'§6play§b': play the selected sequence once per §csignal change§b
+'§6repeat§b': repeat the selected sequence while §cpowered§b
+'§6record§b': record the §csignal received§b and store it as a new sequence
+for more details, use the help in the top right corner of the Sequencer menu
+
+§bThis diode will emit §csignals§b using a '§ftruth table§b' of §csignals§b
+the §csignal§b is selected by using the §aback signal§b as the §fcolumn§b and the §astrongest side signal§b as the §frow§b
+you can load §apresets§b using the top right button in the menu, and copy the settings to another programmable gate by §5[%3$s§5]§b with the configured programmable gate (will be copied from the item to the block)
+
+§bDispenser that only §fshoots§b when §apowered in the back§b, with §fspeed§b scaled by the §cstrength§b of the back input
+
+you can aim by §cpowering the sides§b (powering a side will shoot in the §aopposite direction§b)
+
+example: aimed at the sky, you will have to power it from the bottom, and to shoot to the east you'd power from the west (otherwise it would shoot straight up).
+
+<pixel ok, just need colors>
+§bBlock that changes §fcolor§b based on §cinput received§b.
+Use the §asame palette order as wool/terracotta§b, with the exception of black being emitted for §cpower 0§b and white at §cpower 15§b.
+Does not transmit redstone (will not bleed it's colors to neighboring pixels if directly powered).
+
+§bGate that can link to other §fresonant gate§b and §fkeyboards§b in a §anamed network§b, the §csignal received§b in the back will be §cemitted§b by all gates' (including the one powered) front instantly (§ano range or dimension restriction§b).
+
+The Keyboard allows you to remotely power Resonant Gates using keybinds or MIDI input (use the redstone button in the top right of the menu to configure MIDI device).
+The menu allows you to bind each key individually to any network and chose the power emitted when the key is pressed (if the power selected is '?', then the signal will be 15 for keyboard/mouse, and between 1 and 15 for MIDI input, based on velocity of the keypress)
+Once setup, you can right click the keyboard to activate it (the redstone button will light up) and all matching keybinds will be caught by the Keyboard, right click again to disable
+It doesn't need to stay in your hand to work once activated (need to be in your inventory though).
+
+<keep the redstone booster secret for now?>
+
+<sequencer record ok, just need colors>
+
+color codes:
+
+-help/controls
+§b main text   (light blue)
+§c redstone    (light red)
+§6 mode        (gold)
+§9 tick/delay  (dark blue)
+§a highlight   (light green)
+§5 keybinding  (purple)
+§f sound/other (white)
+§e light       (yellow)
+
+-sequencer:
+§l BOLD
+§f main text/buttons   (white)
+§b binding/head/tick (light blue)
+§7 end (gray)
+§a limits/subsequences (light green)
+§e info (yellow)
