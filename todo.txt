@@ -1,33 +1,69 @@
-status|action
-oops  |broke tooltips system (might have to simplify and accept to just copy paste at some point)
-      |
-ok?   |sequencer tooltips
-ok    |programmable gate tooltips
-ok    |precise dispenser tooltips
-ok    |pixel tooltips
-ok    |resonant gate name + tooltips
-todo  |keyboard tooltips
-todo  |redstone booster tooltips + craft
-ok?   |sequencer record tooltips
-      |
-todo  |color coding of sequencer help chapters
-      |
-todo  |add explanation via hover on menus
-      |
-todo  |check ALL recipes and drop tables
-      |
-todo  |check everything on server and client, neoforge and fabric
-      |
-      |compare with previous released version to list all the new features/blocks
-      |make explanations on the mod page clearer
-      |(eventually): make a video explanation of the mod
-      |(even less likely): add support for ponder menu (disable shift/ctrl tooltip if ponder lib is present)
-      |
-      |additions:
-      |improve channel system of resonant gates/keyboards (add option to switch between player networks and global networks)
-      |add back the keyboard on lectern feature
-      |add framed redstone variants (redstone wire in block form, can move in any of the 6 directions, but can't do diagonals)
+status |action
+ok     |broke tooltips system (might have to simplify and accept to just copy paste at some point)
+       |
+ok     |sequencer tooltips
+ok     |programmable gate tooltips
+ok     |precise dispenser tooltips
+ok     |pixel tooltips
+ok     |resonant gate name + tooltips
+ok     |keyboard tooltips
+ok     |redstone booster tooltips + craft
+ok     |sequencer record tooltips
+       |
+todo   |color coding of sequencer help chapters
+       |
+todo   |add explanation via hover on menus (still debating)
+       |
+ok     |check ALL recipes and drop tables (all drop tables seem ok)
+       |
+todo   |check everything on server and client, neoforge and fabric
+       |
+todo   |set the correct version numbers for lim_lib and arss
+       |
+release|compare with previous released version to list all the new features/blocks
+       |make explanations on the mod page clearer
+       |(eventually): make a video explanation of the mod
+       |(even less likely): add support for ponder menu (disable shift/ctrl tooltip if ponder lib is present)
+       |
+other  |additions:
+       |improve channel system of resonant gates/keyboards (add option to switch between player networks and global networks)
+       |add back the keyboard on lectern feature
+       |add framed redstone variants (redstone wire in block form, can move in any of the 6 directions, but can't do diagonals)
 
+generator ok
+cell ok
+adder ok
+and ok
+nand ok
+or ok
+nor ok
+xor ok
+xnor ok
+comparator ok
+checker ok
+delayer ok
+demuxer ok
+edge ok
+shifter ok
+sequencer ok
+programmable ok
+enriched ok
+perfected ok
+button ok
+dispenser ok
+jukebox ok
+lever ok
+note ok
+block ok
+lamp ok
+torch ok
+swapper ok
+pixel ok
+resonant ok
+keyboard ok
+booster ok (recipe changed to surrounding a speed 2 potion with redstone)
+record ok
+vibrations ok (bug, does not give the correct amount of books if there was more than one|FIXED)
 
 §bThe Sequencer is a diode capable of emitting §9sequences§b of §credstone pulse/signals§b with 3 §6modes§b:
 '§6play§b': play the selected sequence once per §csignal change§b
@@ -52,12 +88,17 @@ Does not transmit redstone (will not bleed it's colors to neighboring pixels if 
 
 §bGate that can link to other §fresonant gate§b and §fkeyboards§b in a §anamed network§b, the §csignal received§b in the back will be §cemitted§b by all gates' (including the one powered) front instantly (§ano range or dimension restriction§b).
 
-The Keyboard allows you to remotely power Resonant Gates using keybinds or MIDI input (use the redstone button in the top right of the menu to configure MIDI device).
-The menu allows you to bind each key individually to any network and chose the power emitted when the key is pressed (if the power selected is '?', then the signal will be 15 for keyboard/mouse, and between 1 and 15 for MIDI input, based on velocity of the keypress)
-Once setup, you can right click the keyboard to activate it (the redstone button will light up) and all matching keybinds will be caught by the Keyboard, right click again to disable
+§bThe Keyboard allows you to remotely power §aResonant Gates§b using §akeybinds or MIDI input§b (use the §credstone button§b in the top right of the menu to configure MIDI device).
+
+The menu allows you to §abind each key individually to any network§b and chose the §cpower emitted§b when the key is pressed (if the power selected is '§c?§b', then the signal will be 15 for keyboard, and between 1 and 15 for MIDI input, based on §9velocity of the keypress§b)
+
+§5[%2$s§5]§b + §5[%1$s§5]§b to open the menu, §5[%1$s§5]§b to activate (§athe redstone button will light up§b) and all matching keybinds will be caught by the Keyboard, §5[%1$s§5]§b again to disable
+
 It doesn't need to stay in your hand to work once activated (need to be in your inventory though).
 
 <keep the redstone booster secret for now?>
+
+§bUse on blocks to boost them. The boosted blocks run as fast as they can (§91 game tick§b instead of §c1 redstone tick§b, aka §92 game ticks§b). Might cause visual glitches, but signals emitted in 1 game tick pulses do work with redstone wires (Vanilla or from this mod).
 
 <sequencer record ok, just need colors>
 

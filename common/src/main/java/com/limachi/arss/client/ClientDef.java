@@ -152,63 +152,37 @@ public class ClientDef {
             return List.of(line);
     }
 
-    protected static String LANGUAGE = null;
-    protected static Component[] SUB_SEQUENCES_BOUND = null;
-    protected static Component[] SUB_SEQUENCES_UNBOUND = null;
     protected static final Component SHIFT_FOR_HELP = Component.translatable("tooltip.help.press_shift_for_help");
     protected static final Component CTRL_FOR_HELP = Component.translatable("tooltip.help.press_ctrl_for_help");
-    protected static final HashMap<String, List<Component>> CACHE = new HashMap<>();
 
     public static void commonHoverText(String name, List<Component> components) {
-        if (LANGUAGE == null)
-            LANGUAGE = Minecraft.getInstance().getLanguageManager().getSelected();
-        if (!Minecraft.getInstance().getLanguageManager().getSelected().equals(LANGUAGE)) {
-            CACHE.clear();
-            SUB_SEQUENCES_BOUND = null;
-            SUB_SEQUENCES_UNBOUND = null;
+        int count = 3;
+        try {
+            count = Integer.parseInt(Component.translatable("tooltip.help.general.count_including_keys").getString());
+        } catch (Exception ignore) {}
+        if (count < 3)
+            count = 3;
+        Component[] general = new Component[count];
+        general[0] = Component.keybind(Minecraft.getInstance().options.keyUse.getName());
+        general[1] = Component.keybind(Minecraft.getInstance().options.keyShift.getName());
+        general[2] = Component.keybind(SCROLL_KEY.getName());
+        for (int i = 3; i < count; ++i)
+            general[i] = Component.translatable("tooltip.help.general." + (i + 1), general[0], general[1], general[2]);
+        var shift = Component.translatable("tooltip.help.shift." + name, (Object[])general);
+        if (!shift.getString().isBlank()) {
+            if (Screen.hasShiftDown())
+                components.addAll(split(shift));
+            else
+                components.add(SHIFT_FOR_HELP);
         }
-        if (SUB_SEQUENCES_BOUND == null) {
-            SUB_SEQUENCES_BOUND = new Component[9];
-            SUB_SEQUENCES_UNBOUND = new Component[9];
-            KeyMapping sneak = Minecraft.getInstance().options.keyShift;
-            KeyMapping use = Minecraft.getInstance().options.keyUse;
-            SUB_SEQUENCES_UNBOUND[0] = SUB_SEQUENCES_BOUND[0] = Component.keybind(SCROLL_KEY.getName());
-            SUB_SEQUENCES_UNBOUND[1] = SUB_SEQUENCES_BOUND[1] = Component.keybind(sneak.getName());
-            SUB_SEQUENCES_UNBOUND[2] = SUB_SEQUENCES_BOUND[2] = Component.keybind(use.getName());
-            for (int i = 1; i <= 6; ++i) {
-                SUB_SEQUENCES_BOUND[i + 2] = Component.translatable("tooltip.help.general." + i, Component.keybind(SCROLL_KEY.getName()), Component.keybind(sneak.getName()), Component.keybind(use.getName()));
-                if (i == 3)
-                    SUB_SEQUENCES_UNBOUND[5] = Component.translatable("tooltip.help.general.3_alternate", Component.keybind(SCROLL_KEY.getName()), Component.keybind(sneak.getName()), Component.keybind(use.getName()));
-                else
-                    SUB_SEQUENCES_UNBOUND[i + 2] = SUB_SEQUENCES_BOUND[i + 2];
-            }
-        }
-        var cachedShift = CACHE.get("tooltip.help.shift." + name);
-        if (cachedShift == null) {
-            if (!Component.translatable("tooltip.help.shift." + name).getString().isBlank()) {
-                cachedShift = split(Component.translatable("tooltip.help.shift." + name, (Object[]) (SCROLL_KEY.isUnbound() ? SUB_SEQUENCES_UNBOUND : SUB_SEQUENCES_BOUND)));
-                CACHE.put("tooltip.help.shift." + name, cachedShift);
-            } else
-                cachedShift = new ArrayList<>();
-        }
-        if (Screen.hasShiftDown())
-            components.addAll(cachedShift);
-        else if (!cachedShift.isEmpty() && !(cachedShift.size() == 1 && cachedShift.get(0).getString().isBlank()))
-            components.add(SHIFT_FOR_HELP);
-        var cachedCtrl = CACHE.get("tooltip.help.ctrl." + name);
-        if (cachedCtrl == null) {
-            if (!Component.translatable("tooltip.help.ctrl." + name).getString().isBlank()) {
-                cachedCtrl = split(Component.translatable("tooltip.help.ctrl." + name, (Object[]) (SCROLL_KEY.isUnbound() ? SUB_SEQUENCES_UNBOUND : SUB_SEQUENCES_BOUND)));
-                CACHE.put("tooltip.help.ctrl." + name, cachedCtrl);
-            } else
-                cachedCtrl = new ArrayList<>();
-        }
-        if (Screen.hasControlDown()) {
-            if (Screen.hasShiftDown() && !cachedShift.isEmpty() && !(cachedShift.size() == 1 && cachedShift.get(0).getString().isBlank()))
+        var ctrl = Component.translatable("tooltip.help.ctrl." + name, (Object[])general);
+        if (!ctrl.getString().isBlank()) {
+            if (!shift.getString().isBlank() && Screen.hasShiftDown())
                 components.add(Component.empty());
-            components.addAll(cachedCtrl);
+            if (Screen.hasControlDown())
+                components.addAll(split(ctrl));
+            else
+                components.add(CTRL_FOR_HELP);
         }
-        else if (!cachedCtrl.isEmpty() && !(cachedCtrl.size() == 1 && cachedCtrl.get(0).getString().isBlank()))
-            components.add(CTRL_FOR_HELP);
     }
 }

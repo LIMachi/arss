@@ -1,4 +1,4 @@
-package com.limachi.arss.common.items;
+package com.limachi.arss.common.recipes;
 
 import com.limachi.arss.Arss;
 
@@ -40,8 +40,8 @@ public class SculkFrequenciesBook {
             PAGES.add(new Filterable<>(Component.translatable("book.sculk_vibrations.page_" + i), Optional.empty()));
     }
 
-    private static ItemStack createBook() {
-        ItemStack out = new ItemStack(Items.WRITTEN_BOOK, 1);
+    private static ItemStack createBook(int count) {
+        ItemStack out = new ItemStack(Items.WRITTEN_BOOK, count);
         out.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(TITLE, "The Sculk", 0, PAGES, false));
         out.set(DataComponents.LORE, LORE);
         return out;
@@ -54,7 +54,7 @@ public class SculkFrequenciesBook {
             if (stack.is(Items.BOOK) || stack.is(Items.WRITABLE_BOOK) || stack.is(Items.WRITTEN_BOOK)) {
                 BlockState state = serverPlayer.level().getBlockState(pos);
                 if (state.is(Blocks.SCULK_SENSOR) || state.is(Blocks.CALIBRATED_SCULK_SENSOR))
-                    serverPlayer.setItemInHand(hand, createBook());
+                    serverPlayer.setItemInHand(hand, createBook(stack.getCount()));
             }
         }
         return EventResult.pass();
@@ -62,6 +62,6 @@ public class SculkFrequenciesBook {
 
     @StaticInit(Stage.ITEM) //FIXME: seem to fail on servers (but does not cause a crash, and the item is visible in the creative tab)
     public static void putBookInCreativeTab() {
-        CreativeTabRegistry.appendStack(Arss.INSTANCE.registries.default_tab, createBook());
+        CreativeTabRegistry.appendStack(Arss.INSTANCE.registries.default_tab, createBook(1));
     }
 }

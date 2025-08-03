@@ -1,10 +1,10 @@
 package com.limachi.arss.client.screen;
 
-import com.limachi.arss.client.widgets.GenericDropDown;
 import com.limachi.arss.client.widgets.PowerSelector;
 import com.limachi.arss.common.block_entities.ProgrammableGateBlockEntity;
 
 import com.limachi.lim_lib.client.screens.SimpleScreen;
+import com.limachi.lim_lib.client.widgets.GenericDropDown;
 
 import com.limachi.lim_lib.common.annotations.RegisterMsg;
 import com.limachi.lim_lib.common.network.IC2SMsg;

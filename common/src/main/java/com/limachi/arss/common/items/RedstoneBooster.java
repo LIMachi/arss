@@ -63,7 +63,7 @@ public class RedstoneBooster extends Item {
                 if (!player.isCreative()) {
                     ItemStack stack = player.getMainHandItem();
                     if (stack.isDamaged())
-                        stack.hurtAndBreak(1, serverLevel, serverPlayer, r->{});
+                        stack.hurtAndBreak(-1, serverLevel, serverPlayer, r->{});
                 }
             }
         }
@@ -78,7 +78,7 @@ public class RedstoneBooster extends Item {
                 serverPlayer.displayClientMessage(Component.translatable("display.arss.redstone_booster.reclaimed"), true);
                 if (!player.isCreative()) {
                     if (stack.isDamaged())
-                        stack.hurtAndBreak(1, serverLevel, serverPlayer, r->{});
+                        stack.hurtAndBreak(-1, serverLevel, serverPlayer, r->{});
                 }
             }
             return true;
