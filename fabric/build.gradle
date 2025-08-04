@@ -9,7 +9,7 @@ architectury {
 
 processResources {
     from(rootProject.file("common/src/main/resources")) {
-        include("${archives_name}.accesswidener")
+        include("${mod_id}.accesswidener")
     }
 }
 
@@ -50,7 +50,7 @@ processResources {
 
     filesMatching('fabric.mod.json') {
         expand  version: project.version,
-                archives_name: project.archives_name,
+                mod_id: project.mod_id,
                 readable_name: project.readable_name,
                 description: project.description,
                 author: project.author,
@@ -62,7 +62,7 @@ processResources {
 
     filesMatching('${project.archives_name}-fabric.mixins.json') {
         expand  version: project.version,
-                archives_name: project.archives_name,
+                mod_id: project.mod_id,
                 readable_name: project.readable_name,
                 description: project.description,
                 author: project.author,

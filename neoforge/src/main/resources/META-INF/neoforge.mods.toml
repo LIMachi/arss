@@ -4,35 +4,35 @@ loaderVersion = "[4,)"
 license = "${license}"
 
 [[mods]]
-modId = "${archives_name}"
+modId = "${mod_id}"
 version = "${version}"
 displayName = "${readable_name}"
 authors = "${author}"
 description = "${description}"
-logoFile = "assets/${archives_name}/icon.png"
+logoFile = "assets/${mod_id}/icon.png"
 
-[[dependencies.${archives_name}]]
+[[dependencies.${mod_id}]]
 modId = "neoforge"
 type = "required"
 versionRange = "[21.0,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.${archives_name}]]
+[[dependencies.${mod_id}]]
 modId = "minecraft"
 type = "required"
 versionRange = "[${minecraft_version},)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.${archives_name}]]
+[[dependencies.${mod_id}]]
 modId = "architectury"
 type = "required"
 versionRange = "[13.0.2,)"
 ordering = "AFTER"
 side = "BOTH"
 
-[[dependencies.${archives_name}]]
+[[dependencies.${mod_id}]]
 modId = "lim_lib"
 type = "required"
 versionRange = "[${lim_lib_version},)"
@@ -40,7 +40,7 @@ ordering = "NONE"
 side = "BOTH"
 
 [[mixins]]
-config = "${archives_name}.mixins.json"
+config = "${mod_id}.mixins.json"
 
 [[mixins]]
-config = "${archives_name}-neo.mixins.json"
+config = "${mod_id}-neo.mixins.json"

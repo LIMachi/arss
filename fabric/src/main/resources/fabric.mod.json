@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "${archives_name}",
+  "id": "${mod_id}",
   "version": "${version}",
   "name": "${readable_name}",
   "description": "${description}",
@@ -12,7 +12,7 @@
     "sources": ""
   },
   "license": "${license}",
-  "icon": "assets/${archives_name}/icon.png",
+  "icon": "assets/${mod_id}/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -23,8 +23,8 @@
     ]
   },
   "mixins": [
-    "${archives_name}.mixins.json",
-    "${archives_name}-fabric.mixins.json"
+    "${mod_id}.mixins.json",
+    "${mod_id}-fabric.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.16.0",
@@ -37,5 +37,5 @@
   "suggests": {
     "another-mod": "*"
   },
-  "__accessWidener": "${archives_name}.accesswidener"
+  "accessWidener": "${mod_id}.accesswidener"
 }

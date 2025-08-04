@@ -13,7 +13,6 @@ import net.fabricmc.api.Environment;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 
 import org.lwjgl.glfw.GLFW;
@@ -37,7 +36,7 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
         super(parent);
         index = key;
         imageWidth = 170;
-        imageHeight = 105;
+        imageHeight = 110;
         binding = parent.getBinding(index).clone();
         previousSuggestions = (HashSet<String>)ResonantGateBlockEntity.clientNames.clone();
         MidiHandler.KEY_CATCHER = this;
@@ -49,19 +48,15 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
         return super.parent();
     }
 
-    //layout:
-    //top left key button
-    //top right power scroller
-    //under target + suggestions
-
     @Override
     protected void init() {
         super.init();
         boolean first = namer == null;
-        addRenderableWidget(bindingButton = new BindingButton(leftPos + 10, topPos + 10, bindingButton));
-        addRenderableWidget(powerSelector = new PowerSelector(leftPos + 150, topPos + 12, Component.translatable("screen.arss.key_setting.power"), powerSelector).setUnknownTooltip(Tooltip.create(Component.translatable("screen.arss.key_setting.unknown_tooltip"))));
-        addRenderableWidget(namer = TextEditor.builder(leftPos + 10, topPos + 30, namer)
-                .width(150)
+        addRenderableWidget(bindingButton = new BindingButton(leftPos + 111, topPos + 6, Component.empty(), bindingButton));
+        addRenderableWidget(powerSelector = new PowerSelector(leftPos + 150, topPos + 23, Component.empty(), powerSelector));
+        powerSelector.setHeight(12);
+        addRenderableWidget(namer = TextEditor.builder(leftPos + 9, topPos + 36, namer)
+                .width(152)
                 .suggestions(ResonantGateBlockEntity.clientNames)
                 .maxSuggestions(3)
                 .suggestionsBelow(true)
@@ -72,8 +67,8 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
             bindingButton.setMessage(binding.getReadableBinding(false));
             powerSelector.unknown = true;
         }
-        addRenderableWidget(okButton = Button.builder(Component.translatable("screen.arss.key_setting.validate"), b->finish(true)).bounds(leftPos + 10, topPos + 85, 70, 15).build());
-        addRenderableWidget(cancelButton = Button.builder(Component.translatable("screen.arss.key_setting.cancel"), b->finish(false)).bounds(leftPos + 85, topPos + 85, 70, 15).build());
+        addRenderableWidget(okButton = Button.builder(Component.translatable("screen.arss.key_setting.validate"), b->finish(true)).bounds(leftPos + 10, topPos + 90, 71, 15).build());
+        addRenderableWidget(cancelButton = Button.builder(Component.translatable("screen.arss.key_setting.cancel"), b->finish(false)).bounds(leftPos + 87, topPos + 90, 71, 15).build());
     }
 
     @Override
@@ -83,6 +78,8 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
             previousSuggestions = (HashSet<String>)ResonantGateBlockEntity.clientNames.clone();
             namer.updateSuggestions(previousSuggestions);
         }
+        guiGraphics.drawString(font, Component.translatable("screen.arss.key_setting.keybind"), leftPos + 10, topPos + 8, 0xFF555555, false);
+        guiGraphics.drawString(font, Component.translatable("screen.arss.key_setting.power"), leftPos + 10, topPos + 24, 0xFF555555, false);
     }
 
     @Override
@@ -98,11 +95,11 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
     }
 
     @Environment(EnvType.CLIENT)
-    class BindingButton extends Button {
+    protected class BindingButton extends Button {
         boolean selected;
 
-        public BindingButton(int x, int y, BindingButton prev) {
-            super(x, y, 50, 16, Component.empty(), s->{
+        public BindingButton(int x, int y, Component title, BindingButton prev) {
+            super(x, y, 50, 16, title, s->{
                 BindingButton b = (BindingButton)s;
                 b.selected = !b.selected;
                 if (!b.selected) {

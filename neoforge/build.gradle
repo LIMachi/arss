@@ -9,7 +9,7 @@ architectury {
 
 processResources {
     from(rootProject.file("common/src/main/resources")) {
-        include("${archives_name}.accesswidener")
+        include("${mod_id}.accesswidener")
     }
 }
 
@@ -54,7 +54,7 @@ processResources {
 
     filesMatching('META-INF/neoforge.mods.toml') {
         expand  version: project.version,
-                archives_name: project.archives_name,
+                mod_id: project.mod_id,
                 readable_name: project.readable_name,
                 description: project.description,
                 author: project.author,
@@ -66,7 +66,7 @@ processResources {
 
     filesMatching('${project.archives_name}-neo.mixins.json') {
         expand  version: project.version,
-                archives_name: project.archives_name,
+                mod_id: project.mod_id,
                 readable_name: project.readable_name,
                 description: project.description,
                 author: project.author,
@@ -84,7 +84,7 @@ shadowJar {
 
 remapJar {
     input.set shadowJar.archiveFile
-    atAccessWideners.add("${archives_name}.accesswidener")
+    atAccessWideners.add("${mod_id}.accesswidener")
 }
 
 loom {

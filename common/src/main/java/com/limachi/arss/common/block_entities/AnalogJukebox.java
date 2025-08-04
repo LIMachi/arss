@@ -19,6 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 
 import java.util.Optional;
 
@@ -76,11 +77,6 @@ public class AnalogJukebox extends MinimalListInventory.MinimalListInventoryBloc
             return JukeboxSong.fromStack(level.registryAccess(), recordStack).map(h->{
                 for (int i = 0; i < getContainerSize(); ++i)
                     if (getItem(i).isEmpty()) {
-                        int power = level.getBestNeighborSignal(worldPosition);
-                        if (power == i + 1) {
-                            playing = power;
-                            jukeboxSongPlayer.play(level, h);
-                        }
                         setItem(i, recordStack);
                         level.updateNeighborsAt(worldPosition, level.getBlockState(worldPosition).getBlock());
                         return true;
@@ -93,10 +89,6 @@ public class AnalogJukebox extends MinimalListInventory.MinimalListInventoryBloc
 
     public void dropAllRecords() {
         if (level instanceof ServerLevel) {
-            if (playing > 0) {
-                playing = 0;
-                jukeboxSongPlayer.stop(level, getBlockState());
-            }
             for (int i = 0; i < getContainerSize(); ++i) {
                 ItemStack record = getItem(i);
                 if (!record.isEmpty()) {
@@ -108,9 +100,11 @@ public class AnalogJukebox extends MinimalListInventory.MinimalListInventoryBloc
                     level.addFreshEntity(itementity);
                 }
             }
-            clearContent();
-            level.updateNeighborsAt(worldPosition, level.getBlockState(worldPosition).getBlock());
         }
+        getItems().replaceAll(s->ItemStack.EMPTY);
+        playing = 0;
+        jukeboxSongPlayer.stop(level, getBlockState());
+        level.updateNeighborsAt(worldPosition, level.getBlockState(worldPosition).getBlock());
     }
 
     public int getAnalogOutputSignal() {
@@ -143,5 +137,7 @@ public class AnalogJukebox extends MinimalListInventory.MinimalListInventoryBloc
         super.setChanged();
     }
 
-    public void tick(Level level, BlockState state) { jukeboxSongPlayer.tick(level, state); }
+    public void tick(Level level, BlockState state) {
+        jukeboxSongPlayer.tick(level, state);
+    }
 }
