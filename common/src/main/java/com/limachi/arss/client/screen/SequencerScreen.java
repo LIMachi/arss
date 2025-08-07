@@ -11,6 +11,7 @@ import com.limachi.lim_lib.client.utils.GUI;
 
 import com.limachi.lim_lib.common.annotations.RegisterMsg;
 import com.limachi.lim_lib.common.network.IC2SMsg;
+import com.limachi.lim_lib.common.utils.BlockEntityMenuListenerSystem;
 import com.limachi.lim_lib.common.utils.History;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -659,16 +660,8 @@ public class SequencerScreen extends SimpleScreen {
         guiGraphics.blit(BACKGROUND, leftPos, topPos, 0, 0, SCREEN_WIDTH, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_HEIGHT);
     }
 
-    public void resyncServer() {
-//        if (be != null)
-//            new SequencerBlockEntity.SyncManually(be.getBlockPos(), be.saveSyncData(new CompoundTag()))
-//            NetworkManager.toServer(new SequencerBlockEntity.SyncManually(be.getBlockPos(), be.saveSyncData(new CompoundTag())));
-    }
-
     @Override
-    public void closing() {
-        resyncServer();
-    }
+    public void closing() { new BlockEntityMenuListenerSystem.ClosingListener(be.getBlockPos()).sendToServer(); }
 
     @Override
     public boolean shouldCloseOnEsc() { return selection == -1; }

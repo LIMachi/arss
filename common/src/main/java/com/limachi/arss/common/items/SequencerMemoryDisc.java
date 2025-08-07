@@ -1,7 +1,9 @@
 package com.limachi.arss.common.items;
 
 import com.limachi.arss.Arss;
+
 import com.limachi.arss.client.ClientDef;
+
 import com.limachi.arss.common.ArssItemStackComponents;
 import com.limachi.arss.common.block_entities.SequencerBlockEntity;
 import com.limachi.arss.common.blocks.AnalogJukebox;
@@ -27,6 +29,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -89,8 +92,8 @@ public class SequencerMemoryDisc extends Item {
             if (ctx.getPlayer() instanceof ServerPlayer player) {
                 if (!player.isShiftKeyDown())
                     stack.set(ArssItemStackComponents.SEQUENCER_DATA.get(), ArssItemStackComponents.SequencerData.fromCompoundTag(be.memoryItemData(new CompoundTag())));
-                else if (stack.has(ArssItemStackComponents.SEQUENCER_DATA.get())) {
-                    be.loadMemoryItem(stack.get(ArssItemStackComponents.SEQUENCER_DATA.get()).toCompoundTag(new CompoundTag()));
+                else if (stack.get(ArssItemStackComponents.SEQUENCER_DATA.get()) instanceof ArssItemStackComponents.SequencerData data) {
+                    be.loadMemoryItem(data.toCompoundTag(new CompoundTag()));
                     be.setChanged();
                 }
             }

@@ -34,7 +34,7 @@ import java.util.List;
 import static com.limachi.arss.common.ArssBlockStateProperties.HIDE_DOT;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.POWER;
 
-@SuppressWarnings({"unused", "deprecation"})
+@SuppressWarnings("unused")
 public class AnalogRedstoneLamp extends RedstoneLampBlock {
 
     @FabricLayer("cutout")

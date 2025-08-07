@@ -5,6 +5,8 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
+import org.jetbrains.annotations.NotNull;
+
 @SuppressWarnings("unused")
 public class ArssBlockStateProperties {
 
@@ -15,7 +17,7 @@ public class ArssBlockStateProperties {
         private final String name;
         MemoryMode(String name) { this.name = name; }
         public String toString() { return this.getSerializedName(); }
-        public String getSerializedName() { return this.name; }
+        public @NotNull String getSerializedName() { return this.name; }
 
         public boolean set() { return this == SET; }
         public boolean reset() { return this == RESET; }
@@ -28,7 +30,7 @@ public class ArssBlockStateProperties {
         private final String name;
         AdderMode(String name) { this.name = name; }
         public String toString() { return this.getSerializedName(); }
-        public String getSerializedName() { return this.name; }
+        public @NotNull String getSerializedName() { return this.name; }
 
         public boolean compare() { return this == COMPARE; }
         public boolean add() { return this == ADD; }
@@ -41,7 +43,7 @@ public class ArssBlockStateProperties {
         private final String name;
         CheckerMode(String name) { this.name = name; }
         public String toString() { return this.getSerializedName(); }
-        public String getSerializedName() { return this.name; }
+        public @NotNull String getSerializedName() { return this.name; }
 
         public boolean equal() { return this == EQUAL; }
         public boolean different() { return this == DIFFERENT; }
@@ -54,7 +56,7 @@ public class ArssBlockStateProperties {
         private final String name;
         EdgeMode(String name) { this.name = name; }
         public String toString() { return this.getSerializedName(); }
-        public String getSerializedName() { return this.name; }
+        public @NotNull String getSerializedName() { return this.name; }
 
         public boolean rising() { return this == RISING; }
         public boolean falling() { return this == FALLING; }
@@ -70,7 +72,7 @@ public class ArssBlockStateProperties {
         private final String name;
         DemuxerMode(String name) { this.name = name; }
         public String toString() { return this.getSerializedName(); }
-        public String getSerializedName() { return this.name; }
+        public @NotNull String getSerializedName() { return this.name; }
     }
 
     public enum DelayerMode implements StringRepresentable {
@@ -83,7 +85,7 @@ public class ArssBlockStateProperties {
         private final String name;
         DelayerMode(String name) { this.name = name; }
         public String toString() { return this.getSerializedName(); }
-        public String getSerializedName() { return this.name; }
+        public @NotNull String getSerializedName() { return this.name; }
     }
 
     public enum ShifterMode implements StringRepresentable {
@@ -93,7 +95,7 @@ public class ArssBlockStateProperties {
         private final String name;
         ShifterMode(String name) { this.name = name; }
         public String toString() { return this.getSerializedName(); }
-        public String getSerializedName() { return this.name; }
+        public @NotNull String getSerializedName() { return this.name; }
 
         public boolean up() { return this == UP; }
         public boolean down() { return this == DOWN; }
@@ -110,7 +112,7 @@ public class ArssBlockStateProperties {
         private final String name;
         SignalGeneratorMode(String name) { this.name = name; }
         public String toString() { return this.getSerializedName(); }
-        public String getSerializedName() { return this.name; }
+        public @NotNull String getSerializedName() { return this.name; }
     }
 
     public enum SequencerMode implements StringRepresentable {
@@ -121,7 +123,7 @@ public class ArssBlockStateProperties {
         private final String name;
         SequencerMode(String name) { this.name = name; }
         public String toString() { return this.getSerializedName(); }
-        public String getSerializedName() { return this.name; }
+        public @NotNull String getSerializedName() { return this.name; }
 
         public boolean isPlaying() { return this == PLAY_ONCE || this == PLAY_LOOP; }
         public boolean isRecording() { return this == RECORD; }
@@ -137,7 +139,7 @@ public class ArssBlockStateProperties {
         private final String name;
         SideToggling(String name) { this.name = name; }
         public String toString() { return this.getSerializedName(); }
-        public String getSerializedName() { return this.name; }
+        public @NotNull String getSerializedName() { return this.name; }
 
         public SideToggling cycle(boolean up, boolean includeBothSides, boolean includeInput) {
             if (up)

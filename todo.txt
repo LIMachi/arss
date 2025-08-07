@@ -1,7 +1,7 @@
 status |action
-todo   |check everything on server and client, neoforge and fabric
+ok     |check everything on server and client, neoforge and fabric
        |
-todo   |set the correct version numbers for lim_lib and arss
+ok     |set the correct version numbers for lim_lib and arss
        |
 release|compare with previous released version to list all the new features/blocks
        |make explanations on the mod page clearer
@@ -12,3 +12,15 @@ other  |additions:
        |improve channel system of resonant gates/keyboards (add option to switch between player networks and global networks)
        |add back the keyboard on lectern feature
        |add framed redstone variants (redstone wire in block form, can move in any of the 6 directions, but can't do diagonals)
+
+
+new to 1.21.1:
+
+sequencer
+programmable gate
+dispenser
+pixel
+resonant
+keyboard
+booster
+record

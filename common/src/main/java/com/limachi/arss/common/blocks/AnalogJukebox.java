@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -107,7 +108,7 @@ public class AnalogJukebox extends Block implements EntityBlock {
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState p_54296_) { return RenderShape.MODEL; }
+    public @NotNull RenderShape getRenderShape(BlockState p_54296_) { return RenderShape.MODEL; }
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {

@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,15 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.function.Consumer;
 
-/**
- * difficulty: synchronicity of object that are updated in chunk order
- * one solution: use the vanilla event system (see note block) to update all gates
- * (collect all changes in 1 tick and standardise the power at event time)
- * since this is blockstate behavior and not block entity, will need to extend the diode manually
- */
-
 public class ResonantGateBlockEntity extends BlockEntity {
-    private static int lastId = 0;
     private static final HashMap<String, HashSet<ResonantGateBlockEntity>> networks = new HashMap<>(); //server only
     public static final HashSet<String> clientNames = new HashSet<>(); //client only
 
@@ -96,9 +89,7 @@ public class ResonantGateBlockEntity extends BlockEntity {
         runOnNetwork(frequency, n->syncPowers(n, power));
     }
 
-    public static List<String> getAllNetworkNames() {
-        return new ArrayList<>(networks.keySet());
-    }
+    public static List<String> getAllNetworkNames() { return new ArrayList<>(networks.keySet()); }
 
     private String frequency = "";
     private int receivedPower = 0;
@@ -106,9 +97,7 @@ public class ResonantGateBlockEntity extends BlockEntity {
     @RegisterBlockEntity(value = "resonant_gate")
     public static RegistrySupplier<BlockEntityType<BlockEntity>> TYPE;
 
-    public ResonantGateBlockEntity(BlockPos pos, BlockState state) {
-        super(TYPE.get(), pos, state);
-    }
+    public ResonantGateBlockEntity(BlockPos pos, BlockState state) { super(TYPE.get(), pos, state); }
 
     public void updatePowerInput(int power) {
         if (Game.isLogicalServer() && power != receivedPower && power >= 0 && power <= 15) {
@@ -119,13 +108,11 @@ public class ResonantGateBlockEntity extends BlockEntity {
     }
 
     public void setOutput(int power) {
-        if (getLevel() instanceof ServerLevel && power != getBlockState().getValue(BlockStateProperties.POWER) && power >= 0 && power <= 15)
-            level.setBlock(worldPosition, getBlockState().setValue(BlockStateProperties.POWER, power).setValue(BlockStateProperties.POWERED, power != 0), 3);
+        if (getLevel() instanceof ServerLevel sl && power != getBlockState().getValue(BlockStateProperties.POWER) && power >= 0 && power <= 15)
+            sl.setBlock(worldPosition, getBlockState().setValue(BlockStateProperties.POWER, power).setValue(BlockStateProperties.POWERED, power != 0), 3);
     }
 
-    public void updateOutputs() {
-        runOnNetwork(frequency, ResonantGateBlockEntity::syncPowers);
-    }
+    public void updateOutputs() { runOnNetwork(frequency, ResonantGateBlockEntity::syncPowers); }
 
     public String getFrequency() { return frequency; }
     public int getReceivedPower() { return receivedPower; }
@@ -181,12 +168,8 @@ public class ResonantGateBlockEntity extends BlockEntity {
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
+    public Packet<ClientGamePacketListener> getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
-        return saveWithoutMetadata(provider);
-    }
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider provider) { return saveWithoutMetadata(provider); }
 }

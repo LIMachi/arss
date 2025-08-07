@@ -1,10 +1,12 @@
 package com.limachi.arss.client;
 
 import com.limachi.lim_lib.client.annotations.RegisterKeyBinding;
+
 import dev.architectury.platform.Platform;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;

@@ -22,6 +22,7 @@ import java.util.Random;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
+@SuppressWarnings("unchecked")
 public class SignalGeneratorBlockEntity extends BaseAnalogDiodeBlockEntity {
 
     private int step = 0;

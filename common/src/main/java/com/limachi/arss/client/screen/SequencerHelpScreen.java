@@ -16,6 +16,7 @@ import net.minecraft.util.Mth;
 
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 @Environment(EnvType.CLIENT)
 public class SequencerHelpScreen extends SimpleBackgroundScreen {
     public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Arss.INSTANCE.registries.mod_id, "textures/screen/sequencer_help_screen.png");

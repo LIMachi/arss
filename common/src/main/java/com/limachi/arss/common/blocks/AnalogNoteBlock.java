@@ -6,6 +6,7 @@ import com.limachi.arss.common.items.RedstoneBooster;
 import com.limachi.arss.client.ClientDef;
 
 import com.limachi.lim_lib.client.annotations.FabricLayer;
+
 import com.limachi.lim_lib.common.annotations.RegisterBlock;
 import com.limachi.lim_lib.common.annotations.RegisterBlockItem;
 
@@ -66,16 +67,11 @@ public class AnalogNoteBlock extends NoteBlock implements EntityBlock {
         builder.add(INSTRUMENT, POWERED, NOTE, HIGH, HIDE_DOT, BOOSTED);
     }
 
-    //FIXME: for some reason gets called multiple times in the same tick when a redstone line is depowering (~every 2 power loss)
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos p_55045_, boolean p_55046_) {
         int power = level.getBestNeighborSignal(pos);
         int prevPower = level.getBlockEntity(pos) instanceof com.limachi.arss.common.block_entities.AnalogNoteBlock be ? be.getPreviousInput() : 0;
         int _new = getNote(state, level, pos);
-        if (!((_new == -1 && power == 0) || _new == state.getValue(NOTE))) {
-//            _new = net.minecraftforge.common.ForgeHooks.onNoteChange(level, pos, state, state.getValue(NOTE), _new);
-//            if (_new == -1) return;
-        }
         boolean boosted = state.getValue(BOOSTED);
         if (power != prevPower) {
             if (level.getBlockEntity(pos) instanceof com.limachi.arss.common.block_entities.AnalogNoteBlock be)
@@ -107,10 +103,6 @@ public class AnalogNoteBlock extends NoteBlock implements EntityBlock {
         else {
             int power = level.getBestNeighborSignal(pos);
             int _new = getNote(state, level, pos);
-            if (!((_new == -1 && power == 0) || _new == state.getValue(NOTE))) {
-//                _new = net.minecraftforge.common.ForgeHooks.onNoteChange(level, pos, state, state.getValue(NOTE), _new);
-//                if (_new == -1) return ItemInteractionResult.FAIL;
-            }
             level.setBlock(pos, state.setValue(NOTE, _new != -1 ? _new : state.getValue(NOTE)).setValue(HIGH, !state.getValue(HIGH)), 3);
             player.displayClientMessage(Component.translatable("display.arss.analog_note_block.high_pitch." + level.getBlockState(pos).getValue(HIGH)), true);
             playNote(player, state, level, pos);

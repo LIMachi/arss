@@ -1,7 +1,7 @@
 package com.limachi.arss.common.blocks;
 
-
 import com.limachi.arss.client.ClientDef;
+
 import com.limachi.arss.common.menus.InstrumentSwapperMenu;
 
 import com.limachi.lim_lib.client.annotations.FabricLayer;
@@ -29,6 +29,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.phys.BlockHitResult;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -114,7 +116,7 @@ public class InstrumentSwapper extends Block implements EntityBlock {
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState p_54296_) { return RenderShape.MODEL; }
+    public @NotNull RenderShape getRenderShape(BlockState p_54296_) { return RenderShape.MODEL; }
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new com.limachi.arss.common.block_entities.InstrumentSwapper(pos, state); }

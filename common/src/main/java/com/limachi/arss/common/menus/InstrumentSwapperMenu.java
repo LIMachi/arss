@@ -22,6 +22,8 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
+import org.jetbrains.annotations.NotNull;
+
 @SuppressWarnings("unused")
 public class InstrumentSwapperMenu extends AbstractContainerMenu {
 
@@ -52,7 +54,7 @@ public class InstrumentSwapperMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public ItemStack quickMoveStack(Player player, int index) {
+    public @NotNull ItemStack quickMoveStack(Player player, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = slots.get(index);
 
@@ -81,9 +83,7 @@ public class InstrumentSwapperMenu extends AbstractContainerMenu {
         if (player instanceof ServerPlayer serverPlayer)
             MenuRegistry.openExtendedMenu(serverPlayer, new MenuProvider() {
                 @Override
-                public Component getDisplayName() {
-                    return Component.translatable("screen.title.instrument_swapper");
-                }
+                public @NotNull Component getDisplayName() { return Component.translatable("screen.title.instrument_swapper"); }
 
                 @Override
                 public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {

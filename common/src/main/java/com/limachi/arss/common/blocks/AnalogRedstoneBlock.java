@@ -32,7 +32,7 @@ import java.util.List;
 
 import static com.limachi.arss.common.ArssBlockStateProperties.HIDE_DOT;
 
-@SuppressWarnings({"unused", "deprecation"})
+@SuppressWarnings("unused")
 public class AnalogRedstoneBlock extends PoweredBlock implements IScrollAndLockPower {
 
     @HasRedstoneTint

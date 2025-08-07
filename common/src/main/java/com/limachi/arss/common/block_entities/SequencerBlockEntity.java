@@ -13,6 +13,7 @@ import com.limachi.lim_lib.common.annotations.StaticInit;
 import com.limachi.lim_lib.common.modCreation.Stage;
 import com.limachi.lim_lib.common.network.IC2SMsg;
 import com.limachi.lim_lib.common.network.IS2CMsg;
+import com.limachi.lim_lib.common.utils.BlockEntityMenuListenerSystem;
 
 import com.mojang.datafixers.util.Pair;
 
@@ -31,6 +32,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -39,14 +41,12 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 
-//new idea for playing: play while at least 1 of the 2 side is powered
-//if both sides are powered, play a range delimited by bookmarks
-//modes: recording, playing once (reset on signal change), playing loop (reset on signal change)
-
-
-public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
+@SuppressWarnings("unchecked")
+public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity implements BlockEntityMenuListenerSystem.BEPlayerListeners {
 
     public static RegistrySupplier<BlockEntityType<SequencerBlockEntity>> TYPE;
 
@@ -63,7 +63,7 @@ public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
     private boolean preview = false;
     private int length = 0;
     private final ArrayList<Integer> limits = new ArrayList<>(); //power 1 -> play from start (limit[-1]) to limit[0], ... power 15 -> play from limit[13] to end (limit[14]). if a limit is invalid (aka 0) skip it.
-    private final HashSet<Player> editing = new HashSet<>();
+    private final HashSet<ServerPlayer> editing = new HashSet<>();
     private boolean playing = false;
     private int startLimit = 0;
     private int finishLimit = 0;
@@ -74,6 +74,9 @@ public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
         m.put("start", "left");
         m.put("finish", "right");
     });
+
+    @Override
+    public Set<ServerPlayer> getPlayers() { return editing; }
 
     public final HashMap<String, String> getMappings() { return mappings; }
 
@@ -194,20 +197,13 @@ public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
     }
 
     public void startEditing(Player player) {
-        editing.add(player);
+        if (player instanceof ServerPlayer sp)
+            addPlayer(sp);
         EnvExecutor.runInEnv(Env.CLIENT, ()->()->SequencerScreen.client_open(this));
     }
 
     public int readPower() { return head >= 0 && head < length ? ticks.get(head) : 0; }
 
-//    /**
-//     * start playing:
-//     *   when the start/finish are updated and at least 1 side is powered or when using playback
-//     * keep playing:
-//     *   any side is powered or playback is active
-//     * stop playing:
-//     *   end reached or no side powered nor playback active
-//     *
     public int update(int back, int left, int right) {
         int input = switch (mappings.get("record")) {
             case "back" -> back;
@@ -304,7 +300,7 @@ public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
             if (level instanceof ServerLevel serverLevel) {
                 if (getBlockState().getValue(BlockStateProperties.POWER) != output)
                     serverLevel.setBlockAndUpdate(worldPosition, getBlockState().setValue(BlockStateProperties.POWER, output));
-                new SyncManually(worldPosition, saveSyncData(new CompoundTag())).sendToClients(); //should sync only to interested clients
+                send(new SyncManually(worldPosition, saveSyncData(new CompoundTag())));
             }
             isChanged = false;
         }
@@ -320,7 +316,7 @@ public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
                     tl = i + 1;
                     break;
                 }
-            int power = ticks.get(0);
+            int power = ticks.getFirst();
             int prev = 0;
             for (int i = 1; i < tl; ++i)
                 if (ticks.get(i) != power) {
@@ -370,9 +366,7 @@ public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
         return tag;
     }
 
-    public boolean isDefault() {
-        return limits.isEmpty() && ticks.stream().noneMatch(i->i != 0);
-    }
+    public boolean isDefault() { return limits.isEmpty() && ticks.stream().noneMatch(i->i != 0); }
 
     public CompoundTag saveSyncData(CompoundTag tag) {
         tag.putInt("Start", startLimit);
@@ -427,9 +421,7 @@ public class SequencerBlockEntity extends BaseAnalogDiodeBlockEntity {
     public Packet<ClientGamePacketListener> getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
-        return saveWithoutMetadata(provider);
-    }
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider provider) { return saveWithoutMetadata(provider); }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {

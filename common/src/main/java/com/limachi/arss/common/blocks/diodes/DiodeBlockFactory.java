@@ -39,6 +39,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -148,9 +149,7 @@ public class DiodeBlockFactory {
             final MapCodec<Product> CODEC = simpleCodec(Product::new);
 
             @Override
-            public MapCodec<Product> codec() {
-                return CODEC;
-            }
+            public @NotNull MapCodec<Product> codec() { return CODEC; }
 
             protected Product() {
                 super(props);

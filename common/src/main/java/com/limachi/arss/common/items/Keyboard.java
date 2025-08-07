@@ -2,10 +2,12 @@ package com.limachi.arss.common.items;
 
 import com.limachi.arss.client.ClientDef;
 import com.limachi.arss.client.screen.KeyboardScreen;
+
 import com.limachi.arss.common.ArssItemStackComponents;
 import com.limachi.arss.common.block_entities.ResonantGateBlockEntity;
 
 import com.limachi.lim_lib.client.annotations.ItemTinter;
+
 import com.limachi.lim_lib.common.annotations.RegisterEventListener;
 import com.limachi.lim_lib.common.annotations.RegisterItem;
 import com.limachi.lim_lib.common.annotations.RegisterMsg;
@@ -70,16 +72,10 @@ public class Keyboard extends Item implements IItemMixin {
             stack.set(CATCH.get(), listening);
     }
 
-    public static boolean isListening(ItemStack stack) {
-        if (stack.has(CATCH.get()))
-            return stack.get(CATCH.get());
-        return false;
-    }
+    public static boolean isListening(ItemStack stack) { return stack.get(CATCH.get()) instanceof Boolean c && c; }
 
     public static boolean setKeyStates(ItemStack stack, long mask, boolean andUpdate) {
-        if (stack.has(ArssItemStackComponents.OUTPUT.get()) && stack.has(ArssItemStackComponents.BINDINGS.get())) {
-            int prev = stack.get(ArssItemStackComponents.OUTPUT.get());
-            var bindings = stack.get(ArssItemStackComponents.BINDINGS.get());
+        if (stack.get(ArssItemStackComponents.OUTPUT.get()) instanceof Integer prev && stack.get(ArssItemStackComponents.BINDINGS.get()) instanceof ArssItemStackComponents.Bindings bindings) {
             int pressedMask = 0;
             for (int i = 0; i < 15; ++i) {
                 long power = ((mask >> (i * 4)) & 0xF);
@@ -100,22 +96,6 @@ public class Keyboard extends Item implements IItemMixin {
             return true;
         }
         return false;
-    }
-
-    @RegisterMsg
-    public record KeyboardKeypressMsg(byte key) implements IC2SMsg<KeyboardKeypressMsg> {
-        public static void sendKeyPress(int key, InteractionHand hand) {
-            new KeyboardKeypressMsg((byte)((key & 0xF) + (hand == InteractionHand.MAIN_HAND ? 0 : 0x10))).sendToServer();
-        }
-        @Override
-        public void run(NetworkManager.PacketContext ctx) {
-            int pressed = key & 0xF;
-            InteractionHand hand = (key & 0x10) == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
-            ItemStack stack = ctx.getPlayer().getItemInHand(hand);
-            if (stack.is(Keyboard.R_ITEM.get())) {
-
-            }
-        }
     }
 
     @Override
@@ -177,8 +157,8 @@ public class Keyboard extends Item implements IItemMixin {
         var inv = player.getInventory();
         for (int i = 0; i < inv.getContainerSize(); ++i) {
             ItemStack stack = inv.getItem(i);
-            if (stack.has(CATCH.get()) && stack.get(CATCH.get()) == true)
-                stack.set(CATCH.get(), false);
+            if (isListening(stack))
+                setListening(stack, false);
         }
     }
 }

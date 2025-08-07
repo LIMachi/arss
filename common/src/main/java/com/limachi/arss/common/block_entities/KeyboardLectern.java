@@ -26,6 +26,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import org.jetbrains.annotations.NotNull;
+
 public class KeyboardLectern extends BlockEntity {
     @Config(cmt = "how far can a player be and still use a keyboard on a lectern", reload = true, path = "Keyboard", name = "LecternReach")
     public static double LECTERN_REACH = 8.;
@@ -53,7 +55,7 @@ public class KeyboardLectern extends BlockEntity {
 
     protected void addUser(Player player) {
         player.displayClientMessage(Component.translatable("display.arss.keyboard_item.toggle_keyboard.true"), true);
-        if (currentUser == null && player != null && getBlockState().is(com.limachi.arss.common.blocks.KeyboardLectern.R_BLOCK.get()) && !getBlockState().getValue(com.limachi.arss.common.blocks.KeyboardLectern.POWERED))
+        if (level != null && currentUser == null && player != null && getBlockState().is(com.limachi.arss.common.blocks.KeyboardLectern.R_BLOCK.get()) && !getBlockState().getValue(com.limachi.arss.common.blocks.KeyboardLectern.POWERED))
             level.setBlockAndUpdate(worldPosition, getBlockState().setValue(com.limachi.arss.common.blocks.KeyboardLectern.POWERED, true));
         if (currentUser instanceof ServerPlayer p)
             new ConnectionStatus(worldPosition, true).sendToClient(p);
@@ -83,14 +85,10 @@ public class KeyboardLectern extends BlockEntity {
     public KeyboardLectern(BlockPos pos, BlockState state) { super(TYPE.get(), pos, state); }
 
     @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
+    public Packet<ClientGamePacketListener> getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
-        return saveWithoutMetadata(provider);
-    }
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider provider) { return saveWithoutMetadata(provider); }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {

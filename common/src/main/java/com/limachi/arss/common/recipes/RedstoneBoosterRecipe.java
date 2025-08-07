@@ -2,6 +2,7 @@ package com.limachi.arss.common.recipes;
 
 import com.limachi.arss.Arss;
 import com.limachi.arss.common.items.RedstoneBooster;
+
 import com.limachi.lim_lib.common.annotations.StaticInit;
 import com.limachi.lim_lib.common.modCreation.Stage;
 
@@ -18,6 +19,8 @@ import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RedStoneWireBlock;
 
+import org.jetbrains.annotations.NotNull;
+
 public class RedstoneBoosterRecipe extends CustomRecipe {
     public static RegistrySupplier<RecipeSerializer<RedstoneBoosterRecipe>> TYPE;
 
@@ -26,9 +29,7 @@ public class RedstoneBoosterRecipe extends CustomRecipe {
         TYPE = Arss.INSTANCE.registries.recipes.register("redstone_booster", ()->new SimpleCraftingRecipeSerializer<>(RedstoneBoosterRecipe::new));
     }
 
-    public RedstoneBoosterRecipe(CraftingBookCategory craftingBookCategory) {
-        super(craftingBookCategory);
-    }
+    public RedstoneBoosterRecipe(CraftingBookCategory craftingBookCategory) { super(craftingBookCategory); }
 
     @Override
     public boolean matches(CraftingInput recipeInput, Level level) {
@@ -50,17 +51,13 @@ public class RedstoneBoosterRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput recipeInput, HolderLookup.Provider provider) {
+    public @NotNull ItemStack assemble(CraftingInput recipeInput, HolderLookup.Provider provider) {
         return new ItemStack(RedstoneBooster.R_ITEM.get());
     }
 
     @Override
-    public boolean canCraftInDimensions(int i, int j) {
-        return i >= 3 && j >= 3;
-    }
+    public boolean canCraftInDimensions(int i, int j) { return i >= 3 && j >= 3; }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
-        return TYPE.get();
-    }
+    public @NotNull RecipeSerializer<?> getSerializer() { return TYPE.get(); }
 }

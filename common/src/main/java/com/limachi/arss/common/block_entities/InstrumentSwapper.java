@@ -16,6 +16,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -79,8 +80,8 @@ public class InstrumentSwapper extends MinimalListInventory.MinimalListInventory
             return stack.get(DataComponents.NOTE_BLOCK_SOUND);
         if (stack.getItem() instanceof BlockItem bi && bi.getBlock() instanceof EntityBlock ebi)
             if (ebi.newBlockEntity(worldPosition, bi.getBlock().defaultBlockState()) instanceof SkullBlockEntity skull) {
-                if (stack.has(DataComponents.BLOCK_ENTITY_DATA) && level != null)
-                    skull.loadCustomOnly(stack.get(DataComponents.BLOCK_ENTITY_DATA).copyTag(), level.registryAccess());
+                if (level != null && stack.get(DataComponents.BLOCK_ENTITY_DATA) instanceof CustomData data)
+                    skull.loadCustomOnly(data.copyTag(), level.registryAccess());
                 return skull.getNoteBlockSound();
             }
         return null;

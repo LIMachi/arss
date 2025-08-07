@@ -16,7 +16,6 @@ import net.fabricmc.api.Environment;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -28,6 +27,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.function.BiFunction;
 
 @SuppressWarnings("unused")
@@ -58,7 +58,7 @@ public class ProgrammableGateScreen extends SimpleScreen {
     protected final ArrayList<String> options = new ArrayList<>();
 
     //list: custom, memory set, memory reset, adder compare, add, comparator compare, subtract, and, nand, or, nor, xor, xnor, eq, neq, demux 1, demux 2, demux 3, demux 4, <<, >>
-    static HashMap<String, byte[]> presets = new HashMap();
+    static HashMap<Component, byte[]> presets = new HashMap<>();
     static byte[] preset(BiFunction<Integer, Integer, Integer> solve) {
         byte[] out = new byte[256];
         for (int y = 0; y < 16; ++y)
@@ -67,31 +67,31 @@ public class ProgrammableGateScreen extends SimpleScreen {
         return out;
     }
     static {
-        presets.put("mem set", preset((b, s)->s > 0 ? b : 16));
-        presets.put("mem reset", preset((b, s)->s > 0 ? 0 : b > 0 ? b : 16));
-        presets.put("-", preset((b, s)->b - s));
-        presets.put("<=", preset((b, s)->b <= s ? b : 0));
-        presets.put("+", preset((b, s)->Math.min(15, b + s)));
-        presets.put(">=", preset((b, s)->b >= s ? b : 0));
-        presets.put("&", preset((b, s)->b & s));
-        presets.put("|", preset((b, s)->b | s));
-        presets.put("^", preset((b, s)->(b ^ s) & 15));
-        presets.put("!&", preset((b, s)->~(b & s) & 15));
-        presets.put("!|", preset((b, s)->~(b | s) & 15));
-        presets.put("!^", preset((b, s)->~(b ^ s) & 15));
-        presets.put("==",  preset((b, s)->b == s ? b : 0));
-        presets.put("!=",  preset((b, s)->b != s ? b : 0));
-        presets.put("demux", preset((b, s)->(b & (1 << s)) & 15));
-        presets.put("<<", preset((b, s)->(b << s) & 15));
-        presets.put(">>", preset((b, s)->(b >> s) & 15));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.mem_set"), preset((b, s)->s > 0 ? b : 16));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.mem_reset"), preset((b, s)->s > 0 ? 0 : b > 0 ? b : 16));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.-"), preset((b, s)->b - s));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.<="), preset((b, s)->b <= s ? b : 0));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.+"), preset((b, s)->Math.min(15, b + s)));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.>="), preset((b, s)->b >= s ? b : 0));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.&"), preset((b, s)->b & s));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.|"), preset((b, s)->b | s));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.^"), preset((b, s)->(b ^ s) & 15));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.!&"), preset((b, s)->~(b & s) & 15));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.!|"), preset((b, s)->~(b | s) & 15));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.!^"), preset((b, s)->~(b ^ s) & 15));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.=="),  preset((b, s)-> Objects.equals(b, s) ? b : 0));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.!="),  preset((b, s)-> !Objects.equals(b, s) ? b : 0));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.demux"), preset((b, s)->(b & (1 << s)) & 15));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.<<"), preset((b, s)->(b << s) & 15));
+        presets.put(Component.translatable("screen.arss.programmable_gate.preset.>>"), preset((b, s)->(b >> s) & 15));
     }
 
     @Override
     protected void init() {
         super.init();
         boolean first = layout[0] == null;
-        var builder = new GenericDropDown.Builder(leftPos + GUI_WIDTH - 85, topPos + 4, 80, 14).options("custom").options(presets.keySet().toArray(new String[0])).onSelect(s->{
-            var p = presets.get(s.getInner().getMessage().getString());
+        var builder = new GenericDropDown.Builder(leftPos + GUI_WIDTH - 85, topPos + 4, 80, 14).options(Component.translatable("screen.arss.programmable_gate.preset.custom")).options(presets.keySet().toArray(new Component[0])).onSelect(s->{
+            var p = presets.get(s.getInner().getMessage());
             if (p != null)
                 for (int i = 0; i < 256; ++i)
                     layout[i].value = p[i];
@@ -103,7 +103,7 @@ public class ProgrammableGateScreen extends SimpleScreen {
         for (int y = 0; y < 16; ++y) {
             for (int x = 0; x < 16; ++x) {
                 int i = y * 16 + x;
-                layout[i] = new PowerSelector(leftPos + GRID_LEFT - 2 + x * 11, topPos + GRID_TOP - 1 + y * 11, Component.empty(), layout[i]).setUnknownTooltip(Tooltip.create(Component.translatable("screen.arss.programmable_gate.unknown_tooltip")));
+                layout[i] = new PowerSelector(leftPos + GRID_LEFT - 2 + x * 11, topPos + GRID_TOP - 1 + y * 11, Component.empty(), layout[i]);
                 if (first) {
                     layout[i].setWidth(10);
                     layout[i].setHeight(10);
@@ -176,10 +176,10 @@ public class ProgrammableGateScreen extends SimpleScreen {
     public void renderFg(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         guiGraphics.drawString(font, Component.translatable("screen.arss.programmable_gate.title"), leftPos + 8, topPos + 8, 4210752, false);
         for (int y = 0; y < 16; ++y) {
-            guiGraphics.drawString(minecraft.font, "0123456789ABCDEF?".substring(y, y + 1), leftPos + GRID_LEFT + y * 11, topPos + GRID_TOP - 10, RedStoneWireBlock.getColorForPower(y) | 0xFF000000, false);
-            guiGraphics.drawString(minecraft.font, "0123456789ABCDEF?".substring(y, y + 1), leftPos + GRID_LEFT + y * 11, topPos + GRID_TOP + 16 * 11, RedStoneWireBlock.getColorForPower(y) | 0xFF000000, false);
-            guiGraphics.drawString(minecraft.font, "0123456789ABCDEF?".substring(y, y + 1), leftPos + GRID_LEFT - 10, topPos + GRID_TOP + y * 11, RedStoneWireBlock.getColorForPower(y) | 0xFF000000, false);
-            guiGraphics.drawString(minecraft.font, "0123456789ABCDEF?".substring(y, y + 1), leftPos + GRID_LEFT + 16 * 11, topPos + GRID_TOP + y * 11, RedStoneWireBlock.getColorForPower(y) | 0xFF000000, false);
+            guiGraphics.drawString(font, "0123456789ABCDEF?".substring(y, y + 1), leftPos + GRID_LEFT + y * 11, topPos + GRID_TOP - 10, RedStoneWireBlock.getColorForPower(y) | 0xFF000000, false);
+            guiGraphics.drawString(font, "0123456789ABCDEF?".substring(y, y + 1), leftPos + GRID_LEFT + y * 11, topPos + GRID_TOP + 16 * 11, RedStoneWireBlock.getColorForPower(y) | 0xFF000000, false);
+            guiGraphics.drawString(font, "0123456789ABCDEF?".substring(y, y + 1), leftPos + GRID_LEFT - 10, topPos + GRID_TOP + y * 11, RedStoneWireBlock.getColorForPower(y) | 0xFF000000, false);
+            guiGraphics.drawString(font, "0123456789ABCDEF?".substring(y, y + 1), leftPos + GRID_LEFT + 16 * 11, topPos + GRID_TOP + y * 11, RedStoneWireBlock.getColorForPower(y) | 0xFF000000, false);
         }
     }
 

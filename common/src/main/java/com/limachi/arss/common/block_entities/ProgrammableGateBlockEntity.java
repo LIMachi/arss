@@ -12,6 +12,7 @@ import com.limachi.lim_lib.common.modCreation.Stage;
 import dev.architectury.registry.registries.RegistrySupplier;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
@@ -26,13 +27,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
-//truth table (16*16, emits from 0 to 15 or keep last signal)
-
+@SuppressWarnings("unchecked")
 public class ProgrammableGateBlockEntity extends BaseAnalogDiodeBlockEntity {
     public static RegistrySupplier<BlockEntityType<ProgrammableGateBlockEntity>> TYPE;
 
@@ -43,8 +43,6 @@ public class ProgrammableGateBlockEntity extends BaseAnalogDiodeBlockEntity {
 
     public final byte[] layout = new byte[256];
     public int mode = 0;
-
-    private final HashSet<Player> editing = new HashSet<>();
 
     public ProgrammableGateBlockEntity(BlockPos pos, BlockState state) {
         super(TYPE.get(), pos, state);
@@ -57,21 +55,16 @@ public class ProgrammableGateBlockEntity extends BaseAnalogDiodeBlockEntity {
     }
 
     public void startEditing(Player player) {
-        editing.add(player);
         EnvExecutor.runInEnv(Env.CLIENT, ()->()->{
             ProgrammableGateScreen.client_open(this);
         });
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
+    public Packet<ClientGamePacketListener> getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
-        return saveWithoutMetadata(provider);
-    }
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider provider) { return saveWithoutMetadata(provider); }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
@@ -103,8 +96,8 @@ public class ProgrammableGateBlockEntity extends BaseAnalogDiodeBlockEntity {
         if (def && player.isCreative())
             return Collections.emptyList();
         ItemStack stack = state.getBlock().getCloneItemStack(level, pos, state);
-        if (!def) {
-            CompoundTag t = level != null ? saveWithId(level.registryAccess()) : new CompoundTag();
+        if (!def && level != null) {
+            CompoundTag t = saveWithId(level.registryAccess());
             saveAdditional(t, level.registryAccess());
             stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(t));
         }

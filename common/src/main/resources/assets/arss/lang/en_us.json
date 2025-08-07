@@ -299,5 +299,24 @@
   "book.sculk_vibrations.page_12": "Block destroy\nFluid pickup",
   "book.sculk_vibrations.page_13": "Block place\nFluid place",
   "book.sculk_vibrations.page_14": "Entity place\nLightning strike\nTeleport",
-  "book.sculk_vibrations.page_15": "Entity die\nExplosion"
+  "book.sculk_vibrations.page_15": "Entity die\nExplosion",
+
+  "screen.arss.programmable_gate.preset.custom": "custom",
+  "screen.arss.programmable_gate.preset.mem_set": "mem set",
+  "screen.arss.programmable_gate.preset.mem_reset": "mem reset",
+  "screen.arss.programmable_gate.preset.-":  "-",
+  "screen.arss.programmable_gate.preset.<=": "<=",
+  "screen.arss.programmable_gate.preset.+":  "+",
+  "screen.arss.programmable_gate.preset.>=": ">=",
+  "screen.arss.programmable_gate.preset.&":  "&",
+  "screen.arss.programmable_gate.preset.|": "|",
+  "screen.arss.programmable_gate.preset.^":  "^",
+  "screen.arss.programmable_gate.preset.!&": "!&",
+  "screen.arss.programmable_gate.preset.!|":  "!|",
+  "screen.arss.programmable_gate.preset.!^": "!^",
+  "screen.arss.programmable_gate.preset.==":  "==",
+  "screen.arss.programmable_gate.preset.!=": "!=",
+  "screen.arss.programmable_gate.preset.demux":  "demux",
+  "screen.arss.programmable_gate.preset.<<": "<<",
+  "screen.arss.programmable_gate.preset.>>": ">>"
 }

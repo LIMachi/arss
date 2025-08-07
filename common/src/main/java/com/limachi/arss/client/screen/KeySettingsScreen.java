@@ -19,6 +19,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.HashSet;
 
+@SuppressWarnings("unchecked")
 @Environment(EnvType.CLIENT)
 public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatchMIDI {
     final int index;
@@ -110,7 +111,7 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
             selected = prev != null && prev.selected;
         }
 
-        public BindingButton setKeyBind(int compactBinding) {
+        public void setKeyBind(int compactBinding) {
             if (compactBinding != binding.key) {
                 binding.key = compactBinding;
                 setMessage(binding.getReadableBinding(false));
@@ -118,7 +119,6 @@ public class KeySettingsScreen extends SimpleScreen implements MidiHandler.ICatc
             selected = false;
             screen().setFocused(null);
             setFocused(false);
-            return this;
         }
 
         @Override

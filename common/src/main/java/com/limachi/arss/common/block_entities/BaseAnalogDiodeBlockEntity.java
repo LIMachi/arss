@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unchecked")
 public class BaseAnalogDiodeBlockEntity extends BlockEntity {
     private int output;
 

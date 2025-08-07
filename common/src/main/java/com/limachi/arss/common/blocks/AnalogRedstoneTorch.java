@@ -34,9 +34,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
-@SuppressWarnings({"unused", "deprecation"})
+@SuppressWarnings("unused")
 public class AnalogRedstoneTorch extends RedstoneTorchBlock implements IScrollAndLockPower {
 
     @HasRedstoneTint
@@ -117,7 +119,7 @@ public class AnalogRedstoneTorch extends RedstoneTorchBlock implements IScrollAn
         }
 
         @Override
-        public String getDescriptionId() { return "block.arss.analog_redstone_torch"; }
+        public @NotNull String getDescriptionId() { return "block.arss.analog_redstone_torch"; }
 
         @Override
         public BlockState getStateForPlacement(BlockPlaceContext ctx) {

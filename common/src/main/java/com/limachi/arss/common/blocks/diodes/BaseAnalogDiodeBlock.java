@@ -47,6 +47,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.ticks.TickPriority;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -90,18 +91,14 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IAccept
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+    public @NotNull BlockState getStateForPlacement(BlockPlaceContext ctx) {
         BlockState state = super.getStateForPlacement(ctx);
-        if (state != null) {
-//            CompoundTag tag = ctx.getItemInHand().getTag();
-            CustomData tag = ctx.getItemInHand().getComponents().get(DataComponents.BLOCK_ENTITY_DATA);
-            if (tag != null/* && tag.contains("BlockEntityTag")*/) {
-                CompoundTag bet = /*tag.getCompound("BlockEntityTag")*/tag.getUnsafe();
-                if (bet.contains("Mode", Tag.TAG_INT) && modeProp != null)
-                    state = setValueByClampedIndex(state, modeProp, bet.getInt("Mode"));
-                if (bet.contains("Sides", Tag.TAG_INT))
-                    state = setValueByClampedIndex(state, SIDES, bet.getInt("Sides"));
-            }
+        if (ctx.getItemInHand().getComponents().get(DataComponents.BLOCK_ENTITY_DATA) instanceof CustomData data) {
+            CompoundTag bet = data.getUnsafe();
+            if (bet.contains("Mode", Tag.TAG_INT) && modeProp != null)
+                state = setValueByClampedIndex(state, modeProp, bet.getInt("Mode"));
+            if (bet.contains("Sides", Tag.TAG_INT))
+                state = setValueByClampedIndex(state, SIDES, bet.getInt("Sides"));
         }
         return state;
     }
@@ -224,7 +221,7 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IAccept
 
     private static ItemFrame getItemFrame(Level level, Direction dir, BlockPos pos) {
         List<ItemFrame> list = level.getEntitiesOfClass(ItemFrame.class, new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1), e -> e != null && e.getDirection() == dir);
-        return list.size() == 1 ? list.get(0) : null;
+        return list.size() == 1 ? list.getFirst() : null;
     }
 
     protected static <T> T findPrevInCollection(Collection<T> col, T find) {
@@ -288,8 +285,9 @@ public abstract class BaseAnalogDiodeBlock extends DiodeBlock implements IAccept
 
     private static <T extends Enum<T> & StringRepresentable> BlockState setValueByClampedIndex(BlockState state, EnumProperty<T> prop, int index) {
         List<String> val = prop.getPossibleValues().stream().map(StringRepresentable::getSerializedName).toList();
-        T f = prop.getValue(val.get(Mth.clamp(index, 0, val.size() - 1))).get();
-        return state.setValue(prop, f);
+        if (prop.getValue(val.get(Mth.clamp(index, 0, val.size() - 1))).orElse(null) instanceof T f)
+            state = state.setValue(prop, f);
+        return state;
     }
 
     @Override

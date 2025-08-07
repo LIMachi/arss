@@ -13,6 +13,8 @@ import net.minecraft.world.level.block.state.properties.RedstoneSide;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import org.jetbrains.annotations.NotNull;
+
 public class BaseRedstoneWire extends RedStoneWireBlock {
     protected IntegerProperty range;
     protected int maxRange;
@@ -54,7 +56,7 @@ public class BaseRedstoneWire extends RedStoneWireBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
         return SHAPES_CACHE.get(setRange(state.setValue(POWER, 0), 0));
     }
 

@@ -19,7 +19,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
 
 import java.util.Optional;
 
@@ -104,7 +103,8 @@ public class AnalogJukebox extends MinimalListInventory.MinimalListInventoryBloc
         getItems().replaceAll(s->ItemStack.EMPTY);
         playing = 0;
         jukeboxSongPlayer.stop(level, getBlockState());
-        level.updateNeighborsAt(worldPosition, level.getBlockState(worldPosition).getBlock());
+        if (level != null)
+            level.updateNeighborsAt(worldPosition, level.getBlockState(worldPosition).getBlock());
     }
 
     public int getAnalogOutputSignal() {

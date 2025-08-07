@@ -92,7 +92,7 @@ public class KeyboardScreen extends SimpleScreen {
         }
 
         @Override
-        protected Binding clone() {
+        public Binding clone() {
             return new Binding(freq, power, key);
         }
     }
@@ -100,7 +100,8 @@ public class KeyboardScreen extends SimpleScreen {
     Binding getBinding(int key) {
         if (key >= 0 && key < 15 && player.getItemInHand(hand).has(ArssItemStackComponents.BINDINGS.get())) {
             var bindings = player.getItemInHand(hand).get(ArssItemStackComponents.BINDINGS.get());
-            return new Binding(bindings.freq()[key], bindings.power()[key], bindings.key()[key]);
+            if (bindings != null)
+                return new Binding(bindings.freq()[key], bindings.power()[key], bindings.key()[key]);
         }
         return null;
     }
@@ -108,7 +109,8 @@ public class KeyboardScreen extends SimpleScreen {
     void setBinding(int key, Binding binding) {
         if (key >= 0 && key < 15 && binding != null && player.getItemInHand(hand).has(ArssItemStackComponents.BINDINGS.get())) {
             var bindings = player.getItemInHand(hand).get(ArssItemStackComponents.BINDINGS.get());
-            player.getItemInHand(hand).set(ArssItemStackComponents.BINDINGS.get(), bindings.setBinding(key, binding.freq, binding.power, binding.key));
+            if (bindings != null)
+                player.getItemInHand(hand).set(ArssItemStackComponents.BINDINGS.get(), bindings.setBinding(key, binding.freq, binding.power, binding.key));
         }
     }
 
@@ -183,7 +185,7 @@ public class KeyboardScreen extends SimpleScreen {
             int length = text.getString().length();
             float scale = length > 0 ? Float.max(2f / (float) length, 0.01f) : 1f;
             guiGraphics.pose().scale(scale, scale, scale);
-            guiGraphics.drawCenteredString(minecraft.font, text, Math.round((getX() + 1 + width / 2) * (1 / scale)), Math.round((getY() + height - 9) * (1 / scale) - 5), -1);
+            guiGraphics.drawCenteredString(font, text, Math.round((getX() + 1 + width / 2f) * (1 / scale)), Math.round((getY() + height - 9) * (1 / scale) - 5), -1);
             guiGraphics.pose().popPose();
         }
 

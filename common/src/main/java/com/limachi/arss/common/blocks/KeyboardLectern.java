@@ -38,6 +38,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
+import org.jetbrains.annotations.NotNull;
+
 @SuppressWarnings("unused")
 public class KeyboardLectern extends LecternBlock implements EntityBlock {
 
@@ -87,7 +89,7 @@ public class KeyboardLectern extends LecternBlock implements EntityBlock {
 //    }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public @NotNull BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new com.limachi.arss.common.block_entities.KeyboardLectern(pos, state);
     }
 
@@ -134,7 +136,7 @@ public class KeyboardLectern extends LecternBlock implements EntityBlock {
 //    }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
+    public @NotNull ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
         return Blocks.LECTERN.getCloneItemStack(levelReader, blockPos, blockState);
     }
 

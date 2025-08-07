@@ -3,15 +3,14 @@ package com.limachi.arss.common.blocks;
 import com.limachi.arss.client.ClientDef;
 
 import com.limachi.arss.common.ArssBlockBehaviors;
-
 import com.limachi.arss.common.block_entities.AnalogDispenserBlockEntity;
-import com.limachi.lim_lib.client.annotations.FabricLayer;
 
+import com.limachi.lim_lib.client.annotations.FabricLayer;
 import com.limachi.lim_lib.common.annotations.RegisterBlock;
 import com.limachi.lim_lib.common.annotations.RegisterBlockItem;
-
 import com.limachi.lim_lib.common.annotations.RegisterMsg;
 import com.limachi.lim_lib.common.network.IS2CMsg;
+
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.registries.RegistrySupplier;
 
@@ -32,7 +31,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -40,6 +38,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class AnalogDispenser extends DispenserBlock {
     @RegisterBlockItem
     public static RegistrySupplier<BlockItem> R_ITEM;
 
-    public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+    public @NotNull BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return new AnalogDispenserBlockEntity(blockPos, blockState);
     }
 
