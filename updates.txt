@@ -1,0 +1,6 @@
+--- 0.5.0 ---
+first architectury version, supporting both neoforge and fabric
+
+--- 0.5.1 ---
+bumped required version of LimLib to 0.3.1 to fix the visual desync of Sequencers (updates where never sent to players)
+fixed the sequencer memory disc not forcing a resync of sequencers when overridden

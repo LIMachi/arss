@@ -19,6 +19,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
@@ -29,7 +30,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -95,6 +95,8 @@ public class SequencerMemoryDisc extends Item {
                 else if (stack.get(ArssItemStackComponents.SEQUENCER_DATA.get()) instanceof ArssItemStackComponents.SequencerData data) {
                     be.loadMemoryItem(data.toCompoundTag(new CompoundTag()));
                     be.setChanged();
+                    if (ctx.getLevel() instanceof ServerLevel sl)
+                        new SequencerBlockEntity.SyncManually(ctx.getClickedPos(), be.saveSyncData(new CompoundTag())).sendToClients(sl, ctx.getClickedPos());
                 }
             }
             return InteractionResult.SUCCESS;
